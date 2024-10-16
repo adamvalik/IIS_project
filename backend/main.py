@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
 
 app = FastAPI()
 
@@ -22,6 +23,10 @@ class Animal(BaseModel):
     type: str
     image: str
 
+class Reservation(BaseModel):
+    day: str
+    time: str
+
 # Example data
 animals = [
     Animal(id=1, name="Bella", description="A playful young dog who loves attention.", age=3, type="Dog", image="https://placekitten.com/300/300"),
@@ -32,3 +37,6 @@ animals = [
 @app.get("/animals")
 def get_animals():
     return animals
+
+async def reserve_slots(reservations: List[Reservation]):
+    return {"message": "Reservation successful!"}

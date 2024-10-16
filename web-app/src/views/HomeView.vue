@@ -9,6 +9,7 @@
           <router-link to="/adopt" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg">Adopt a Pet</router-link>
           <router-link to="/volunteer" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg">Volunteer</router-link>
           <router-link to="/donate" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg">Donate</router-link>
+          <router-link to="/scheduler" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg">Open Scheduler</router-link>
         </div>
       </div>
     </section>
