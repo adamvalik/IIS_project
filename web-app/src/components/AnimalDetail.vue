@@ -1,4 +1,3 @@
-<!-- AnimalDetail.vue -->
 <template>
   <div class="container mx-auto px-4 py-6 h-screen">
     <NavigationBar />
@@ -6,13 +5,16 @@
     <div class="bg-white shadow-lg rounded-lg p-8">
       <div class="flex flex-col md:flex-row items-center md:space-x-8">
         <!-- Animal Image -->
-        <img :src="animal.image || defaultImage" :alt="animal.name" class="w-full md:w-1/3 h-64 object-cover rounded-lg shadow-md" />
+        <img :src="animal.photo || defaultImage" :alt="animal.name" class="w-full md:w-1/3 h-64 object-cover rounded-lg shadow-md" />
 
         <!-- Animal Info -->
         <div class="mt-6 md:mt-0">
           <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ animal.name }}</h2>
-          <p class="text-lg text-gray-600 mb-2">Age: {{ animal.age }} years</p>
-          <p class="text-lg text-gray-600 mb-2">Type: {{ animal.type }}</p>
+          <p class="text-lg text-gray-600 mb-2">Species: {{ animal.species }}</p>
+          <p class="text-lg text-gray-600 mb-2">Breed: {{ animal.breed }}</p>
+          <p class="text-lg text-gray-600 mb-2">Age: {{ calculateAge(animal.birth_year) }} years</p>
+          <p class="text-lg text-gray-600 mb-2">Size: {{ animal.size }}</p>
+          <p class="text-lg text-gray-600 mb-2">Admission Date: {{ formatDate(animal.admission_date) }}</p>
           <p class="text-lg text-gray-600">{{ animal.description }}</p>
 
           <!-- Role-based actions -->
@@ -40,22 +42,16 @@
 
 <script>
 import NavigationBar from './NavigationBar.vue';
+
 export default {
   components: { 
     NavigationBar
   },
   data() {
     return {
-      animal: { 
-        id: 0, 
-        name: 'Khaledik', 
-        age: 3, 
-        type: 'dog idk', 
-        description: 'cute puppy like satek', 
-        image: '/assets/puppy.jpg'
-      },
-      defaultImage: '/assets/puppy.jpg',
-      isAdmin: false,
+      animal: {}, // This will be populated via API call
+      defaultImage: '/assets/default.png',
+      isAdmin: true,
       isUser: true,
     };
   },
@@ -63,21 +59,20 @@ export default {
     const animalId = this.$route.params.id;
     try {
       // Fetch the animal details using the animal ID
-      const response = await fetch(`https://your-api-url/animal/${animalId}`);
+      const response = await fetch(`http://localhost:8000/animal/${animalId}`);
       this.animal = await response.json();
-
-      // Example: Based on user role, set admin/user actions
-      const userRole = this.getUserRole(); // Replace with actual role-checking logic
-      this.isAdmin = userRole === "admin";
-      this.isUser = userRole === "user";
     } catch (error) {
       console.error("Error fetching animal details:", error);
     }
   },
   methods: {
-    getUserRole() {
-      // Example of getting user role, adjust to your logic
-      return localStorage.getItem('userRole') || 'guest';
+    calculateAge(birthYear) {
+      const currentYear = new Date().getFullYear();
+      return currentYear - birthYear;
+    },
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString(); // Formats date to "MM/DD/YYYY"
     },
     editAnimal() {
       // Logic for editing animal (admin action)
@@ -90,3 +85,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Styling for animal details */
+</style>
