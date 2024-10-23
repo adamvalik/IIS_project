@@ -2,10 +2,13 @@
   <div class="schedule-container h-screen">
     <NavigationBar />
     <div class="py-10">
+      <div class="text-center font-bold mb-4">
+        Selected Animal: {{ selectedAnimal ? selectedAnimal.name : 'Mr Mittens' }}
+      </div>
       <div class="flex justify-between items-center mb-4">
         <button @click="previousWeek" class="p-2 bg-gray-300 rounded">&lt;</button>
         <div class="text-center font-bold">
-          Week {{ currentWeek.week }}.   {{ currentWeek.startDay }}.{{ currentWeek.startMonth }}. - {{ currentWeek.endDay }}.{{ currentWeek.endMonth }}.   year {{ currentWeek.year }}
+          Week {{ currentWeek.week }}. {{ currentWeek.startDay }}.{{ currentWeek.startMonth }}. - {{ currentWeek.endDay }}.{{ currentWeek.endMonth }}. year {{ currentWeek.year }}
         </div>
         <button @click="nextWeek" class="p-2 bg-gray-300 rounded">&gt;</button>
       </div>
@@ -20,9 +23,9 @@
           <div class="text-right font-bold pr-2">{{ day }}</div>
           <!-- Time slots for that day -->
           <div v-for="time in times" :key="day + time"
-              :class="getClass(getSlot(day, time))"
-              @click="toggleSelection(day, time)"
-              class="border p-2 cursor-pointer">
+               :class="getClass(getSlot(day, time))"
+               @click="toggleSelection(day, time)"
+               class="border p-2 cursor-pointer">
           </div>
         </div>
       </div>
@@ -45,18 +48,16 @@ export default {
     return {
       currentDate: new Date(),
       currentWeek: {},
+      selectedAnimal: { name: 'Mr Mittens' }, // Hardcoded for now
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       times: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'],
-      schedule: [
-        { day: 'Mon', time: '09:00', status: 'green' },
-        { day: 'Mon', time: '10:00', status: 'red' },
-        { day: 'Tue', time: '09:00', status: 'blue' },
-      ],
+      schedule: [],
       selected: []
     };
   },
   created() {
     this.currentWeek = this.getWeekDetails(this.currentDate);
+    this.fetchSchedule(); // Fetch the schedule when component is created
   },
   methods: {
     getWeekDetails(date) {
@@ -87,24 +88,38 @@ export default {
         year: year
       };
     },
+    fetchSchedule() {
+      const startDate = this.currentDate.toISOString().split('T')[0];
+      // Fetch schedule from the backend API
+      fetch(`/schedule/Mr Mittens/${startDate}`)
+          .then(response => response.json())
+          .then(data => {
+            this.schedule = data.schedule; // Update schedule with the data from the backend
+          })
+          .catch(error => {
+            console.error('Error fetching schedule:', error);
+          });
+    },
     getSlot(day, time) {
-      return this.schedule.find(slot => slot.day === day && slot.time === time) || {status: 'gray'};
+      const dayIndex = this.days.indexOf(day);
+      const timeIndex = this.times.indexOf(time);
+      return this.schedule[dayIndex] ? this.schedule[dayIndex][timeIndex] : 'gray';
     },
     getClass(slot) {
-      if (slot.status === 'green') return 'bg-green-400';
-      if (slot.status === 'red') return 'bg-red-400';
-      if (slot.status === 'blue') return 'bg-blue-400';
-      if (slot.status === 'selected') return 'bg-yellow-400';
+      if (slot === 'green') return 'bg-green-400';
+      if (slot === 'red') return 'bg-red-400';
+      if (slot === 'blue') return 'bg-blue-400';
+      if (slot === 'selected') return 'bg-yellow-400';
       return 'bg-gray-200';
     },
     toggleSelection(day, time) {
-      const slot = this.schedule.find(s => s.day === day && s.time === time);
-      if (slot && slot.status === 'green') {
-        slot.status = 'selected';
-        this.selected.push(slot);
-      } else if (slot && slot.status === 'selected') {
-        slot.status = 'green';
-        this.selected = this.selected.filter(s => s !== slot);
+      const slot = this.schedule[this.days.indexOf(day)][this.times.indexOf(time)];
+      if (slot && slot === 'green') {
+        this.schedule[this.days.indexOf(day)][this.times.indexOf(time)] = 'selected';
+        this.selected.push({ day, time });
+      } else if (slot && slot === 'selected') {
+        this.schedule[this.days.indexOf(day)][this.times.indexOf(time)] = 'green';
+        this.selected = this.selected.filter(s => s.day !== day || s.time !== time);
       }
     },
     confirmSelection() {
@@ -113,12 +128,12 @@ export default {
     previousWeek() {
       this.currentDate.setDate(this.currentDate.getDate() - 7);
       this.currentWeek = this.getWeekDetails(this.currentDate);
-      // Fetch and update the schedule for the previous week
+      this.fetchSchedule(); // Fetch new week data
     },
     nextWeek() {
       this.currentDate.setDate(this.currentDate.getDate() + 7);
       this.currentWeek = this.getWeekDetails(this.currentDate);
-      // Fetch and update the schedule for the next week
+      this.fetchSchedule(); // Fetch new week data
     }
   }
 };
