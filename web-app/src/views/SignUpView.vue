@@ -1,0 +1,163 @@
+<template>
+  <div class="container mx-auto px-4 py-10 max-w-lg">
+    <!-- Shelter Name -->
+    <h1 class="text-4xl font-bold text-gray-800 text-center mb-10">DJ Khaled's Animal Shelter</h1>
+
+    <!-- Sign-Up Form -->
+    <div class="bg-white shadow-lg rounded-lg p-8">
+      <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Sign Up</h2>
+      <form @submit.prevent="handleSubmit">
+        <!-- Name Input -->
+        <div class="mb-4">
+          <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
+          <input
+            v-model="name"
+            type="text"
+            id="name"
+            placeholder="Enter your first name"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <!-- Surname Input -->
+        <div class="mb-4">
+          <label for="surname" class="block text-gray-700 font-bold mb-2">Surname</label>
+          <input
+            v-model="surname"
+            type="text"
+            id="surname"
+            placeholder="Enter your surname"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <!-- Email Input -->
+        <div class="mb-4">
+          <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
+          <input
+            v-model="email"
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <!-- Password Input -->
+        <div class="mb-4">
+          <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
+          <input
+            v-model="password"
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <!-- Password Confirmation Input -->
+        <div class="mb-4">
+          <label for="passwordConfirm" class="block text-gray-700 font-bold mb-2">Confirm Password</label>
+          <input
+            v-model="passwordConfirm"
+            type="password"
+            id="passwordConfirm"
+            placeholder="Confirm your password"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <p v-if="passwordsDoNotMatch" class="text-red-500 mt-2">Passwords do not match.</p>
+        </div>
+
+        <!-- Telephone Input (Optional) -->
+        <div class="mb-6">
+          <label for="telephone" class="block text-gray-700 font-bold mb-2">Telephone (Optional)</label>
+          <input
+            v-model="telephone"
+            type="tel"
+            id="telephone"
+            placeholder="Enter your telephone number"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+        >
+          Sign Up
+        </button>
+      </form>
+
+      <!-- Log In Redirect -->
+      <div class="mt-6 text-center">
+        <p class="text-gray-700">
+          Already have an account? 
+          <router-link to="/login" class="text-blue-500 hover:underline">Log In</router-link>
+        </p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SignUpPage',
+  data() {
+    return {
+      name: '',
+      surname: '',
+      email: '',
+      password: '',
+      passwordConfirm: '',
+      telephone: '',
+    };
+  },
+  computed: {
+    passwordsDoNotMatch() {
+      // Check if the passwords match
+      return this.password !== this.passwordConfirm;
+    }
+  },
+  methods: {
+    handleSubmit() {
+      // Check if passwords match before proceeding
+      if (this.passwordsDoNotMatch) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      // Create a user object with the provided data
+      const newUser = {
+        name: this.name,
+        surname: this.surname,
+        email: this.email,
+        password: this.password,
+        telephone: this.telephone || null, // Optional telephone
+      };
+
+      console.log("New user data:", newUser);
+
+      // Submit the form (e.g., make an API call to the backend)
+      // Example: axios.post('/signup', newUser)
+      this.$router.push('/');
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* Utility styles for form inputs and labels */
+input:focus {
+  outline: none;
+}
+
+button[type="submit"] {
+  font-size: 1.25rem;
+}
+</style>
