@@ -1,37 +1,45 @@
 <template>
-  <div class="schedule-container">
-    <div class="flex justify-between items-center mb-4">
-      <button @click="previousWeek" class="p-2 bg-gray-300 rounded">&lt;</button>
-      <div class="text-center font-bold">
-        Week {{ currentWeek.week }}.   {{ currentWeek.startDay }}.{{ currentWeek.startMonth }}. - {{ currentWeek.endDay }}.{{ currentWeek.endMonth }}.   year {{ currentWeek.year }}
+  <div class="schedule-container h-screen">
+    <NavigationBar />
+    <div class="py-10">
+      <div class="flex justify-between items-center mb-4">
+        <button @click="previousWeek" class="p-2 bg-gray-300 rounded">&lt;</button>
+        <div class="text-center font-bold">
+          Week {{ currentWeek.week }}.   {{ currentWeek.startDay }}.{{ currentWeek.startMonth }}. - {{ currentWeek.endDay }}.{{ currentWeek.endMonth }}.   year {{ currentWeek.year }}
+        </div>
+        <button @click="nextWeek" class="p-2 bg-gray-300 rounded">&gt;</button>
       </div>
-      <button @click="nextWeek" class="p-2 bg-gray-300 rounded">&gt;</button>
-    </div>
-    <div class="grid grid-cols-14 gap-2">
-      <div></div>
-      <!-- Time headers on the top -->
-      <div v-for="time in times" :key="time" class="text-center font-bold">{{ time }}</div>
+      <div class="grid grid-cols-14 gap-2">
+        <div></div>
+        <!-- Time headers on the top -->
+        <div v-for="time in times" :key="time" class="text-center font-bold">{{ time }}</div>
 
-      <!-- Days and corresponding time slots -->
-      <div v-for="day in days" :key="day" class="contents">
-        <!-- Day label on the first column -->
-        <div class="text-right font-bold pr-2">{{ day }}</div>
-        <!-- Time slots for that day -->
-        <div v-for="time in times" :key="day + time"
-             :class="getClass(getSlot(day, time))"
-             @click="toggleSelection(day, time)"
-             class="border p-2 cursor-pointer">
+        <!-- Days and corresponding time slots -->
+        <div v-for="day in days" :key="day" class="contents">
+          <!-- Day label on the first column -->
+          <div class="text-right font-bold pr-2">{{ day }}</div>
+          <!-- Time slots for that day -->
+          <div v-for="time in times" :key="day + time"
+              :class="getClass(getSlot(day, time))"
+              @click="toggleSelection(day, time)"
+              class="border p-2 cursor-pointer">
+          </div>
         </div>
       </div>
+      <button class="mt-4 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
+        Confirm Reservation
+      </button>
     </div>
-    <button class="mt-4 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
-      Confirm Reservation
-    </button>
   </div>
 </template>
 
 <script>
+import NavigationBar from '@/components/NavigationBar.vue';
+
 export default {
+  components: {
+    NavigationBar
+  },
   name: 'SchedulerView',
   data() {
     return {

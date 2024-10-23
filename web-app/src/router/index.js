@@ -11,7 +11,7 @@ const routes = [
   { path: '/login', component: LoginView },
   { path: '/signup', component: SignUpView },
   { path: '/animals', component: AnimalsView },
-  { path: '/animal/:id', component: AnimalDetail }
+  { path: '/animal/:id', component: AnimalDetail },
   { path: '/scheduler', component: SchedulerView } // Define the route for Scheduler
 ]
 

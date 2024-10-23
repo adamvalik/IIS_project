@@ -3,6 +3,10 @@
     <!-- NavigationBar -->
     <NavigationBar />
 
+    <router-link to="/scheduler" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
+      Skibidi Scheduler
+    </router-link>
+
     <!-- Main Content -->
     <div class="mt-10">
       <!-- Shelter Info -->
