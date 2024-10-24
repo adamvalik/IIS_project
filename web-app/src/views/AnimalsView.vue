@@ -9,9 +9,10 @@
         <label for="filter" class="text-gray-700 font-bold mr-2">Filter by:</label>
         <select v-model="filterType" @change="filterAnimals" class="border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="all">All</option>
-          <option value="dog">Dogs</option>
-          <option value="cat">Cats</option>
-          <option value="rabbit">Rabbits</option>
+          <!-- Dynamically generate options based on species -->
+          <option v-for="species in uniqueSpecies" :key="species" :value="species.toLowerCase()">
+            {{ species }}
+          </option>
         </select>
       </div>
 
@@ -20,25 +21,26 @@
         <select v-model="sortType" @change="sortAnimals" class="border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="name">Name</option>
           <option value="age">Age</option>
-          <option value="type">Type</option>
+          <option value="species">Species</option>
         </select>
       </div>
     </section>
 
-     <!-- Animals Grid -->
-     <section>
+    <!-- Animals Grid -->
+    <section>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Make each animal card clickable to the detail page -->
+        <!-- Use AnimalTile component -->
         <router-link
           v-for="animal in filteredAnimals"
           :key="animal.id"
-          :to="`/animal/${animal.id}`"  
-          class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition-all"
+          :to="`/animal/${animal.id}`"
         >
-          <img :src="animal.image || defaultImage" :alt="animal.name" class="w-full h-48 object-cover rounded-md mb-4" />
-          <h3 class="text-xl font-semibold text-gray-700">{{ animal.name }}</h3>
-          <p class="text-gray-500 mt-2">Age: {{ animal.age }} years</p>
-          <p class="text-gray-500">Type: {{ animal.type }}</p>
+          <AnimalTile
+            :name="animal.name"
+            :species="animal.species" 
+            :birth_year="animal.birth_year"
+            :photo="animal.photo || defaultImage"
+          />
         </router-link>
       </div>
     </section>
@@ -46,38 +48,49 @@
 </template>
 
 <script>
+import AnimalTile from '@/components/AnimalTile.vue';
 import NavigationBar from '@/components/NavigationBar.vue';
-
+import axios from 'axios';
 
 export default {
   components: { 
-    NavigationBar
+    NavigationBar,
+    AnimalTile
    },
   data() {
     return {
-      animals: [
-        { id: 1, name: "Bella", age: 3, type: "Dog", image: "./assets/puppy.jpg" },
-        { id: 2, name: "Max", age: 2, type: "Cat", image: "./assets/kotatko.jpg" },
-        { id: 3, name: "Charlie", age: 1, type: "Rabbit", image: "./assets/rabbit.jpg" },
-        { id: 4, name: "Luna", age: 4, type: "Dog", image: "./assets/puppy.jpg" },
-        { id: 5, name: "Milo", age: 5, type: "Cat", image: "./assets/kotatko.jpg" },
-        { id: 6, name: "Oreo", age: 2, type: "Rabbit", image: "./assets/rabbit.jpg" },
-      ],
+      animals: [],
       filteredAnimals: [],
       filterType: "all",
       sortType: "name",
-      defaultImage: "./assets/default-placeholder.png", // Default placeholder image
+      defaultImage: "./assets/default.png", 
+      uniqueSpecies: [],  // Dynamic species list
     };
   },
-  mounted() {
-    this.filteredAnimals = this.animals;
+  async mounted() {
+    await this.fetchAnimals();
+    this.filterAnimals();
   },
   methods: {
+    async fetchAnimals() {
+      try {
+        const response = await axios.get('http://localhost:8000/animals');
+        this.animals = response.data;
+        this.filteredAnimals = this.animals;
+        this.extractSpecies(); // Extract unique species from the fetched data
+      } catch (error) {
+        console.error('Error fetching animals:', error);
+      }
+    },
+    extractSpecies() {
+      const speciesSet = new Set(this.animals.map(animal => animal.species));
+      this.uniqueSpecies = Array.from(speciesSet); // Create an array of unique species
+    },
     filterAnimals() {
       if (this.filterType === "all") {
         this.filteredAnimals = this.animals;
       } else {
-        this.filteredAnimals = this.animals.filter((animal) => animal.type.toLowerCase() === this.filterType);
+        this.filteredAnimals = this.animals.filter((animal) => animal.species.toLowerCase() === this.filterType);
       }
       this.sortAnimals(); // Sort after filtering
     },
@@ -87,7 +100,7 @@ export default {
       } else if (this.sortType === "age") {
         this.filteredAnimals.sort((a, b) => a.age - b.age);
       } else if (this.sortType === "type") {
-        this.filteredAnimals.sort((a, b) => a.type.localeCompare(b.type));
+        this.filteredAnimals.sort((a, b) => a.species.localeCompare(b.species));
       }
     },
   },
