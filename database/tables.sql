@@ -31,25 +31,6 @@ CREATE TABLE Animal (
     FOREIGN KEY (ID_caregiver) REFERENCES User(ID_user)
 );
 
-CREATE TABLE Feed (
-    ID_feed INT NOT NULL AUTO_INCREMENT,
-    typ VARCHAR(255),
-
-    PRIMARY KEY (ID_feed)
-);
-
-CREATE TABLE Consume (
-    ID_feed INT NOT NULL,
-    ID_animal INT NOT NULL,
-    amount DECIMAL(5,2) NOT NULL,
-    per_day INT NOT NULL,
-
-    PRIMARY KEY (ID_feed, ID_animal),
-    FOREIGN KEY (ID_feed) REFERENCES Feed(ID_feed),
-    FOREIGN KEY (ID_animal) REFERENCES Animal(ID_animal)
-
-);
-
 CREATE TABLE Examination_request (
     ID_request INT NOT NULL AUTO_INCREMENT,
     caregivers_description TEXT,

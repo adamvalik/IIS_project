@@ -38,6 +38,7 @@
 
 <script>
 import NavigationBar from '@/components/NavigationBar.vue';
+import axios from 'axios';
 
 export default {
   components: {
@@ -90,11 +91,11 @@ export default {
     },
     fetchSchedule() {
       const startDate = this.currentDate.toISOString().split('T')[0];
-      // Fetch schedule from the backend API
-      fetch(`/schedule/Mr Mittens/${startDate}`)
-          .then(response => response.json())
-          .then(data => {
-            this.schedule = data.schedule; // Update schedule with the data from the backend
+      // Fetch schedule from the backend API using axios
+      const animalName = encodeURIComponent(this.selectedAnimal.name || 'Mr Mittens');
+      axios.get(`/schedule/${animalName}/${startDate}`)
+          .then(response => {
+            this.schedule = response.data.schedule; // Update schedule with the data from the backend
           })
           .catch(error => {
             console.error('Error fetching schedule:', error);
