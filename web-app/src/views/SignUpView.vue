@@ -106,6 +106,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'SignUpPage',
   data() {
@@ -116,6 +118,7 @@ export default {
       password: '',
       passwordConfirm: '',
       telephone: '',
+      id: 0,
     };
   },
   computed: {
@@ -139,12 +142,24 @@ export default {
         email: this.email,
         password: this.password,
         telephone: this.telephone || null, // Optional telephone
+        id: this.id,
       };
 
       console.log("New user data:", newUser);
 
       // Submit the form (e.g., make an API call to the backend)
       // Example: axios.post('/signup', newUser)
+
+      axios.post('http://localhost:8000/signup', newUser)
+        .then(response => {
+          console.log("Sign up successful:", response.data);
+          alert("Account created succesfully, now please log in.");
+          this.$router.push('/login');
+        })
+        .catch(error => {
+          alert("Sign up failed, reason: " + error.response.data.detail);
+        });
+
       this.$router.push('/');
     },
   },

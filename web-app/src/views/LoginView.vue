@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -81,12 +82,20 @@ export default {
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
     },
     handleSubmit() {
-      // Here you will handle the actual login, like making an API call
-      console.log("Email:", this.email);
-      console.log("Password:", this.password);
 
-      // You would likely make a request to your backend API here:
-      // e.g., axios.post('/login', { email: this.email, password: this.password })
+      axios.post('http://localhost:8000/login', {
+        email: this.email,
+        password: this.password
+      })
+      .then(response => {
+        console.log("Login successful:", response.data);
+        this.$router.push('/homepage');
+        // Do something with the returned user data, like storing it in state
+      })
+      .catch(error => {
+        alert("Login failed, reason: " + error.response.data.detail);
+        // Handle the error (e.g., display an error message to the user)
+      });
     }
   }
 };
