@@ -88,9 +88,11 @@ export default {
         password: this.password
       })
       .then(response => {
-        console.log("Login successful:", response.data);
-        this.$router.push('/homepage');
-        // Do something with the returned user data, like storing it in state
+        console.log("Login successful:", response.data.message);
+        // Save the token in localStorage
+        //localStorage.setItem('access_token', response.data.access_token);
+        this.$store.dispatch('login', response.data.access_token);
+        this.$router.push('/');
       })
       .catch(error => {
         alert("Login failed, reason: " + error.response.data.detail);

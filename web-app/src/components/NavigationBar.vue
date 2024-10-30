@@ -1,4 +1,3 @@
-<!-- Navbar.vue -->
 <template>
   <nav class="flex justify-between items-center py-4 border-b">
     <div class="text-2xl font-bold text-gray-800">DJ Khaled's Animal Shelter</div>
@@ -24,51 +23,60 @@
       <router-link v-else to="/profile" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600">
         My Profile
       </router-link>
+
+      <!-- Logout button -->
+      <button v-if="isLoggedIn" @click="handleLogout" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600">
+        Logout
+      </button>
     </div>
   </nav>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
-      isLoggedIn: false, // Dynamic check for user login status
-      showActions: false, // To control the display of the actions dropdown
-      roleActions: [],
+      showActions: false,
     };
   },
-  mounted() {
-    // Check if user is logged in
-    this.isLoggedIn = this.checkUserLoginStatus();
+  computed: {
+    ...mapGetters(['isAuthenticated', 'userRole']),
 
-    // Fetch actions based on user role
-    if (this.isLoggedIn) {
-      this.roleActions = this.getRoleBasedActions();
+    isLoggedIn() {
+      return this.isAuthenticated;
+    },
+
+    roleActions() {
+      if (this.userRole === 'caregiver') {
+        return [
+          { name: 'Caregiver Dashboard', link: '/caregiver-dashboard' },
+          { name: 'Manage Animals', link: '/manage-animals' }
+        ];
+      } else if (this.userRole === 'veterinarian') {
+        return [
+          { name: 'Veterinarian Dashboard', link: '/veterinarian-dashboard' },
+          { name: 'Medical Records', link: '/medical-records' }
+        ];
+      } else if (this.userRole === 'volunteer') {
+        return [
+          { name: 'Volunteer Dashboard', link: '/volunteer-dashboard' },
+          { name: 'Task List', link: '/tasks' }
+        ];
+      }
+      return []; // Empty for unauthenticated or unknown roles
     }
   },
   methods: {
     toggleActions() {
       this.showActions = !this.showActions;
     },
-    checkUserLoginStatus() {
-      return localStorage.getItem("userToken") !== null;
-    },
-    getRoleBasedActions() {
-      const userRole = this.getUserRole();
-      if (userRole === "admin") {
-        return [
-          { name: "Manage Animals", link: "/admin/manage-animals" },
-          { name: "Manage Users", link: "/admin/manage-users" },
-        ];
-      } else if (userRole === "volunteer") {
-        return [{ name: "Volunteer Dashboard", link: "/volunteer/dashboard" }];
-      } else {
-        return [];
-      }
-    },
-    getUserRole() {
-      return localStorage.getItem("userRole") || "guest";
-    },
-  },
+    handleLogout() {
+      // Dispatch the logout action from Vuex
+      this.$store.dispatch('logout');
+      this.$router.push('/');
+    }
+  }
 };
 </script>

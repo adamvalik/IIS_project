@@ -3,6 +3,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
+from routers import satecek_scheduler_mrdka
+from routers import login
+
 app = FastAPI()
 
 # CORS middleware
@@ -13,6 +16,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+# app.include_router(satecek_scheduler_mrdka.router)
+app.include_router(login.router)
+
 
 # Example model for an animal
 class Animal(BaseModel):
