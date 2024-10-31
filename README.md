@@ -17,7 +17,7 @@ This project uses Docker Compose, which is included with Docker Desktop (downloa
 | Command                                | Description                                           |
 |----------------------------------------|-------------------------------------------------------|
 | `docker-compose build`                 | Builds all services in the `docker-compose.yml`.      |
-| `docker-compose build <service_name>`  | Builds a single service (e.g., `frontend`, `backend`).|
+| `docker-compose build <service_name>`  | Builds a single service (e.g., `web-app`, `backend`). |
 | `docker-compose up --build`            | Rebuilds and restarts containers.                     |
 | `docker-compose up`                    | Starts all services in the foreground.                |
 | `docker-compose up -d`                 | Starts all services in detached mode (background).    |
