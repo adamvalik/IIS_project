@@ -36,15 +36,17 @@ services:
       context: ./web-app
       dockerfile: Dockerfile
     container_name: web-app
+    ports:
+      - "8080:8080"  # development: serve directly on port 8080 with hot-reloading
+    # - "8080:80"    # production:  serve via NGINX on port 8080 mapped to port 80 inside the container
     volumes:
       - ./web-app:/app
-      - /app/node_modules  # avoid reinstalling dependencies
-    ports:
-      - "8080:80"
+      - /app/node_modules
     environment:
       - BACKEND_URL=http://backend:8000
     networks:
       - app_network
+
 
 networks:
   app_network:
