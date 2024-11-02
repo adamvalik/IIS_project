@@ -1,9 +1,13 @@
 <template>
+
   <div class="schedule-container h-screen relative" @click="showPopup=false">
+
     <NavigationBar />
+
     <div class="py-10">
+
       <div class="text-center font-bold mb-4">
-        Selected Animal: {{ selectedAnimal ? selectedAnimal.name : 'Mr Mittens' }}
+        Selected Animal: {{ selectedAnimal ? selectedAnimal.name : 'Bella' }}
       </div>
       <div class="flex justify-between items-center mb-4">
         <button @click="previousWeek" class="p-2 bg-gray-300 rounded">&lt;</button>
@@ -12,6 +16,7 @@
         </div>
         <button @click="nextWeek" class="p-2 bg-gray-300 rounded">&gt;</button>
       </div>
+
       <div class="grid grid-cols-14 gap-2">
         <div></div>
         <div v-for="time in times" :key="time" class="text-center font-bold">{{ time }}</div>
@@ -24,6 +29,7 @@
           </div>
         </div>
       </div>
+
       <button class="mt-4 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
         Confirm Reservation
       </button>
@@ -37,6 +43,7 @@
         <button @click="cancelReservation" class="mt-2 px-3 py-1 bg-red-500 text-white rounded">Cancel Reservation</button>
         <p class="text-sm text-gray-600 mt-2">If you are canceling less than 24 hours before the appointment, please call us at +69696969</p>
       </div>
+
     </div>
   </div>
 </template>
@@ -54,7 +61,7 @@ export default {
     return {
       currentDate: new Date(),
       currentWeek: {},
-      selectedAnimal: {name: 'Mr Mittens'}, // Hardcoded for now
+      selectedAnimal: {name: 'Bella'}, // Hardcoded for now
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       times: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'],
       schedule: [],
@@ -99,9 +106,9 @@ export default {
     fetchSchedule() {
       const startOfWeek = new Date(this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay() + 1));
       const startDate = startOfWeek.toISOString().split('T')[0];
-      const animalName = encodeURIComponent(this.selectedAnimal.name || 'Mr Mittens');
+      const animalID = encodeURIComponent(1);
 
-      axios.get(`http://localhost:8000/schedule/${animalName}/${startDate}`)
+      axios.get(`http://localhost:8000/schedule/${animalID}/${startDate}`)
           .then(response => {
             const scheduleData = response.data.schedule;
             this.schedule = Array.from({length: 7}, (_, day) =>
@@ -154,7 +161,7 @@ export default {
 
       const dayIndex = this.days.indexOf(day);
       const timeIndex = this.times.indexOf(time);
-      const animalName = encodeURIComponent(this.selectedAnimal.name || 'Mr Mittens');
+      const animalName = encodeURIComponent(this.selectedAnimal.name || 'Bella');
 
 
       if (dayIndex >= 0 && timeIndex >= 0) {
@@ -185,7 +192,7 @@ export default {
       }
     },
     confirmSelection() {
-      const animalName = encodeURIComponent(this.selectedAnimal.name || 'Mr Mittens');
+      const animalName = encodeURIComponent(this.selectedAnimal.name || 'Bella');
       const startOfWeek = new Date(this.currentDate);
       startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
       const selectedSlots = this.selected.map(slot => {
@@ -234,7 +241,7 @@ export default {
         this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
         this.showPopup.visible = false;
 
-        const animalName = encodeURIComponent(this.selectedAnimal.name || 'Mr Mittens');
+        const animalName = encodeURIComponent(this.selectedAnimal.name || 'Bella');
         axios.delete(`http://localhost:8000/cancel/${animalName}/${date}/${time}`)
             .then(response => {
               console.log('Reservation canceled:', response.data);

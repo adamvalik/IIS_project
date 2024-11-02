@@ -114,7 +114,19 @@ def create_example_medical_records(user_ids, animal_ids):
 def create_example_animal_borrows(animal_ids):
     borrows = [
         AnimalBorrow(
-            date=date(2022, 8, 15), time=time(10, 0), borrowed=True, returned=False,
+            date=date(2024, 11, 3), time=time(10, 0), borrowed=True, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2024, 11, 2), time=time(10, 0), borrowed=False, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2024, 11, 2), time=time(11, 0), borrowed=False, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2024, 11, 2), time=time(12, 0), borrowed=False, returned=False,
             id_animal=animal_ids.get("Bella")
         ),
         AnimalBorrow(

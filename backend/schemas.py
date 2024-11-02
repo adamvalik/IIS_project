@@ -108,3 +108,12 @@ class Reservation(ReservationBase):
 
     class Config:
         orm_mode = True
+
+class Slot(BaseModel):
+    day: str
+    time: str
+    date: str
+
+class ConfirmSelectionRequest(BaseModel):
+    animalName: str
+    slots: List[Slot]
