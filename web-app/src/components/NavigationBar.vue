@@ -1,14 +1,14 @@
 <template>
   <nav class="flex justify-between items-center py-4 border-b">
-    <div class="text-2xl font-bold text-gray-800">DJ Khaled's Animal Shelter</div>
-    
+    <router-link to="/" class="text-2xl font-bold text-gray-800">DJ Khaled's Animal Shelter</router-link>
+
     <div class="flex space-x-4 items-center">
-      <!-- Role-based actions -->
+      <!-- role-based actions -->
       <div v-if="isLoggedIn" class="relative">
         <button @click="toggleActions" class="text-gray-800 font-semibold bg-gray-200 py-2 px-4 rounded-lg hover:bg-gray-300">
           Actions
         </button>
-        <!-- Dropdown for role-based actions -->
+        <!-- dropdown for role-based actions -->
         <div v-if="showActions" class="absolute right-0 mt-2 bg-white shadow-lg rounded-lg py-2 w-48 z-10">
           <router-link v-for="action in roleActions" :key="action.name" :to="action.link" class="block px-4 py-2 hover:bg-gray-100">
             {{ action.name }}
@@ -16,7 +16,6 @@
         </div>
       </div>
 
-      <!-- Profile or Login button -->
       <router-link v-if="!isLoggedIn" to="/login" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600">
         Login
       </router-link>
@@ -24,7 +23,6 @@
         My Profile
       </router-link>
 
-      <!-- Logout button -->
       <button v-if="isLoggedIn" @click="handleLogout" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600">
         Logout
       </button>
@@ -65,7 +63,7 @@ export default {
           { name: 'Task List', link: '/tasks' }
         ];
       }
-      return []; // Empty for unauthenticated or unknown roles
+      return [];
     }
   },
   mounted() {

@@ -1,6 +1,10 @@
 fastapi
 uvicorn
 pydantic
+pydantic[email]
 bcrypt
 sqlalchemy
-jose
+python-jose
+pymysql
+cryptography
+pytz

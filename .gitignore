@@ -1,3 +1,11 @@
 .DS_Store
 .vscode
+
 backend/venv/
+backend/__pycache__/
+backend/routers/__pycache__/
+
+web-app/node_modules/
+web-app/dist/
+
+mysql_data/

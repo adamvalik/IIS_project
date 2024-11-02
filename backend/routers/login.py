@@ -61,8 +61,8 @@ class User(BaseModel):
     role: Optional[UserRole] = None
 
 users = [
-    User(id=1, email="user1@example.com", password=hash_password("auticko"), name="John", surname="Doe", telephone="123456789", role=UserRole.caregiver),
-    User(id=2, email="user2@example.com", password=hash_password("mypassword123"), name="Jane", surname="Doe", telephone="987654321", role=UserRole.veterinarian),
+    User(id=1, email="caregiver@example.com", password=hash_password("satek"), name="John", surname="Doe", telephone="123456789", role=UserRole.caregiver),
+    User(id=2, email="vet@example.com", password=hash_password("satek"), name="Jane", surname="Doe", telephone="987654321", role=UserRole.veterinarian),
 ]
 
 # Dependency to retrieve user and validate role
@@ -71,11 +71,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
         role = payload.get("role")
-        user_id = payload.get("user_id") 
+        user_id = payload.get("user_id")
 
         if email is None or role is None or user_id is None:
             raise HTTPException(status_code=401, detail="Invalid credentials")
-        
+
         return {"email": email, "role": role, "user_id": user_id}
     except JWTError:
         raise HTTPException(status_code=403, detail="Could not validate credentials")
@@ -90,13 +90,13 @@ async def login(login_request: LoginRequest):
         if user.email == login_request.email:
             userFound = user
             break
-    
+
     if userFound is None:
         raise HTTPException(status_code=401, detail="User not found.")
-    
+
     if not verify_password(login_request.password, userFound.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    
+
     token_data = {
         "sub": userFound.email,
         "role": userFound.role.value,
@@ -104,7 +104,7 @@ async def login(login_request: LoginRequest):
     }
 
     access_token = create_access_token(data=token_data)
-    
+
     return {"message": "Login successful", "access_token": access_token}
 
 @router.post("/signup", response_model=SignUpResponse)
@@ -122,6 +122,6 @@ async def create_user(user: User):
     users.append(user)
     current_free_id += 1
     return SignUpResponse(message="User created successfully")
-    
+
 
 
