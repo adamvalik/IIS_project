@@ -9,7 +9,7 @@
       <button @click="$emit('editUser', user)" class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600">
         Edit
       </button>
-      <button @click="$emit('deleteUser', user.id)" class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600">
+      <button @click="confirmDelete" class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600">
         Delete
       </button>
     </div>
@@ -18,16 +18,18 @@
 
 <script>
 export default {
-  name: "UserRow",
   props: {
     user: {
       type: Object,
       required: true
     }
+  },
+  methods: {
+    confirmDelete() {
+      if (confirm(`Are you sure you want to delete ${this.user.name} ${this.user.surname}?`)) {
+        this.$emit('deleteUser', this.user.id);
+      }
+    }
   }
 };
 </script>
-
-<style scoped>
-/* Additional styles for UserRow */
-</style>
