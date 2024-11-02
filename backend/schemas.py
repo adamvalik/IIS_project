@@ -28,22 +28,17 @@ class User(UserBase):
     class Config:
         orm_mode = True  # Enables reading from SQLAlchemy models
 
-class AnimalBase(BaseModel):
+class Animal(BaseModel):
+    id: int
     name: str
     species: str
     breed: Optional[str] = None
     birth_year: Optional[int] = None
     size: Optional[str] = Field(None, description="Size of the animal, e.g., small, medium, large")
-
-class AnimalCreate(AnimalBase):
-    id_caregiver: int
     photo: Optional[bytes] = None
     admission_date: Optional[date] = None
-    caregivers_description: Optional[str] = None
-
-class Animal(AnimalBase):
-    id: int
     id_caregiver: int
+    caregivers_description: Optional[str] = None
 
     class Config:
         orm_mode = True

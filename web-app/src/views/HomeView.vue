@@ -25,18 +25,19 @@
         </div>
 
         <div v-if="loading" class="text-center">Loading...</div>
-        <div v-if="errorMessage" class="text-center text-red-600">{{ errorMessage }}</div>
-
-        <div v-if="!loading && !errorMessage" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Use AnimalTile component to display each animal -->
-          <AnimalTile
+        <div v-if="!loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <router-link
             v-for="animal in recentAnimals"
             :key="animal.id"
-            :name="animal.name"
-            :species="animal.species"
-            :birth_year="animal.birth_year"
-            :photo="animal.photo"
-          />
+            :to="`/animal/${animal.id}`"
+          >
+            <AnimalTile
+              :name="animal.name"
+              :species="animal.species"
+              :birth_year="animal.birth_year"
+              :photo="animal.photo"
+            />
+          </router-link>
         </div>
       </section>
     </div>
@@ -57,7 +58,6 @@ export default {
     return {
       recentAnimals: [],
       loading: true,
-      errorMessage: '',
     };
   },
   mounted() {
@@ -66,10 +66,10 @@ export default {
   methods: {
     async fetchRecentAnimals() {
       try {
-        const response = await axios.get("http://localhost:8000/animals/recent ");
+        const response = await axios.get("http://localhost:8000/animals/recent");
         this.recentAnimals = response.data;
       } catch (error) {
-        this.errorMessage = 'Failed to load recent animals.';
+        console.error("Error fetching recent animals:", error);
       } finally {
         this.loading = false;
       }
