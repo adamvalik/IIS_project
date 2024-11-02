@@ -1,12 +1,11 @@
-from datetime import date
+from datetime import date, time
 from db import SessionLocal
-from models import Animal, User
+from models import User, Animal, ExaminationRequest, MedicalRecord, AnimalBorrow, Reservation
 import os
 
 IMAGE_DIRECTORY = "./images"
 
 def load_image_as_binary(image_name):
-    """Reads an image file from the specified directory and returns binary data"""
     file_path = os.path.join(IMAGE_DIRECTORY, image_name)
     try:
         with open(file_path, "rb") as file:
@@ -15,205 +14,155 @@ def load_image_as_binary(image_name):
         print(f"File {file_path} not found.")
         return None
 
-def create_example_animals(user_ids):
-    caregiver_id = user_ids.get("caregiver")
-
-    example_animals = [
-        Animal(
-            name="Bella",
-            species="Dog",
-            breed="Labrador Retriever",
-            birth_year=2018,
-            photo=load_image_as_binary("puppy.jpg"),
-            admission_date=date(2021, 5, 10),
-            size="large",
-            caregivers_description="Friendly and outgoing.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Max",
-            species="Cat",
-            breed="Siamese",
-            birth_year=2017,
-            photo=load_image_as_binary("kotatko.jpg"),
-            admission_date=date(2022, 2, 3),
-            size="medium",
-            caregivers_description="Curious and playful.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Charlie",
-            species="Dog",
-            breed="Beagle",
-            birth_year=2016,
-            photo=load_image_as_binary("puppy.jpg"),
-            admission_date=date(2020, 11, 5),
-            size="medium",
-            caregivers_description="Loyal and affectionate.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Luna",
-            species="Rabbit",
-            breed="Lionhead",
-            birth_year=2019,
-            photo=load_image_as_binary("rabbit.jpg"),
-            admission_date=date(2021, 6, 15),
-            size="small",
-            caregivers_description="Gentle and friendly.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Rocky",
-            species="Dog",
-            breed="German Shepherd",
-            birth_year=2015,
-            photo=load_image_as_binary("satek.jpg"),
-            admission_date=date(2019, 3, 14),
-            size="large",
-            caregivers_description="Brave and intelligent.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Daisy",
-            species="Rabbit",
-            breed="Dwarf Hotot",
-            birth_year=2020,
-            photo=load_image_as_binary("default.png"),
-            admission_date=date(2022, 7, 19),
-            size="small",
-            caregivers_description="Quiet and gentle.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Oliver",
-            species="Cat",
-            breed="British Shorthair",
-            birth_year=2019,
-            photo=load_image_as_binary("kotatko.jpg"),
-            admission_date=date(2022, 1, 17),
-            size="medium",
-            caregivers_description="Calm and affectionate.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Coco",
-            species="Dog",
-            breed="Chihuahua",
-            birth_year=2021,
-            photo=load_image_as_binary("puppy.jpg"),
-            admission_date=date(2023, 3, 10),
-            size="small",
-            caregivers_description="Lively and bold.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Simba",
-            species="Cat",
-            breed="Maine Coon",
-            birth_year=2017,
-            photo=load_image_as_binary("rabbit.jpg"),
-            admission_date=date(2021, 9, 22),
-            size="large",
-            caregivers_description="Gentle and friendly.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Buddy",
-            species="Dog",
-            breed="Golden Retriever",
-            birth_year=2015,
-            photo=load_image_as_binary("satek.jpg"),
-            admission_date=date(2019, 8, 30),
-            size="large",
-            caregivers_description="Friendly and loyal.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Milo",
-            species="Dog",
-            breed="Poodle",
-            birth_year=2018,
-            photo=load_image_as_binary("puppy.jpg"),
-            admission_date=date(2020, 12, 5),
-            size="medium",
-            caregivers_description="Intelligent and active.",
-            id_caregiver=caregiver_id
-        ),
-        Animal(
-            name="Whiskers",
-            species="Cat",
-            breed="Persian",
-            birth_year=2016,
-            photo=load_image_as_binary("kotatko.jpg"),
-            admission_date=date(2019, 4, 25),
-            size="medium",
-            caregivers_description="Quiet and gentle.",
-            id_caregiver=caregiver_id
-        )
-    ]
-
-    db = SessionLocal()
-    try:
-        db.add_all(example_animals)
-        db.commit()
-        print("Example animals successfully added to the database!")
-    except Exception as e:
-        db.rollback()
-        print(f"Error adding example animals: {e}")
-    finally:
-        db.close()
-
-
 def create_example_users():
     users = [
-        User(
-            email="caregiver@example.com",
-            password="satek123",
-            name="Bob",
-            surname="Caregiver",
-            phone_num="987-654-3210",
-            role="caregiver",
-            verified=None,
-            id_caregiver=None
-        ),
-        User(
-            email="vet@example.com",
-            password="satek123",
-            name="Dr. Smith",
-            surname="Veterinarian",
-            phone_num="555-555-5555",
-            role="veterinarian",
-            verified=None,
-            id_caregiver=None
-        ),
-         User(
-            email="volunteer@example.com",
-            password="satek123",
-            name="Alice",
-            surname="Volunteer",
-            phone_num="123-456-7890",
-            role="volunteer",
-            verified=False,
-            id_caregiver=None
-        )
+        User(email="caregiver@example.com", password="password", name="Bob", surname="Caregiver", phone_num="1234567890", role="caregiver"),
+        User(email="vet@example.com", password="password", name="Dr. Alice", surname="Veterinarian", phone_num="0987654321", role="veterinarian"),
+        User(email="volunteer@example.com", password="password", name="Charlie", surname="Volunteer", phone_num="1122334455", role="volunteer", verified=True)
     ]
 
     db = SessionLocal()
     try:
         db.add_all(users)
         db.commit()
-        print("Example users successfully added to the database!")
+        print("Example users added to the database.")
 
         return {user.role: user.id for user in db.query(User).all()}
-
     except Exception as e:
         db.rollback()
         print(f"Error adding example users: {e}")
     finally:
         db.close()
 
+def create_example_animals(user_ids):
+    caregiver_id = user_ids.get("caregiver")
+    animals = [
+        Animal(
+            name="Bella", species="Dog", breed="Labrador Retriever", birth_year=2018,
+            photo=load_image_as_binary("puppy.jpg"), admission_date=date(2021, 5, 10),
+            size="large", caregivers_description="Friendly and outgoing.", id_caregiver=caregiver_id
+        ),
+        Animal(
+            name="Mittens", species="Cat", breed="Siamese", birth_year=2016,
+            photo=load_image_as_binary("kotatko.jpg"), admission_date=date(2022, 3, 8),
+            size="medium", caregivers_description="Quiet and affectionate.", id_caregiver=caregiver_id
+        ),
+    ]
+
+    db = SessionLocal()
+    try:
+        db.add_all(animals)
+        db.commit()
+        print("Example animals added to the database.")
+
+        return {animal.name: animal.id for animal in db.query(Animal).all()}
+    except Exception as e:
+        db.rollback()
+        print(f"Error adding example animals: {e}")
+    finally:
+        db.close()
+
+def create_example_examination_requests(user_ids, animal_ids):
+    caregiver_id = user_ids.get("caregiver")
+    veterinarian_id = user_ids.get("veterinarian")
+    examination_requests = [
+        ExaminationRequest(
+            caregivers_description="Annual check-up.", id_animal=animal_ids.get("Bella"),
+            id_caregiver=caregiver_id, id_veterinarian=veterinarian_id
+        ),
+        ExaminationRequest(
+            caregivers_description="Vaccination needed.", id_animal=animal_ids.get("Mittens"),
+            id_caregiver=caregiver_id, id_veterinarian=veterinarian_id
+        )
+    ]
+
+    db = SessionLocal()
+    try:
+        db.add_all(examination_requests)
+        db.commit()
+        print("Example examination requests added to the database.")
+    except Exception as e:
+        db.rollback()
+        print(f"Error adding example examination requests: {e}")
+    finally:
+        db.close()
+
+def create_example_medical_records(user_ids, animal_ids):
+    veterinarian_id = user_ids.get("veterinarian")
+    medical_records = [
+        MedicalRecord(
+            date=date(2021, 7, 21), weight=15.5, vaccination=True, vaccination_type="Rabies",
+            vet_description="Healthy and active.", id_animal=animal_ids.get("Bella"), id_veterinarian=veterinarian_id
+        ),
+        MedicalRecord(
+            date=date(2022, 1, 10), weight=8.2, vaccination=True, vaccination_type="Feline distemper",
+            vet_description="Good health, recently vaccinated.", id_animal=animal_ids.get("Mittens"), id_veterinarian=veterinarian_id
+        )
+    ]
+
+    db = SessionLocal()
+    try:
+        db.add_all(medical_records)
+        db.commit()
+        print("Example medical records added to the database.")
+    except Exception as e:
+        db.rollback()
+        print(f"Error adding example medical records: {e}")
+    finally:
+        db.close()
+
+def create_example_animal_borrows(animal_ids):
+    borrows = [
+        AnimalBorrow(
+            date=date(2022, 8, 15), time=time(10, 0), borrowed=True, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2022, 8, 16), time=time(14, 30), borrowed=True, returned=True,
+            id_animal=animal_ids.get("Mittens")
+        )
+    ]
+
+    db = SessionLocal()
+    try:
+        db.add_all(borrows)
+        db.commit()
+        print("Example animal borrows added to the database.")
+
+        # Return mapping of animal names to borrow IDs
+        return {borrow.id_animal: borrow.id for borrow in db.query(AnimalBorrow).all()}
+    except Exception as e:
+        db.rollback()
+        print(f"Error adding example animal borrows: {e}")
+    finally:
+        db.close()
+
+def create_example_reservations(user_ids, borrow_ids):
+    volunteer_id = user_ids.get("volunteer")
+    reservations = [
+        Reservation(
+            approved=True, id_borrow=borrow_ids.get(13), id_volunteer=volunteer_id  # For "Bella"
+        ),
+        Reservation(
+            approved=False, id_borrow=borrow_ids.get(14), id_volunteer=volunteer_id  # For "Mittens"
+        )
+    ]
+
+    db = SessionLocal()
+    try:
+        db.add_all(reservations)
+        db.commit()
+        print("Example reservations added to the database.")
+    except Exception as e:
+        db.rollback()
+        print(f"Error adding example reservations: {e}")
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     user_ids = create_example_users()
-    create_example_animals(user_ids)
+    animal_ids = create_example_animals(user_ids)
+    create_example_examination_requests(user_ids, animal_ids)
+    create_example_medical_records(user_ids, animal_ids)
+    borrow_ids = create_example_animal_borrows(animal_ids)
+    create_example_reservations(user_ids, borrow_ids)
