@@ -3,17 +3,19 @@
     <NavigationBar />
 
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-3xl font-bold text-gray-800">Manage Users</h2>
-      <button @click="openCreateUserModal" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+
+      <h2 v-if="isAdmin" class="text-3xl font-bold text-gray-800 py-8">Manage Users</h2>
+      <h2 v-else class="text-3xl font-bold text-gray-800 py-8">Manage Volunteers</h2>
+      <button v-if="isAdmin" @click="openCreateUserModal" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
         Add New User
+      </button>
+      <button v-else  @click="openCreateUserModal" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+        Add New Volunteer
       </button>
     </div>
 
-    <!-- User List -->
     <div v-if="loading" class="text-center">Loading...</div>
-    <div v-if="errorMessage" class="text-center text-red-600">{{ errorMessage }}</div>
-
-    <div v-if="!loading && !errorMessage">
+    <div v-if="!loading">
       <div class="grid grid-cols-1 gap-4">
         <UserRow
           v-for="user in users"
@@ -25,10 +27,10 @@
       </div>
     </div>
 
-    <!-- User Modal (for creating/editing users) -->
     <UserModal
       v-if="showUserModal"
       :user="selectedUser"
+      :isAdmin="isAdmin"
       @close="closeUserModal"
       @saveUser="fetchUsers"
     />
@@ -51,20 +53,27 @@ export default {
     return {
       users: [],
       loading: true,
-      errorMessage: '',
       showUserModal: false,
-      selectedUser: null, // User object for editing, or null for creating a new user
+      selectedUser: null,
+      isAdmin: true,
     };
+  },
+  async mounted() {
+    await this.fetchUsers();
   },
   methods: {
     async fetchUsers() {
       this.loading = true;
       this.errorMessage = '';
       try {
-        const response = await axios.get("http://localhost:8000/users");
-        this.users = response.data;
+        if (this.isAdmin) {
+          const response = await axios.get("http://localhost:8000/users");
+          this.users = response.data;
+        } else {
+          const response = await axios.get("http://localhost:8000/volunteers");
+          this.users = response.data;
+        }
       } catch (error) {
-        this.errorMessage = 'Failed to load users.';
         console.error(error);
       } finally {
         this.loading = false;
@@ -75,12 +84,17 @@ export default {
       this.showUserModal = true;
     },
     openEditUserModal(user) {
-      this.selectedUser = { ...user }; // Pass a copy to avoid direct editing
+      this.selectedUser = { ...user };
+      console.log(this.selectedUser);
       this.showUserModal = true;
     },
     async deleteUser(userId) {
       try {
-        await axios.delete(`${process.env.VUE_APP_BACKEND_URL}/users/${userId}`);
+        if (!userId) {
+          console.error('No user ID provided');
+          return;
+        }
+        await axios.delete(`http://localhost:8000/users/${userId}`);
         this.fetchUsers();
       } catch (error) {
         console.error('Error deleting user:', error);
@@ -90,9 +104,6 @@ export default {
       this.showUserModal = false;
       this.fetchUsers();
     },
-  },
-  async mounted() {
-    await this.fetchUsers();
   },
 };
 </script>

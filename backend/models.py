@@ -13,7 +13,7 @@ class User(Base):
     name = Column(String(255), nullable=False)
     surname = Column(String(255), nullable=False)
     phone_num = Column(String(20), nullable=True)
-    role = Column(Enum('caregiver', 'veterinarian', 'volunteer'), nullable=False)
+    role = Column(Enum('caregiver', 'veterinarian', 'volunteer', 'admin'), nullable=False)
 
     # volunteer specific
     verified = Column(Boolean, nullable=True)

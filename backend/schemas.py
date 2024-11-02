@@ -17,6 +17,15 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
+class UserWithId(BaseModel):
+    id: int
+    name: str
+    surname: str
+    email: str
+    password: Optional[str]
+    role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
+    verified: Optional[bool] = False
+
 class LoginRequest(BaseModel):
     email: str
     password: str
