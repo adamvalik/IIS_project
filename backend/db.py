@@ -11,7 +11,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # retry logic for connecting to the database
 # MySQL database container was sometimes still initializing when the backend container tried to connect, which caused a connection failure
 engine = None
-for attempt in range(5):
+for attempt in range(10):
     try:
         # SQLAlchemy engine (echo=True logs SQL queries)
         engine = create_engine(DATABASE_URL, echo=True)

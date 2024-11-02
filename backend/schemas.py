@@ -7,21 +7,14 @@ from datetime import date, time
 
 
 
-class UserBase(BaseModel):
+class User(BaseModel):
+    id: int
     email: EmailStr
+    password: str
     name: str
     surname: str
     phone_num: Optional[str] = None
     role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
-
-class UserCreate(UserBase):
-    password: str
-
-class UserUpdate(UserBase):
-    password: Optional[str] = None
-
-class User(UserBase):
-    id: int
     verified: Optional[bool] = False
     id_caregiver: Optional[int] = None
 
