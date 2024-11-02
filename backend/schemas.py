@@ -48,3 +48,78 @@ class Animal(BaseModel):
     class Config:
         orm_mode = True
 
+class ExaminationRequestBase(BaseModel):
+    caregivers_description: Optional[str] = None
+
+class ExaminationRequestCreate(ExaminationRequestBase):
+    id_animal: int
+    id_caregiver: int
+
+class ExaminationRequest(ExaminationRequestBase):
+    id: int
+    id_animal: int
+    id_caregiver: int
+    id_veterinarian: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+class MedicalRecordBase(BaseModel):
+    date: Optional[date] = None
+    weight: Optional[float] = None
+    vaccination: Optional[bool] = None
+    vaccination_type: Optional[str] = None
+    vet_description: Optional[str] = None
+
+class MedicalRecordCreate(MedicalRecordBase):
+    id_animal: int
+    id_veterinarian: int
+
+class MedicalRecord(MedicalRecordBase):
+    id: int
+    id_animal: int
+    id_veterinarian: int
+
+    class Config:
+        orm_mode = True
+
+class AnimalBorrowBase(BaseModel):
+    date: date
+    time: time
+    borrowed: Optional[bool] = None
+    returned: Optional[bool] = None
+
+class AnimalBorrowCreate(AnimalBorrowBase):
+    id_animal: int
+
+class AnimalBorrow(AnimalBorrowBase):
+    id: int
+    id_animal: int
+
+    class Config:
+        orm_mode = True
+
+class ReservationBase(BaseModel):
+    approved: Optional[bool] = None
+
+class ReservationCreate(ReservationBase):
+    id_borrow: int
+    id_volunteer: int
+
+class Reservation(ReservationBase):
+    id: int
+    id_borrow: int
+    id_volunteer: int
+
+    class Config:
+        orm_mode = True
+
+class Slot(BaseModel):
+    day: str
+    time: str
+    date: str
+
+class ConfirmSelectionRequest(BaseModel):
+    user_id: int
+    animal_id: int
+    slots: List[Slot]

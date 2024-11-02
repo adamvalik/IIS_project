@@ -115,11 +115,23 @@ def create_example_medical_records(user_ids, animal_ids):
 def create_example_animal_borrows(animal_ids):
     borrows = [
         AnimalBorrow(
-            date=date(2022, 8, 15), time=time(10, 0), borrowed=True, returned=False,
+            date=date(2024, 11, 3), time=time(10, 0), borrowed=True, returned=False,
             id_animal=animal_ids.get("Bella")
         ),
         AnimalBorrow(
-            date=date(2022, 8, 16), time=time(14, 30), borrowed=True, returned=True,
+            date=date(2024, 11, 2), time=time(10, 0), borrowed=False, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2024, 11, 2), time=time(11, 0), borrowed=False, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2024, 11, 2), time=time(12, 0), borrowed=False, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2022, 8, 16), time=time(14, 30), borrowed=False, returned=False,
             id_animal=animal_ids.get("Mittens")
         )
     ]
@@ -130,8 +142,8 @@ def create_example_animal_borrows(animal_ids):
         db.commit()
         print("Example animal borrows added to the database.")
 
-        # Return mapping of animal names to borrow IDs
-        return {borrow.id_animal: borrow.id for borrow in db.query(AnimalBorrow).all()}
+        # Return mapping of borrow IDs to animal names
+        return {borrow.id: borrow.id_animal for borrow in db.query(AnimalBorrow).all()}
     except Exception as e:
         db.rollback()
         print(f"Error adding example animal borrows: {e}")
@@ -142,10 +154,10 @@ def create_example_reservations(user_ids, borrow_ids):
     volunteer_id = user_ids.get("volunteer")
     reservations = [
         Reservation(
-            approved=True, id_borrow=borrow_ids.get(13), id_volunteer=volunteer_id  # For "Bella"
+            approved=True, id_borrow=borrow_ids.get(1), id_volunteer=volunteer_id  # For "Bella"
         ),
         Reservation(
-            approved=False, id_borrow=borrow_ids.get(14), id_volunteer=volunteer_id  # For "Mittens"
+            approved=False, id_borrow=borrow_ids.get(2), id_volunteer=volunteer_id  # For "Mittens"
         )
     ]
 
@@ -159,6 +171,7 @@ def create_example_reservations(user_ids, borrow_ids):
         print(f"Error adding example reservations: {e}")
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     user_ids = create_example_users()
