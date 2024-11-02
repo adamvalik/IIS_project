@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import AnimalsView from '@/views/AnimalsView.vue'
 import AnimalDetail from '@/components/AnimalDetail.vue'
-import SchedulerView from '../views/SchedulerView.vue' // Import the Scheduler component
+import SchedulerView from '@/views/SchedulerView.vue' // Import the Scheduler component
+import ProfileDetails from "@/views/ProfileDetails.vue";
 
 const routes = [
   { path: '/', component: HomeView },
@@ -13,6 +14,7 @@ const routes = [
   { path: '/animals', component: AnimalsView },
   { path: '/animal/:id', component: AnimalDetail },
   { path: '/scheduler', component: SchedulerView }, // Define the route for Scheduler
+  { path: '/profile', component: ProfileDetails }
 ]
 
 const router = createRouter({
@@ -46,8 +48,8 @@ const router = createRouter({
 
 // const routes = [
 //   { path: '/', component: Home },
-//   { 
-//     path: '/caregiver-dashboard', 
+//   {
+//     path: '/caregiver-dashboard',
 //     component: CaregiverDashboard,
 //     meta: { requiresAuth: true, role: 'caregiver' } // Define meta properties
 //   },
