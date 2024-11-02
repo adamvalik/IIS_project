@@ -27,6 +27,17 @@ This project uses Docker Compose, which is included with Docker Desktop (downloa
 | `docker-compose exec <service_name> sh`| Opens a shell in a specific running container.        |
 | `docker ps`                            | Lists all currently running Docker containers.        |
 
+### Commands inside the docker
+Run example_data.py to fill the database with example data
+```bash
+docker exec -it backend python3 /app/example_data.py
+```
+
+Open mysql shell
+```bash
+docker exec -it mysql mysql -uuser
+```
+
 ## Running the Project
 
 Services will be available at:
