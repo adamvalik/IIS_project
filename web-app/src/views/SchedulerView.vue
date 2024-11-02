@@ -34,6 +34,10 @@
         Confirm Reservation
       </button>
 
+      <button v-if="getRole === 'caregiver'" class="mt-4 p-2 bg-green-500 text-white rounded" @click="createNewSlot">
+        Create New Slot
+      </button>
+
       <!-- Pop-up Window -->
       <div v-if="showPopup.visible" class="popup absolute bg-white border p-4 rounded shadow-lg" style="top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 50;" @click.stop>
         <p class="font-bold">Waiting for approval</p>
@@ -51,8 +55,18 @@
 <script>
 import NavigationBar from '@/components/NavigationBar.vue';
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 
 export default {
+  computed: {
+    ...mapGetters(['isAuthenticated', 'userRole', 'tokenExp', 'user_id']),
+    getID() {
+      return this.user_id;
+    },
+    getRole() {
+      return this.userRole;
+    }
+  },
   components: {
     NavigationBar
   },
@@ -71,6 +85,8 @@ export default {
     };
   },
   created() {
+    console.log('User ID:', this.getID);
+    console.log('User Role:', this.getRole);
     this.currentWeek = this.getWeekDetails(this.currentDate);
     this.fetchSchedule(); // Fetch the schedule when component is created
   },
@@ -107,20 +123,24 @@ export default {
       const startOfWeek = new Date(this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay() + 1));
       const startDate = startOfWeek.toISOString().split('T')[0];
       const animal_id = 1;
-      const user_id = 1;
+      const user_id = this.getID;
 
-      axios.get(`http://localhost:8000/schedule/${user_id}/${animal_id}/${startDate}`)
-          .then(response => {
-            const scheduleData = response.data.schedule;
-            this.schedule = Array.from({length: 7}, (_, day) =>
-                Array.from({length: 13}, (_, hour) =>
-                    scheduleData[day]?.[hour + 9] || "blue" // Map backend data to array format
-                )
-            );
-          })
-          .catch(error => {
-            console.error('Error fetching schedule:', error);
-          });
+      axios.post('http://localhost:8000/schedule', {
+        user_id: user_id,
+        animal_id: animal_id,
+        date: startDate
+      })
+        .then(response => {
+          const scheduleData = response.data.schedule;
+          this.schedule = Array.from({ length: 7 }, (_, day) =>
+            Array.from({ length: 13 }, (_, hour) =>
+              scheduleData[day]?.[hour + 9] || "blue" // Map backend data to array format
+            )
+          );
+        })
+        .catch(error => {
+          console.error('Error fetching schedule:', error);
+        });
     },
     getSlot(day, time) {
       const dayIndex = this.days.indexOf(day);
@@ -154,6 +174,8 @@ export default {
         const formattedDate = selectedDate.toISOString().split('T')[0];
 
         this.showPopup = { visible: true, day, time, date: formattedDate };
+      } else if (slotStatus === 'gray' && this.getRole === 'caregiver') {
+        this.createNewSlot(day, time);
       } else {
         if (this.showPopup.visible) {
           this.showPopup.visible = false;
@@ -174,6 +196,26 @@ export default {
         }
       }
     },
+    createNewSlot(day, time) {
+      const dayIndex = this.days.indexOf(day);
+      const startOfWeek = new Date(this.currentDate);
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
+      const selectedDate = new Date(startOfWeek);
+      selectedDate.setDate(startOfWeek.getDate() + dayIndex);
+      const formattedDate = selectedDate.toISOString().split('T')[0];
+
+      axios.post('http://localhost:8000/createslot', {
+        date: formattedDate,
+        time: time
+      })
+        .then(response => {
+          console.log('Slot created:', response.data);
+          this.schedule[dayIndex][this.times.indexOf(time)] = 'blue'; // Update the slot to blue
+        })
+        .catch(error => {
+          console.error('Error creating slot:', error);
+        });
+    },
     confirmSelection() {
       const startOfWeek = new Date(this.currentDate);
       startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
@@ -184,9 +226,9 @@ export default {
         const formattedDate = selectedDate.toISOString().split('T')[0];
         return { day: slot.day, time: slot.time, date: formattedDate };
       });
-
+      const user_id = this.getID;
       axios.post('http://localhost:8000/confirmselection', {
-        user_id: 1,
+        user_id: user_id,
         animal_id: 1,
         slots: selectedSlots
       })
@@ -225,7 +267,7 @@ export default {
         this.showPopup.visible = false;
 
         const animalId = 1;
-        const userId = 1;
+        const userId = this.getID;
         axios.delete(`http://localhost:8000/cancel/${userId}/${animalId}/${date}/${time}`)
             .then(response => {
               console.log('Reservation canceled:', response.data);

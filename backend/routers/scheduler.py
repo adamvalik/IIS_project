@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import cast, Date
 from db import get_db
 from typing import Dict, List
-from schemas import ConfirmSelectionRequest, Slot
+from schemas import ConfirmSelectionRequest, Slot, CSlot, UADSlot
 from models import Animal as AnimalModel
 from models import AnimalBorrow as AnimalBorrowModel
 from models import Reservation as ReservationModel
@@ -18,8 +18,12 @@ utc_now = utc_now.astimezone(local_tz)
 
 router = APIRouter()
 
-@router.get("/schedule/{user_id}/{animal_id}/{start_date}", response_model=dict)
-async def get_schedule(user_id: int, animal_id: int, start_date: str, db: Session = Depends(get_db)):
+@router.post("/schedule", response_model=dict)
+async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
+
+    user_id = uad_slot.user_id
+    animal_id = uad_slot.animal_id
+    start_date = utc_now.strftime("%Y-%m-%d")
 
     # Get the animal by name from the database
     animal = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
@@ -155,3 +159,34 @@ async def cancel_slot(user_id: int, animal_id: int, date: str, time: str, db: Se
         raise HTTPException(status_code=500, detail=f"Error cancelling reservation: {e}")
 
 
+@router.post("/slot", response_model=dict)
+async def create_slot(slot: CSlot, db: Session = Depends(get_db)):
+    print(f"Creating slot for {slot.date} at {slot.time}")
+
+    # Check if the `AnimalBorrow` already exists for this slot
+    borrow = db.query(AnimalBorrowModel).filter(
+        AnimalBorrowModel.id_animal == slot.animal_id,
+        AnimalBorrowModel.date == slot.date,
+        AnimalBorrowModel.time == slot.time
+    ).first()
+
+    if borrow:
+        # If a reservation already exists for this `AnimalBorrow`, raise an error
+        if borrow.reservation:
+            raise HTTPException(status_code=400, detail="Slot already reserved")
+
+    new_borrow = AnimalBorrowModel(
+        date=slot.date,
+        time=slot.time,
+        borrowed=False,
+        returned=False,
+        id_animal=slot.animal_id
+    )
+    db.add(new_borrow)
+
+    try:
+        db.commit()
+        return {"status": "success", "message": "Slot created"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error creating slot: {e}")
