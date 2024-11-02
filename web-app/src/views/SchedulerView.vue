@@ -106,9 +106,10 @@ export default {
     fetchSchedule() {
       const startOfWeek = new Date(this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay() + 1));
       const startDate = startOfWeek.toISOString().split('T')[0];
-      const animalID = encodeURIComponent(1);
+      const animal_id = 1;
+      const user_id = 1;
 
-      axios.get(`http://localhost:8000/schedule/${animalID}/${startDate}`)
+      axios.get(`http://localhost:8000/schedule/${user_id}/${animal_id}/${startDate}`)
           .then(response => {
             const scheduleData = response.data.schedule;
             this.schedule = Array.from({length: 7}, (_, day) =>
@@ -161,30 +162,12 @@ export default {
 
       const dayIndex = this.days.indexOf(day);
       const timeIndex = this.times.indexOf(time);
-      const animalName = encodeURIComponent(this.selectedAnimal.name || 'Bella');
-
 
       if (dayIndex >= 0 && timeIndex >= 0) {
         const slot = this.schedule[dayIndex][timeIndex];
         if (slot === 'blue') {
           this.schedule[dayIndex][timeIndex] = 'selected';
           this.selected.push({ day, time });
-
-          // Calculate the date for the given day
-          const startOfWeek = new Date(this.currentDate);
-          startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
-          const selectedDate = new Date(startOfWeek);
-          selectedDate.setDate(startOfWeek.getDate() + dayIndex);
-          const formattedDate = selectedDate.toISOString().split('T')[0];
-
-          // Send the selection info through Axios
-          axios.get(`http://localhost:8000/reserve/${animalName}/${formattedDate}/${time}`)
-              .then(response => {
-                console.log('Reservation confirmed:', response.data);
-              })
-              .catch(error => {
-                console.error('Error confirming reservation:', error);
-              });
         } else if (slot === 'selected') {
         this.schedule[dayIndex][timeIndex] = 'blue';
         this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
@@ -192,7 +175,6 @@ export default {
       }
     },
     confirmSelection() {
-      const animalName = encodeURIComponent(this.selectedAnimal.name || 'Bella');
       const startOfWeek = new Date(this.currentDate);
       startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
       const selectedSlots = this.selected.map(slot => {
@@ -204,7 +186,8 @@ export default {
       });
 
       axios.post('http://localhost:8000/confirmselection', {
-        animalName: animalName,
+        user_id: 1,
+        animal_id: 1,
         slots: selectedSlots
       })
           .then(response => {
@@ -241,8 +224,9 @@ export default {
         this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
         this.showPopup.visible = false;
 
-        const animalName = encodeURIComponent(this.selectedAnimal.name || 'Bella');
-        axios.delete(`http://localhost:8000/cancel/${animalName}/${date}/${time}`)
+        const animalId = 1;
+        const userId = 1;
+        axios.delete(`http://localhost:8000/cancel/${userId}/${animalId}/${date}/${time}`)
             .then(response => {
               console.log('Reservation canceled:', response.data);
             })

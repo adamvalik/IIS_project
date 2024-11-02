@@ -115,5 +115,6 @@ class Slot(BaseModel):
     date: str
 
 class ConfirmSelectionRequest(BaseModel):
-    animalName: str
+    user_id: int
+    animal_id: int
     slots: List[Slot]

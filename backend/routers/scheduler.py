@@ -18,8 +18,8 @@ utc_now = utc_now.astimezone(local_tz)
 
 router = APIRouter()
 
-@router.get("/schedule/{animal_id}/{start_date}", response_model=dict)
-async def get_schedule(animal_id: int, start_date: str, db: Session = Depends(get_db)):
+@router.get("/schedule/{user_id}/{animal_id}/{start_date}", response_model=dict)
+async def get_schedule(user_id: int, animal_id: int, start_date: str, db: Session = Depends(get_db)):
 
     # Get the animal by name from the database
     animal = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
@@ -39,13 +39,13 @@ async def get_schedule(animal_id: int, start_date: str, db: Session = Depends(ge
 
 
     all_borrows = db.query(AnimalBorrowModel).all()
-    print(f"All borrows: {[(borrow.date, borrow.time) for borrow in all_borrows]}")
+    print(f"All borrows: {[(borrow.date, borrow.time, borrow.id_animal) for borrow in all_borrows]}")
 
     # Get borrow data for the week
     borrows = db.query(AnimalBorrowModel).filter(
         AnimalBorrowModel.id_animal == animal_id,
-        cast(AnimalBorrowModel.date, Date) >= cast(start_date, Date),
-        cast(AnimalBorrowModel.date, Date) <= cast(end_date, Date)
+        AnimalBorrowModel.date >= start_date,
+        AnimalBorrowModel.date <= end_date
     ).all()
 
     print(borrows)
@@ -58,33 +58,100 @@ async def get_schedule(animal_id: int, start_date: str, db: Session = Depends(ge
     print(schedule)
 
     for borrow in borrows:
-        day_index = (borrow["date"] - start_date).days
-        time_index = borrow["time"].hour
+        my_reservation = False
+        reservation_exists = False
+        approved_reservation = False
+
+        day_index = (borrow.date - start_date).days
+        time_index = borrow.time.hour
         print(day_index, time_index)
+
+        reservation = db.query(ReservationModel).filter(ReservationModel.id_borrow == borrow.id).first()
+
+        if reservation:
+            if reservation.id_volunteer == user_id:
+                my_reservation = True
+                if reservation.approved:
+                    approved_reservation = True
+                    my_reservation = False
+            elif reservation.id_volunteer != user_id:
+                reservation_exists = True
+
         if day_index >= 0 and time_index >= 0:
-            schedule[day_index][time_index] = "blue" if borrow["borrowed"] else "green"
+            if my_reservation:
+                schedule[day_index][time_index] = "orange"
+            elif reservation_exists:
+                schedule[day_index][time_index] = "red"
+            elif approved_reservation:
+                schedule[day_index][time_index] = "green"
+            else:
+                schedule[day_index][time_index] = "blue"
 
     return {"schedule": schedule}
 
-@router.get("/reserve/{animal_name}/{date}/{time}", response_model=dict)
-async def reserve_slot(animal_name: str, date: str, time: str, db: Session = Depends(get_db)):
-    # just return the input for now
-    print("Reserve slot")
-    return {"animal_name": animal_name, "date": date, "time": time}
 
 @router.post("/confirmselection", response_model=Dict[str, str])
 async def confirm_selection(request: ConfirmSelectionRequest, db: Session = Depends(get_db)):
-    # Process the selected slots
-    # TODO: check s databazi, jestli v mezicase zmena, tak error, jinak vse ok
-    print("Confirming selection for:", request.animalName)
+    print("Confirming selection for:", request.animal_id)
+
     for slot in request.slots:
         print(f"Day: {slot.day}, Time: {slot.time}, Date: {slot.date}")
 
-    # Return a confirmation response
-    return {"status": "success", "message": "Selection confirmed"}
+        # Check if the `AnimalBorrow` already exists for this slot
+        borrow = db.query(AnimalBorrowModel).filter(
+            AnimalBorrowModel.id_animal == request.animal_id,
+            AnimalBorrowModel.date == slot.date,
+            AnimalBorrowModel.time == slot.time
+        ).first()
 
-@router.delete("/cancel/{animal_name}/{date}/{time}", response_model=dict)
-async def cancel_slot(animal_name: str, date: str, time: str):
-    # just return the input for now
-    print("Cancel slot")
-    return {"animal_name": animal_name, "date": date, "time": time}
+        if borrow:
+            # If a reservation already exists for this `AnimalBorrow`, raise an error
+            if borrow.reservation:
+                raise HTTPException(status_code=400, detail="Slot already reserved")
+
+        # Create a new `Reservation` associated with this `AnimalBorrow`
+        new_reservation = ReservationModel(
+            approved=False,  # Assuming new reservations are not approved by default
+            id_borrow=borrow.id,
+            id_volunteer=request.user_id
+        )
+        db.add(new_reservation)
+
+    try:
+        db.commit()
+        return {"status": "success", "message": "Selection confirmed"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error confirming selection: {e}")
+
+
+@router.delete("/cancel/{user_id}/{animal_id}/{date}/{time}", response_model=dict)
+async def cancel_slot(user_id: int, animal_id: int, date: str, time: str, db: Session = Depends(get_db)):
+
+    borrow = db.query(AnimalBorrowModel).filter(
+        AnimalBorrowModel.id_animal == animal_id,
+        AnimalBorrowModel.date == date,
+        AnimalBorrowModel.time == time
+    ).first()
+
+    if not borrow:
+        raise HTTPException(status_code=404, detail="Slot not found")
+
+    reservation = db.query(ReservationModel).filter(
+        ReservationModel.id_borrow == borrow.id,
+        ReservationModel.id_volunteer == user_id
+    ).first()
+
+    if not reservation:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+
+    db.delete(reservation)
+
+    try:
+        db.commit()
+        return {"status": "success", "message": "Reservation cancelled"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error cancelling reservation: {e}")
+
+
