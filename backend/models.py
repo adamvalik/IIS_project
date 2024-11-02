@@ -17,7 +17,6 @@ class User(Base):
 
     # volunteer specific
     verified = Column(Boolean, nullable=True)
-    id_caregiver = Column(Integer, ForeignKey("users.ID_user"), nullable=True)
 
     animals = relationship("Animal", back_populates="caregiver")
     examination_requests_as_caregiver = relationship("ExaminationRequest", back_populates="caregiver", foreign_keys="[ExaminationRequest.id_caregiver]")

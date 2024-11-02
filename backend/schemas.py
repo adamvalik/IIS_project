@@ -14,6 +14,9 @@ class User(BaseModel):
     role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
     verified: Optional[bool] = False
 
+    class Config:
+        orm_mode = True
+
 class LoginRequest(BaseModel):
     email: str
     password: str
@@ -24,27 +27,6 @@ class LoginResponse(BaseModel):
 
 class SignUpResponse(BaseModel):
     message: str
-
-# class UserBase(BaseModel):
-#     email: EmailStr
-#     name: str
-#     surname: str
-#     phone_num: Optional[str] = None
-#     role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
-
-# class UserCreate(UserBase):
-#     password: str
-
-# class UserUpdate(UserBase):
-#     password: Optional[str] = None
-
-# class User(UserBase):
-#     id: int
-#     verified: Optional[bool] = False
-#     id_caregiver: Optional[int] = None
-
-#     class Config:
-#         orm_mode = True  # Enables reading from SQLAlchemy models
 
 class Animal(BaseModel):
     id: int
@@ -61,68 +43,3 @@ class Animal(BaseModel):
     class Config:
         orm_mode = True
 
-class ExaminationRequestBase(BaseModel):
-    caregivers_description: Optional[str] = None
-
-class ExaminationRequestCreate(ExaminationRequestBase):
-    id_animal: int
-    id_caregiver: int
-
-class ExaminationRequest(ExaminationRequestBase):
-    id: int
-    id_animal: int
-    id_caregiver: int
-    id_veterinarian: Optional[int] = None
-
-    class Config:
-        orm_mode = True
-
-class MedicalRecordBase(BaseModel):
-    date: Optional[date] = None
-    weight: Optional[float] = None
-    vaccination: Optional[bool] = None
-    vaccination_type: Optional[str] = None
-    vet_description: Optional[str] = None
-
-class MedicalRecordCreate(MedicalRecordBase):
-    id_animal: int
-    id_veterinarian: int
-
-class MedicalRecord(MedicalRecordBase):
-    id: int
-    id_animal: int
-    id_veterinarian: int
-
-    class Config:
-        orm_mode = True
-
-class AnimalBorrowBase(BaseModel):
-    date: date
-    time: time
-    borrowed: Optional[bool] = None
-    returned: Optional[bool] = None
-
-class AnimalBorrowCreate(AnimalBorrowBase):
-    id_animal: int
-
-class AnimalBorrow(AnimalBorrowBase):
-    id: int
-    id_animal: int
-
-    class Config:
-        orm_mode = True
-
-class ReservationBase(BaseModel):
-    approved: Optional[bool] = None
-
-class ReservationCreate(ReservationBase):
-    id_borrow: int
-    id_volunteer: int
-
-class Reservation(ReservationBase):
-    id: int
-    id_borrow: int
-    id_volunteer: int
-
-    class Config:
-        orm_mode = True
