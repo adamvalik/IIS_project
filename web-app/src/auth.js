@@ -5,7 +5,8 @@ export default createStore({
   state: {
     accessToken: localStorage.getItem('access_token') || '',
     userRole: localStorage.getItem('access_token') ? jwtDecode(localStorage.getItem('access_token')).role : null,
-    expiration: localStorage.getItem('access_token') ? jwtDecode(localStorage.getItem('access_token')).exp : null
+    expiration: localStorage.getItem('access_token') ? jwtDecode(localStorage.getItem('access_token')).exp : null,
+    user_id: localStorage.getItem('access_token') ? jwtDecode(localStorage.getItem('access_token')).user_id : null
   },
   mutations: {
     setToken(state, token) {
@@ -33,6 +34,7 @@ export default createStore({
   getters: {
     isAuthenticated: state => !!state.accessToken,
     userRole: state => state.userRole,
-    tokenExp: state => state.expiration
+    tokenExp: state => state.expiration,
+    user_id: state => state.user_id
   }
 });

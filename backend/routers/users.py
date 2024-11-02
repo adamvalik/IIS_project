@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from typing import List
 from db import get_db
 from models import User as UserModel
-from schemas import UserWithId as UserSchema
-from schemas import User as UserCreateSchema
+from schemas import User as UserSchema
+from schemas import UpdatePhoneRequest
 from routers.login import hash_password
 
 router = APIRouter()
@@ -24,7 +24,7 @@ async def get_volunteers(db: Session = Depends(get_db)):
 
 
 @router.post("/users")
-async def create_user(user: UserCreateSchema, db: Session = Depends(get_db)):
+async def create_user(user: UserSchema, db: Session = Depends(get_db)):
 
     if(db.query(UserModel).filter(UserModel.email == user.email).first() is not None):
         raise HTTPException(status_code=400, detail="User already exists.")
@@ -68,3 +68,26 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found.")
     db.delete(user_to_delete)
     db.commit()
+
+@router.put("/volunteers/{volunteer_id}/verify")
+async def verify_volunteer(volunteer_id: int, db: Session = Depends(get_db)):
+    volunteer = db.query(UserModel).filter(UserModel.id == volunteer_id).first()
+    if volunteer is None:
+        raise HTTPException(status_code=404, detail="Volunteer not found.")
+    volunteer.verified = True
+    db.commit()
+
+@router.put("/users/{user_id}/phone")
+async def update_phone(user_id: int, request: UpdatePhoneRequest, db: Session = Depends(get_db)):
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found.")
+    user.phone_num = request.phone
+    db.commit()
+
+@router.get("/users/{user_id}/phone")
+async def get_phone(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found.")
+    return {"phone": user.phone_num}
