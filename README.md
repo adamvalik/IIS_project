@@ -33,9 +33,9 @@ Run example_data.py to fill the database with example data
 docker exec -it backend python3 /app/example_data.py
 ```
 
-Open mysql shell
+Open mysql shell, password satek123
 ```bash
-docker exec -it mysql mysql -uuser
+docker exec -it mysql mysql -uuser -p
 ```
 
 ## Running the Project
@@ -48,3 +48,14 @@ Services will be available at:
 API Documentation:
 - [http://localhost:8000/docs](http://localhost:8000/docs) - FastAPI Swagger UI
 - [http://localhost:8000/redoc](http://localhost:8000/redoc) - FastAPI Redoc UI
+
+# If problems with permission in node-modules
+- Run containers as docker compuse -up
+- Navigate to web-app container
+```bash
+docker exec -it web-app bash
+```
+- apply permissions
+```bash
+chmod -R 777 ./node_modules
+```

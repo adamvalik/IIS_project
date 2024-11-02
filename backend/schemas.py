@@ -5,28 +5,28 @@ from datetime import date, time
 # schemas for shared fields between create and update schemas
 # examples:
 
-
-
-class UserBase(BaseModel):
-    email: EmailStr
+class User(BaseModel):
     name: str
     surname: str
-    phone_num: Optional[str] = None
-    role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
-
-class UserCreate(UserBase):
+    email: str
     password: str
-
-class UserUpdate(UserBase):
-    password: Optional[str] = None
-
-class User(UserBase):
-    id: int
+    telephone: Optional[str] = None
+    role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
     verified: Optional[bool] = False
-    id_caregiver: Optional[int] = None
 
     class Config:
-        orm_mode = True  # Enables reading from SQLAlchemy models
+        orm_mode = True
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class LoginResponse(BaseModel):
+    message: str
+    access_token: str
+
+class SignUpResponse(BaseModel):
+    message: str
 
 class Animal(BaseModel):
     id: int
