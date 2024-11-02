@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from db import Base, engine
 
-from routers import satecek_scheduler_mrdka
+from routers import scheduler
 from routers import login
 from routers import animals
 
@@ -17,10 +17,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.include_router(satecek_scheduler_mrdka.router)
 app.include_router(login.router)
 app.include_router(animals.router)
-app.include_router(satecek_scheduler_mrdka.router)
+app.include_router(scheduler.router)
 
 # create tables in the database
 Base.metadata.create_all(bind=engine)

@@ -29,7 +29,7 @@
       </button>
 
       <!-- Pop-up Window -->
-      <div v-if="showPopup.visible" class="popup absolute bg-white border p-4 rounded shadow-lg" style="top: 20%; left: 50%; transform: translate(-50%, -50%); z-index: 50;" @click.stop>
+      <div v-if="showPopup.visible" class="popup absolute bg-white border p-4 rounded shadow-lg" style="top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 50;" @click.stop>
         <p class="font-bold">Waiting for approval</p>
         <p>Name: Satek</p>
         <p>Time: {{ showPopup.time }}</p>
