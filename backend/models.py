@@ -1,19 +1,21 @@
 # translation of /doc/tables.sql to SQLAlchemy ORM
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Enum, Text, DECIMAL, Year, Time, BLOB
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Enum, Text, DECIMAL, Time
+from sqlalchemy.dialects.mysql import MEDIUMBLOB
 from sqlalchemy.orm import relationship
 from db import Base
 
 class User(Base):
     __tablename__ = "users"
-    
+
     id = Column("ID_user", Integer, primary_key=True, autoincrement=True)
     email = Column(String(255), nullable=False)
     password = Column(String(255), nullable=False)
     name = Column(String(255), nullable=False)
     surname = Column(String(255), nullable=False)
     phone_num = Column(String(20), nullable=True)
-    role = Column(Enum('caregiver', 'veterinarian', 'volunteer'), nullable=True)
-    
+    role = Column(Enum('caregiver', 'veterinarian', 'volunteer'), nullable=False)
+
+    # volunteer specific
     verified = Column(Boolean, nullable=True)
     id_caregiver = Column(Integer, ForeignKey("users.ID_user"), nullable=True)
 
@@ -25,13 +27,13 @@ class User(Base):
 
 class Animal(Base):
     __tablename__ = "animals"
-    
+
     id = Column("ID_animal", Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
     species = Column(String(255), nullable=False)
     breed = Column(String(255), nullable=True)
-    birth_year = Column(Year, nullable=True)
-    photo = Column(BLOB, nullable=True)
+    birth_year = Column(Integer, nullable=True)
+    photo = Column(MEDIUMBLOB, nullable=True)
     admission_date = Column(Date, nullable=True)
     size = Column(Enum('small', 'medium', 'large'), nullable=True)
     caregivers_description = Column(Text, nullable=True)

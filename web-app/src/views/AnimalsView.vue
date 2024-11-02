@@ -37,7 +37,7 @@
         >
           <AnimalTile
             :name="animal.name"
-            :species="animal.species" 
+            :species="animal.species"
             :birth_year="animal.birth_year"
             :photo="animal.photo || defaultImage"
           />
@@ -53,7 +53,7 @@ import NavigationBar from '@/components/NavigationBar.vue';
 import axios from 'axios';
 
 export default {
-  components: { 
+  components: {
     NavigationBar,
     AnimalTile
    },
@@ -63,7 +63,7 @@ export default {
       filteredAnimals: [],
       filterType: "all",
       sortType: "name",
-      defaultImage: "./assets/default.png", 
+      defaultImage: "./assets/default.png",
       uniqueSpecies: [],  // Dynamic species list
     };
   },

@@ -3,6 +3,10 @@ from typing import Optional, List
 from datetime import date, time
 
 # schemas for shared fields between create and update schemas
+# examples:
+
+
+
 class UserBase(BaseModel):
     email: EmailStr
     name: str

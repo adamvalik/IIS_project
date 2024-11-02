@@ -32,7 +32,7 @@ export default {
     },
     photo: {
       type: String,
-      required: true
+      required: false
     }
   },
   methods: {
@@ -43,7 +43,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* Basic styling */
-</style>

@@ -23,7 +23,7 @@
           <h3 class="text-2xl font-semibold text-gray-800 mb-6">Recently Added Animals</h3>
           <router-link to="/animals" class="mt-6 block text-blue-500 font-semibold hover:underline">See all animals</router-link>
         </div>
-        
+
         <div v-if="loading" class="text-center">Loading...</div>
         <div v-if="errorMessage" class="text-center text-red-600">{{ errorMessage }}</div>
 
@@ -66,7 +66,7 @@ export default {
   methods: {
     async fetchRecentAnimals() {
       try {
-        const response = await axios.get('http://localhost:8000/animals/recent');
+        const response = await axios.get("http://localhost:8000/animals/recent ");
         this.recentAnimals = response.data;
       } catch (error) {
         this.errorMessage = 'Failed to load recent animals.';
@@ -81,7 +81,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* No additional styles needed */
-</style>

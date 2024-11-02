@@ -1,9 +1,7 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from sqlalchemy.orm import Session
-from db import Base, engine, get_db
-from models import *
+from db import Base, engine
 
 from routers import satecek_scheduler_mrdka
 from routers import login
