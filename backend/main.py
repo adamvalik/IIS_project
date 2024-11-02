@@ -24,6 +24,7 @@ app.add_middleware(
 # app.include_router(satecek_scheduler_mrdka.router)
 app.include_router(login.router)
 app.include_router(zviratka.router)
+app.include_router(satecek_scheduler_mrdka.router)
 
 # Create tables in the database
 Base.metadata.create_all(bind=engine)
