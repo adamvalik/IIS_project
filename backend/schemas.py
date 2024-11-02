@@ -4,29 +4,45 @@ from datetime import date, time
 
 # schemas for shared fields between create and update schemas
 # examples:
-
-
-
-class UserBase(BaseModel):
-    email: EmailStr
+class User(BaseModel):
     name: str
     surname: str
-    phone_num: Optional[str] = None
-    role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
+    email: str
+    password: str
+    telephone: Optional[str] = None
 
-class UserCreate(UserBase):
+    
+class LoginRequest(BaseModel):
+    email: str
     password: str
 
-class UserUpdate(UserBase):
-    password: Optional[str] = None
+class LoginResponse(BaseModel):
+    message: str
+    access_token: str
 
-class User(UserBase):
-    id: int
-    verified: Optional[bool] = False
-    id_caregiver: Optional[int] = None
+class SignUpResponse(BaseModel):
+    message: str
+    
+# class UserBase(BaseModel):
+#     email: EmailStr
+#     name: str
+#     surname: str
+#     phone_num: Optional[str] = None
+#     role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
 
-    class Config:
-        orm_mode = True  # Enables reading from SQLAlchemy models
+# class UserCreate(UserBase):
+#     password: str
+
+# class UserUpdate(UserBase):
+#     password: Optional[str] = None
+
+# class User(UserBase):
+#     id: int
+#     verified: Optional[bool] = False
+#     id_caregiver: Optional[int] = None
+
+#     class Config:
+#         orm_mode = True  # Enables reading from SQLAlchemy models
 
 class Animal(BaseModel):
     id: int

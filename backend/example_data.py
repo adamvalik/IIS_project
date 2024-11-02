@@ -1,6 +1,7 @@
 from datetime import date, time
 from db import SessionLocal
 from models import User, Animal, ExaminationRequest, MedicalRecord, AnimalBorrow, Reservation
+from routers import login
 import os
 
 IMAGE_DIRECTORY = "./images"
@@ -16,11 +17,10 @@ def load_image_as_binary(image_name):
 
 def create_example_users():
     users = [
-        User(email="caregiver@example.com", password="password", name="Bob", surname="Caregiver", phone_num="1234567890", role="caregiver"),
-        User(email="vet@example.com", password="password", name="Dr. Alice", surname="Veterinarian", phone_num="0987654321", role="veterinarian"),
-        User(email="volunteer@example.com", password="password", name="Charlie", surname="Volunteer", phone_num="1122334455", role="volunteer", verified=True)
+        User(email="caregiver@example.com", password=login.hash_password("password"), name="Bob", surname="Caregiver", phone_num="1234567890", role="caregiver"),
+        User(email="vet@example.com", password=login.hash_password("password12"), name="Dr. Alice", surname="Veterinarian", phone_num="0987654321", role="veterinarian"),
+        User(email="volunteer@example.com", password=login.hash_password("password123"), name="Charlie", surname="Volunteer", phone_num="1122334455", role="volunteer", verified=True)
     ]
-
     db = SessionLocal()
     try:
         db.add_all(users)

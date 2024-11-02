@@ -118,7 +118,6 @@ export default {
       password: '',
       passwordConfirm: '',
       telephone: '',
-      id: 0,
     };
   },
   computed: {
@@ -142,7 +141,6 @@ export default {
         email: this.email,
         password: this.password,
         telephone: this.telephone || null, // Optional telephone
-        id: this.id,
       };
 
       console.log("New user data:", newUser);
