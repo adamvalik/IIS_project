@@ -54,7 +54,8 @@ export default {
       if (this.userRole === 'caregiver') {
         return [
           { name: 'Caregiver Dashboard', link: '/caregiver-dashboard' },
-          { name: 'Manage Animals', link: '/manage-animals' }
+          { name: 'Manage Animals', link: '/manage-animals' },
+          { name: 'List users', link: '/listusers' },
         ];
       } else if (this.userRole === 'veterinarian') {
         return [
@@ -64,7 +65,12 @@ export default {
       } else if (this.userRole === 'volunteer') {
         return [
           { name: 'Volunteer Dashboard', link: '/volunteer-dashboard' },
-          { name: 'Task List', link: '/tasks' }
+          { name: 'Task List', link: '/tasks' },
+        ];
+      } else if (this.userRole === 'admin') {
+        return [
+          { name: 'Admin Dashboard', link: '/admin-dashboard' },
+          { name: 'List users', link: '/listusers' },
         ];
       }
       return [];

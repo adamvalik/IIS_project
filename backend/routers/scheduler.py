@@ -9,6 +9,7 @@ from schemas import ConfirmSelectionRequest, Slot, CSlot, UADSlot
 from models import Animal as AnimalModel
 from models import AnimalBorrow as AnimalBorrowModel
 from models import Reservation as ReservationModel
+from routers.login import verify_user
 import pytz
 
 # We be working in CR
@@ -17,6 +18,16 @@ local_tz = pytz.timezone('Europe/Prague')
 utc_now = utc_now.astimezone(local_tz)
 
 router = APIRouter()
+
+@router.get("/scheduler")
+async def listUsers(user_verified: bool = Depends(verify_user)):
+    if user_verified is None:
+        raise HTTPException(status_code=401, detail="User not verified")
+
+    if user_verified.get("role") == "veterinarian":
+        raise HTTPException(status_code=401, detail="User not authorized")
+    # If the user is verified, return the list of users
+    return {"Validation successful"}
 
 @router.post("/schedule", response_model=dict)
 async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):

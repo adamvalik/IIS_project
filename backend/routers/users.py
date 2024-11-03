@@ -13,10 +13,22 @@ router = APIRouter()
 
 @router.get("/profile")
 async def reachProfile(user_verified: bool = Depends(verify_user)):
-    if not user_verified:
+    if user_verified is None:
         raise HTTPException(status_code=401, detail="User not verified")
 
     # If the user is verified, return the user's profile
+    return {"Validation successful"}
+
+@router.get("/listusers")
+async def listUsers(user_verified: bool = Depends(verify_user)):
+    if user_verified is None:
+        raise HTTPException(status_code=401, detail="User not verified")
+    
+    role = user_verified.get("role")
+    if role not in ["admin", "caregiver"]:
+        raise HTTPException(status_code=401, detail="User not authorized")
+
+    # If the user is verified, return the list of users
     return {"Validation successful"}
 
 @router.get("/users", response_model=List[UserSchema])

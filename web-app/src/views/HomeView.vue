@@ -3,12 +3,12 @@
     <!-- NavigationBar -->
     <NavigationBar />
 
-    <router-link to="/scheduler" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
+    <router-link to="/scheduler" v-if="checkSchedulerRole" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
       Skibidi Scheduler
     </router-link>
-    <router-link to="/listusers" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
+    <!-- <router-link to="/listusers" v-if="checkListUsersRole" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
       Skibidi List Users
-    </router-link>
+    </router-link> -->
 
     <!-- Main Content -->
     <div class="mt-10">
@@ -51,6 +51,7 @@
 import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import AnimalTile from '@/components/AnimalTile.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -62,6 +63,22 @@ export default {
       recentAnimals: [],
       loading: true,
     };
+  },
+  computed: {
+    ...mapGetters(['isAuthenticated', 'userRole']),
+
+    isLoggedIn() {
+      return this.isAuthenticated;
+    },
+
+    checkListUsersRole() {
+      return (this.isAuthenticated && (this.userRole == 'admin' || this.userRole == 'caregiver'));
+    },
+
+    checkSchedulerRole() {
+      return this.isAuthenticated && this.userRole != 'veterinarian';
+    }
+
   },
   mounted() {
     this.fetchRecentAnimals();
