@@ -5,16 +5,15 @@
     <NavigationBar />
 
     <div class="py-10 px-20">
-
       <div class="text-center font-bold mb-4">
         Selected Animal: {{ selectedAnimal ? selectedAnimal.name : 'Bella' }}
       </div>
       <div class="flex justify-between items-center mb-4">
-        <button @click="previousWeek" class="p-2 bg-gray-300 rounded">&lt;</button>
+        <button @click="previousWeek" class="px-3 py-2 bg-gray-300 rounded">&#9664;</button>
         <div class="text-center font-bold">
           Week {{ currentWeek.week }}. {{ currentWeek.startDay }}.{{ currentWeek.startMonth }}. - {{ currentWeek.endDay }}.{{ currentWeek.endMonth }}. year {{ currentWeek.year }}
         </div>
-        <button @click="nextWeek" class="p-2 bg-gray-300 rounded">&gt;</button>
+        <button @click="nextWeek" class="px-3 py-2 bg-gray-300 rounded">&#9654;</button>
       </div>
 
       <div class="grid grid-cols-14 gap-2">
@@ -32,7 +31,7 @@
 
       <!-- Legend -->
       <div class="mt-7 mb-4">
-        <div v-if="getRole === 'volunteer'" class="flex justify-around">
+        <div v-if="getRole === 'volunteer'" class="flex justify-around flex-col md:flex-row">
           <div class="flex items-center">
             <div class="w-4 h-4 bg-green-400 mr-2"></div>
             <span>Approved</span>
@@ -58,7 +57,7 @@
             <span>Unavailable</span>
           </div>
         </div>
-        <div v-else class="flex justify-around">
+        <div v-else class="flex justify-around flex-col md:flex-row">
           <div class="flex items-center">
             <div class="w-4 h-4 bg-green-400 mr-2"></div>
             <span>Approved</span>
