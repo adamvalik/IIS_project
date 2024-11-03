@@ -176,7 +176,7 @@ def create_example_reservations(user_ids, borrow_ids):
 if __name__ == "__main__":
     user_ids = create_example_users()
     animal_ids = create_example_animals(user_ids)
-    create_example_examination_requests(user_ids, animal_ids)
-    create_example_medical_records(user_ids, animal_ids)
-    borrow_ids = create_example_animal_borrows(animal_ids)
-    create_example_reservations(user_ids, borrow_ids)
+    # create_example_examination_requests(user_ids, animal_ids)
+    # create_example_medical_records(user_ids, animal_ids)
+    # borrow_ids = create_example_animal_borrows(animal_ids)
+    # create_example_reservations(user_ids, borrow_ids)

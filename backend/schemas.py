@@ -102,10 +102,36 @@ class Reservation(BaseModel):
     date: str
     time: str
 
+#-------------------------------------------
+
+class ReservationAnimal(BaseModel):
+    id: int
+    name: str
+
+class ReservationUser(BaseModel):
+    id: int
+    name: str
+    surname: str
+
+    class Config:
+        orm_mode = True
+
+class ReservationAnimalBorrow(BaseModel):
+    id: int
+    date: date
+    time: time
+    borrowed: bool
+    returned: bool
+    animal: ReservationAnimal
+
+    class Config:
+        orm_mode = True
+
 class ReservationShow(BaseModel):
+    id: int
     approved: bool
-    borrow: object
-    volunteer: object
+    borrow: ReservationAnimalBorrow
+    volunteer: ReservationUser
 
     class Config:
         orm_mode = True
