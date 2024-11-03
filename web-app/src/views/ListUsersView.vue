@@ -57,7 +57,7 @@ export default {
       loading: true,
       showUserModal: false,
       selectedUser: null,
-      isAdmin: false,
+      isAdmin: true,
     };
   },
   async mounted() {

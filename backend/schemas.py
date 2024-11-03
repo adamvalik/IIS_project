@@ -67,3 +67,12 @@ class ConfirmSelectionRequest(BaseModel):
     user_id: int
     animal_id: int
     slots: List[Slot]
+
+class CSlot(BaseModel):
+    animal_id: int
+    new_slots: List[Slot]
+
+class UADSlot(BaseModel):
+    user_id: int
+    animal_id: int
+    date: str

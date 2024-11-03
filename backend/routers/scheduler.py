@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import cast, Date
 from db import get_db
 from typing import Dict, List
-from schemas import ConfirmSelectionRequest, Slot
+from schemas import ConfirmSelectionRequest, Slot, CSlot, UADSlot
 from models import Animal as AnimalModel
 from models import AnimalBorrow as AnimalBorrowModel
 from models import Reservation as ReservationModel
@@ -18,8 +18,12 @@ utc_now = utc_now.astimezone(local_tz)
 
 router = APIRouter()
 
-@router.get("/schedule/{user_id}/{animal_id}/{start_date}", response_model=dict)
-async def get_schedule(user_id: int, animal_id: int, start_date: str, db: Session = Depends(get_db)):
+@router.post("/schedule", response_model=dict)
+async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
+
+    user_id = uad_slot.user_id
+    animal_id = uad_slot.animal_id
+    start_date = utc_now.strftime("%Y-%m-%d")
 
     # Get the animal by name from the database
     animal = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
@@ -155,3 +159,65 @@ async def cancel_slot(user_id: int, animal_id: int, date: str, time: str, db: Se
         raise HTTPException(status_code=500, detail=f"Error cancelling reservation: {e}")
 
 
+@router.post("/createslot", response_model=dict)
+async def create_slot(request: CSlot, db: Session = Depends(get_db)):
+
+    for slot in request.new_slots:
+        print(f"Day: {slot.day}, Time: {slot.time}, Date: {slot.date}")
+        # Check if the `AnimalBorrow` already exists for this slot
+        borrow = db.query(AnimalBorrowModel).filter(
+            AnimalBorrowModel.id_animal == request.animal_id,
+            AnimalBorrowModel.date == slot.date,
+            AnimalBorrowModel.time == slot.time
+        ).first()
+
+        if borrow:
+            # If a reservation already exists for this `AnimalBorrow`, raise an error
+            if borrow.reservation:
+                raise HTTPException(status_code=400, detail="Slot already reserved")
+
+        new_borrow = AnimalBorrowModel(
+            date=slot.date,
+            time=slot.time,
+            borrowed=False,
+            returned=False,
+            id_animal=request.animal_id
+        )
+        db.add(new_borrow)
+
+    try:
+        db.commit()
+        return {"status": "success", "message": "Slot created"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error creating slot: {e}")
+
+@router.delete('/delete/{animal_id}/{date}/{time}', response_model=dict)
+async def delete_slot(animal_id: int, date: str, time: str, db: Session = Depends(get_db)):
+
+    borrow = db.query(AnimalBorrowModel).filter(
+        AnimalBorrowModel.id_animal == animal_id,
+        AnimalBorrowModel.date == date,
+        AnimalBorrowModel.time == time
+    ).first()
+
+    satek_flag = False
+    # if there is a Reservation associated with this slot, delete it first
+    if borrow.reservation:
+        satek_flag = True
+        db.delete(borrow.reservation)
+
+    if not borrow:
+        raise HTTPException(status_code=404, detail="Slot not found")
+
+    db.delete(borrow)
+
+    try:
+        db.commit()
+        if not satek_flag:
+            return {"status": "success", "message": "Slot deleted"}
+        else:
+            return {"status": "success", "message": "Slot and associated reservation deleted"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error deleting slot: {e}")
