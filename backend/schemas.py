@@ -72,3 +72,8 @@ class UADSlot(BaseModel):
     user_id: int
     animal_id: int
     date: str
+
+class Reservation(BaseModel):
+    animal_id: int
+    date: str
+    time: str
