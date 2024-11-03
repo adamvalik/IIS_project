@@ -9,7 +9,6 @@ from routers import scheduler
 from routers import login
 from routers import animals
 from routers import users
-from routers import profile
 
 # URL = "http://localhost:8000"
 

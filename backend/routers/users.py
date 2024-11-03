@@ -7,8 +7,17 @@ from models import User as UserModel
 from schemas import User as UserSchema
 from schemas import UpdatePhoneRequest
 from routers.login import hash_password
+from routers.login import verify_user
 
 router = APIRouter()
+
+@router.get("/profile")
+async def reachProfile(user_verified: bool = Depends(verify_user)):
+    if not user_verified:
+        raise HTTPException(status_code=401, detail="User not verified")
+
+    # If the user is verified, return the user's profile
+    return {"Validation successful"}
 
 @router.get("/users", response_model=List[UserSchema])
 async def get_all_users(db: Session = Depends(get_db)):
