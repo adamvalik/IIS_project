@@ -4,7 +4,7 @@ from typing import List
 from db import get_db
 from models import User as UserModel
 from schemas import User as UserSchema, UserCreate as UserCreateSchema, UserUpdate as UserUpdateSchema, PasswordChangeRequest
-from schemas import UpdatePhoneRequest
+from schemas import UpdatePhoneRequest, UserDetails
 from routers.login import hash_password
 from routers.login import verify_user, verify_password
 
@@ -122,3 +122,15 @@ async def change_password(user_id: int, request: PasswordChangeRequest, db: Sess
         raise HTTPException(status_code=401, detail="Invalid password")
     user.password = hash_password(request.newPassword)
     db.commit()
+
+@router.post("/user_detail", response_model=dict)
+async def get_user_details(ida: UserDetails, db: Session = Depends(get_db)):
+    user = db.query(UserModel).filter(UserModel.id == ida.id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found.")
+    name = user.name
+    surname = user.surname
+    email = user.email
+    phone = user.phone
+    role = user.role
+    return {"name": name, "surname": surname, "mail": email, "telephone": phone, "role": role}
