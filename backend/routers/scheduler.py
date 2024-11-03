@@ -267,12 +267,12 @@ async def check_approval(animal_id: int, date: str, time: str, db: Session = Dep
 
         if borrow.reservation.approved:
 
-            return {'isApproved': True, 'username': username}
+            return {'isApproved': True, 'username': username, 'user_id': borrow.reservation.id_volunteer}
         else:
-            return {'isApproved': False, 'username': username}
+            return {'isApproved': False, 'username': username, 'user_id': borrow.reservation.id_volunteer}
     else:
         # shouldnt happen really
-        return {'isApproved': False, 'username': 'No one'}
+        return {'isApproved': False, 'username': 'No one', 'user_id': -1}
 
 @router.post('/approve', response_model=dict)
 async def approve_slot(reservation: Reservation, db: Session = Depends(get_db)):

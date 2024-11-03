@@ -41,7 +41,12 @@
       <!-- Pop-up Window -->
       <div v-if="showPopup.visible" class="popup absolute bg-white border p-4 rounded shadow-lg" style="top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 50;" @click.stop>
         <p class="font-bold">{{ approvalText }}</p>
-        <p>Name: {{ userReserve }}</p>
+        <p>
+          Name:
+          <router-link :to="`/user/${showPopup.user_id}`" class="text-blue-500 underline">
+            {{ userReserve }}
+          </router-link>
+        </p>
         <p>Time: {{ showPopup.time }}</p>
         <p>Date: {{ showPopup.date }}</p>
         <div class="flex justify-evenly">
@@ -98,7 +103,7 @@ export default {
       selected: [],
       new_slots: [],
       hoveredSlot: {day: null, time: null}, // Initialize hoveredSlot with default values
-      showPopup: { visible: false, day: '', time: '', date: '' }, // Control the visibility of the popup and store day, time, date
+      showPopup: { visible: false, day: '', time: '', date: '', user_id: '' }, // Control the visibility of the popup and store day, time, date
       isApproved: false,
       userReservation: ''
     };
@@ -391,6 +396,7 @@ export default {
     const response = await axios.get(`http://localhost:8000/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
     this.isApproved = response.data.isApproved;
     this.userReservation = response.data.username;
+    this.showPopup.user_id = response.data.user_id;
     console.log('Approval status:', this.isApproved);
     console.log('User:', this.userReservation);
     },

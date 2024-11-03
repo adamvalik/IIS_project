@@ -11,6 +11,7 @@ import ProfileDetail from "@/components/ProfileDetail.vue";
 import ListUsersView from '@/views/ListUsersView.vue'
 import AddAnimalView from '@/views/AddAnimalView.vue';
 import ReservationsView from '@/views/ReservationsView.vue';
+import UserDetail from "@/views/UserDetail.vue";
 
 const routes = [
   { path: '/', component: HomeView },
@@ -22,7 +23,8 @@ const routes = [
   { path: '/profile', component: ProfileDetail },
   { path: '/listusers', component: ListUsersView},
   { path: '/addanimal', component: AddAnimalView },
-  { path: '/reservations', component: ReservationsView }
+  { path: '/reservations', component: ReservationsView },
+  { path: '/user/:id', component: UserDetail }
 ]
 
 const router = createRouter({
