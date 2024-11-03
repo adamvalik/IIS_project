@@ -19,9 +19,12 @@
       <router-link v-if="!isLoggedIn" to="/login" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600">
         Login
       </router-link>
-      <router-link v-else to="/profile" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600">
+      <router-link v-else to ="/profile" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600">
         My Profile
       </router-link>
+      <!-- <button v-if="isLoggedIn" @click="clickProfile" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600">
+        My Profile
+      </button> -->
 
       <button v-if="isLoggedIn" @click="handleLogout" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600">
         Logout
@@ -31,6 +34,7 @@
 </template>
 
 <script>
+// import axios from 'axios';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -92,10 +96,13 @@ export default {
         alert("Your session has expired. Please log in again.");
         this.handleLogout();
       }
+    },
+    async clickProfile() {
+      this.$router.push('/profile');
     }
-  },
-  beforeUnmount() {
-    clearInterval(this.tokenInterval);
-  }
+},
+beforeUnmount() {
+  clearInterval(this.tokenInterval);
+}
 };
 </script>
