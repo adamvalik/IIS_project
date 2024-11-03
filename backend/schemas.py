@@ -135,3 +135,9 @@ class ReservationShow(BaseModel):
 
     class Config:
         orm_mode = True
+
+class VetRequest(BaseModel):
+    animal_id: int
+    caregiver_id: int
+    request_text: str
+

@@ -4,9 +4,20 @@ from typing import List, Optional
 from models import Animal as AnimalModel
 from schemas import Animal as AnimalSchema, AnimalCreate as AnimalCreateSchema
 from db import get_db
+from routers.login import verify_user
 import base64
 
 router = APIRouter()
+
+@router.get("/addanimal")
+async def addAnimal(user_verified: bool = Depends(verify_user)):
+    if user_verified is None:
+        raise HTTPException(status_code=401, detail="User not verified")
+
+    if user_verified.get("role") not in ["admin", "caregiver"]:
+        raise HTTPException(status_code=401, detail="User not authorized")
+
+    return {"Validation successful"}
 
 @router.get("/animals/animal/{animal_id}", response_model=AnimalSchema)
 async def get_animal(animal_id: int, db: Session = Depends(get_db)):
@@ -83,3 +94,21 @@ async def create_animal(animal: AnimalCreateSchema, db: Session = Depends(get_db
     db.add(new_animal)
     db.commit()
     db.refresh(new_animal)
+
+@router.put("/animals/edit/{animal_id}")
+async def update_animal(animal_id: int, animal: AnimalCreateSchema, db: Session = Depends(get_db)):
+    animal_to_update = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
+    if animal_to_update is None:
+        raise HTTPException(status_code=404, detail="Animal not found")
+
+    animal_to_update.name = animal.name
+    animal_to_update.species = animal.species
+    animal_to_update.breed = animal.breed
+    animal_to_update.birth_year = animal.birth_year
+    animal_to_update.admission_date = animal.admission_date
+    animal_to_update.size = animal.size
+    animal_to_update.caregivers_description = animal.caregivers_description
+    animal_to_update.id_caregiver = animal.id_caregiver
+
+    db.commit()
+    db.refresh(animal_to_update)

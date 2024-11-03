@@ -223,6 +223,9 @@ export default {
         } else if (slot === 'gray' && this.getRole === 'caregiver') {
           this.new_slots.push({day, time});
           this.schedule[dayIndex][timeIndex] = 'pink';
+        } else if (slot === 'pink' && this.getRole === 'caregiver') {
+          this.schedule[dayIndex][timeIndex] = 'gray';
+          this.new_slots = this.new_slots.filter(s => !(s.day === day && s.time === time));
         }
       }
     },
