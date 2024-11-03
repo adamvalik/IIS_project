@@ -306,8 +306,6 @@ export default {
       const timeIndex = this.times.indexOf(time);
 
       if (dayIndex >= 0 && timeIndex >= 0) {
-        this.schedule[dayIndex][timeIndex] = 'blue';
-        this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
         this.showPopup.visible = false;
         const reservationDate = new Date(date);
         const currentDate = new Date();
@@ -322,6 +320,8 @@ export default {
         const userId = this.getID;
         axios.delete(`http://localhost:8000/cancel/${userId}/${animalId}/${date}/${time}`)
             .then(response => {
+              this.schedule[dayIndex][timeIndex] = 'blue';
+              this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
               console.log('Reservation canceled:', response.data);
             })
             .catch(error => {

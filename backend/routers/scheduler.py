@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import cast, Date
 from db import get_db
 from typing import Dict, List
-from schemas import ConfirmSelectionRequest, Slot, CSlot, UADSlot
+from schemas import ConfirmSelectionRequest, Slot, CSlot, UADSlot, Reservation
 from models import Animal as AnimalModel
 from models import AnimalBorrow as AnimalBorrowModel
 from models import Reservation as ReservationModel
@@ -82,6 +82,7 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
         print(day_index, time_index)
 
         reservation = db.query(ReservationModel).filter(ReservationModel.id_borrow == borrow.id).first()
+        role = db.query(UserModel).filter(UserModel.id == user_id).first().role
 
         if reservation and role != "caregiver":
             if reservation.id_volunteer == user_id:
