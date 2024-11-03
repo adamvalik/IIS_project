@@ -28,7 +28,7 @@ const router = createRouter({
   routes
 })
 
-const protectedRoutes = ['/profile', '/scheduler', '/listusers'];
+const protectedRoutes = ['/profile', '/scheduler', '/listusers', '/addanimal'];
 const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';
 
