@@ -99,6 +99,13 @@ async def verify_volunteer(volunteer_id: int, db: Session = Depends(get_db)):
     volunteer.verified = True
     db.commit()
 
+@router.get("/users/volunteers/{volunteer_id}/verify")
+async def check_volunteer(volunteer_id: int, db: Session = Depends(get_db)):
+    volunteer = db.query(UserModel).filter(UserModel.id == volunteer_id).first()
+    if volunteer is None:
+        raise HTTPException(status_code=404, detail="Volunteer not found.")
+    return volunteer.verified
+
 @router.put("/users/{user_id}/phone")
 async def update_phone(user_id: int, request: UpdatePhoneRequest, db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
