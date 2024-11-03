@@ -1,12 +1,12 @@
 <template>
-  <div class="container mx-auto px-4 py-6">
+  <div class="container mx-auto px-4 py-6 h-screen">
     <NavigationBar />
 
     <div class="flex justify-between items-center mb-4">
 
       <h2 v-if="isAdmin" class="text-3xl font-bold text-gray-800 py-8">Manage Users</h2>
       <h2 v-else-if="isCaregiver" class="text-3xl font-bold text-gray-800 py-8">Manage Volunteers</h2>
-      <h2 v-else class="text-3xl font-bold text-gray-800 py-8" style="display:none;">Manage Users or Volunteers</h2> 
+      <h2 v-else class="text-3xl font-bold text-gray-800 py-8" style="display:none;">Manage Users or Volunteers</h2>
 
       <button v-if="isAdmin" @click="openCreateUserModal" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
         Add New User
