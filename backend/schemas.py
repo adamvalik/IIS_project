@@ -101,3 +101,9 @@ class Reservation(BaseModel):
     animal_id: int
     date: str
     time: str
+
+class VetRequest(BaseModel):
+    animal_id: int
+    caregiver_id: int
+    request_text: str
+

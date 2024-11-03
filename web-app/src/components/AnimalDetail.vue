@@ -20,11 +20,29 @@
         <div v-if="isAuthenticated" class="flex gap-4">
           <router-link v-if="this.hasSchedulerPermissions" to="/scheduler" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Schedule</router-link>
           <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
+          <button v-if="isCaregiver" @click="showVetRequestModal = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Medical Request</button>
+          <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
         </div>
-        
+
         <div v-else class="flex gap-4 items-center">
           <h1 class="text-lg"><b>You are not logged in. To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</b></h1>
           <router-link class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0" to="/signup">Sign Up</router-link>
+        </div>
+
+        <!-- Vet Request Modal -->
+        <div v-if="showVetRequestModal == true" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
+            <h2 class="text-2xl font-bold mb-4">Request Specification</h2>
+            <textarea v-model="vetRequestText" class="w-full h-40 p-2 border rounded-lg mb-4" placeholder="Enter request details..."></textarea>
+            <div class="flex justify-end">
+              <button @click="sendVetRequest" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Send Request</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Request Sent Notification -->
+        <div v-if="showRequestSent" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+          Request Sent
         </div>
       </div>
     </div>
@@ -43,8 +61,12 @@ export default {
   data() {
     return {
       animal: {},
+      showSchedulerModal: false,
       showUnverifiedVolunteer: false,
       hasSchedulerPermissions: false,
+      showVetRequestModal: false,
+      vetRequestText: '',
+      showRequestSent: false,
     };
   },
   computed: {
@@ -55,6 +77,9 @@ export default {
     },
     isVeterinarian() {
       return this.userRole === 'veterinarian';
+    },
+    isCaregiver() {
+      return this.userRole === 'caregiver';
     },
   },
   async mounted() {
@@ -100,19 +125,6 @@ export default {
         }
       }
     },
-    // async loadVolunteerVetification() {
-    //   if (this.isAuthenticated && this.userRole === 'volunteer') {
-    //     try {
-    //       const response = await axios.get('http://localhost:8000/users/volunteers/${this.$store.getters.userId}');
-    //       if (response.data === 'true') {
-    //         return true;
-    //       }
-    //     } catch (error) {
-    //       console.error("Error fetching user verification:", error);
-    //       return false;
-    //     }
-    //   }
-    // },
     calculateAge(birthYear) {
       const currentYear = new Date().getFullYear();
       return currentYear - birthYear;
@@ -121,6 +133,24 @@ export default {
       const date = new Date(dateString);
       return date.toLocaleDateString();
     },
-  },
+    async sendVetRequest() {
+      try {
+        const response = await axios.post('http://localhost:8000/vetrequest', {
+          animal_id: this.animal.id,
+          caregiver_id: this.user_id,
+          request_text: this.vetRequestText
+        });
+        console.log('Request sent:', response.data);
+        this.showVetRequestModal = false;
+        this.showRequestSent = true;
+        this.vetRequestText = '';
+        setTimeout(() => {
+          this.showRequestSent = false;
+        }, 3000);
+      } catch (error) {
+        console.error('Error sending request:', error);
+      }
+    }
+  }
 };
 </script>
