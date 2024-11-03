@@ -6,13 +6,9 @@
     <router-link to="/scheduler" v-if="checkSchedulerRole" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
       Skibidi Scheduler
     </router-link>
-    <!-- <router-link to="/listusers" v-if="checkListUsersRole" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
-      Skibidi List Users
+    <router-link to="/reservations" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
+      Skibidi Reservations
     </router-link>
-    <router-link to="/addanimal" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
-      Skibidi Add Animal
-    </router-link> -->
-
 
     <div class="mt-10">
       <!-- Shelter Info -->
