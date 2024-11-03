@@ -36,7 +36,7 @@ export default {
         if((Date.now() >= this.sessionExp * 1000)) {
           alert("Your session has expired. Please log in again.");
           this.logout();
-          this.$router.push('');
+          this.$router.push('/');
         }
       }
     }
