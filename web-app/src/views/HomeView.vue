@@ -10,7 +10,6 @@
       Skibidi Reservations
     </router-link>
 
-
     <div class="mt-10">
       <!-- Shelter Info -->
       <section class="mb-10">

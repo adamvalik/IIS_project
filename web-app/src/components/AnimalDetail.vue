@@ -17,14 +17,14 @@
             <p class="text-lg text-gray-600">{{ animal.caregivers_description }}</p>
           </div>
         </div>
-        <div class="flex gap-4">
-          <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0">Volunteer</button>
-          <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0">Please wait for verification</button>
-          <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0">Schedule</button>
-          <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0">Edit</button>
-          <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0">Show Medical Records</button>
-          <button class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0">Create Vet Request</button>
-          <button class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0">Contact</button>
+        <div v-if="isAuthenticated" class="flex gap-4">
+          <router-link v-if="this.hasSchedulerPermissions" to="/scheduler" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Schedule</router-link>
+          <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
+        </div>
+        
+        <div v-else class="flex gap-4 items-center">
+          <h1 class="text-lg"><b>You are not logged in. To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</b></h1>
+          <router-link class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0" to="/signup">Sign Up</router-link>
         </div>
       </div>
     </div>
@@ -34,6 +34,7 @@
 <script>
 import NavigationBar from './NavigationBar.vue';
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -42,11 +43,24 @@ export default {
   data() {
     return {
       animal: {},
+      showUnverifiedVolunteer: false,
+      hasSchedulerPermissions: false,
     };
+  },
+  computed: {
+  ...mapGetters(['isAuthenticated', 'userRole', 'user_id']),
+
+    isLoggedIn() {
+      return this.isAuthenticated;
+    },
+    isVeterinarian() {
+      return this.userRole === 'veterinarian';
+    },
   },
   async mounted() {
     const animalId = this.$route.params.id;
     this.fetchAnimal(animalId);
+    this.loadSchedulerPermissions(this.user_id);
   },
   methods: {
     async fetchAnimal(id) {
@@ -57,6 +71,48 @@ export default {
         console.error("Error fetching recent animals:", error);
       }
     },
+    async loadSchedulerPermissions(userId) {
+
+      if(this.isAuthenticated){
+        this.hasSchedulerPermissions = true;
+
+        if(this.userRole === 'veterinarian'){
+          this.hasSchedulerPermissions = false;
+        }
+        if (this.userRole === 'volunteer') {
+          console.log("User is a volunteer");
+          console.log("User ID: ", userId);
+          try {
+            const response = await axios.get(`http://localhost:8000/users/volunteers/${userId}/verify`);
+            if (response.data === true) {
+              console.log("User is verified");
+              this.VolunteerVetification = true;
+            } else {
+              console.log("User is not verified");
+              this.showUnverifiedVolunteer = true;
+              this.hasSchedulerPermissions = false;
+            }
+          } catch (error) {
+            console.error("Error fetching user permissions:", error);
+            this.hasSchedulerPermissions = false;
+            this.VolunteerVetification = false;
+          }
+        }
+      }
+    },
+    // async loadVolunteerVetification() {
+    //   if (this.isAuthenticated && this.userRole === 'volunteer') {
+    //     try {
+    //       const response = await axios.get('http://localhost:8000/users/volunteers/${this.$store.getters.userId}');
+    //       if (response.data === 'true') {
+    //         return true;
+    //       }
+    //     } catch (error) {
+    //       console.error("Error fetching user verification:", error);
+    //       return false;
+    //     }
+    //   }
+    // },
     calculateAge(birthYear) {
       const currentYear = new Date().getFullYear();
       return currentYear - birthYear;

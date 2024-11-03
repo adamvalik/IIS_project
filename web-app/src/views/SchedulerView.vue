@@ -1,10 +1,10 @@
 <template>
 
-  <div class="schedule-container h-screen relative" @click="showPopup=false">
+  <div class="container mx-auto px-4 py-6 h-screen relative" @click="showPopup=false">
 
     <NavigationBar />
 
-    <div class="py-10">
+    <div class="py-10 px-20">
 
       <div class="text-center font-bold mb-4">
         Selected Animal: {{ selectedAnimal ? selectedAnimal.name : 'Bella' }}
@@ -30,21 +30,24 @@
         </div>
       </div>
 
-      <button class="mt-4 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
+      <button v-if="getRole !== 'caregiver'" class="mt-4 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
         Confirm Reservation
       </button>
 
       <button v-if="getRole === 'caregiver'" class="mt-4 p-2 bg-green-500 text-white rounded" @click="createNewSlot">
-        Create New Slot
+        Create New Slots
       </button>
 
       <!-- Pop-up Window -->
       <div v-if="showPopup.visible" class="popup absolute bg-white border p-4 rounded shadow-lg" style="top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 50;" @click.stop>
-        <p class="font-bold">Waiting for approval</p>
-        <p>Name: Satek</p>
+        <p class="font-bold">{{ approvalText }}</p>
+        <p>Name: {{ userReserve }}</p>
         <p>Time: {{ showPopup.time }}</p>
         <p>Date: {{ showPopup.date }}</p>
-        <button @click="cancelReservation" class="mt-2 px-3 py-1 bg-red-500 text-white rounded">Cancel Reservation</button>
+        <div class="flex justify-evenly">
+          <button @click="cancelReservation" class="mt-2 px-3 py-1 bg-red-500 text-white rounded">Cancel Reservation</button>
+          <button v-if="getRole === 'caregiver'" @click="approveReservation" class="mt-2 px-3 py-1 bg-yellow-500 text-white rounded">Approve Reservation</button>
+        </div>
         <p class="text-sm text-gray-600 mt-2">If you are canceling less than 24 hours before the appointment, please call us at +69696969</p>
       </div>
 
@@ -65,10 +68,23 @@ export default {
     },
     getRole() {
       return this.userRole;
+    },
+    approvalText() {
+      return this.isApproved ? 'Approved Reservation' : 'Waiting for approval';
+    },
+    userReserve() {
+      return this.userReservation;
     }
   },
   components: {
     NavigationBar
+  },
+  watch: {
+    'showPopup.visible'(newVal) {
+      if (newVal) {
+        this.checkApprovalStatus();
+      }
+    }
   },
   name: 'SchedulerView',
   data() {
@@ -82,7 +98,9 @@ export default {
       selected: [],
       new_slots: [],
       hoveredSlot: {day: null, time: null}, // Initialize hoveredSlot with default values
-      showPopup: { visible: false, day: '', time: '', date: '' } // Control the visibility of the popup and store day, time, date
+      showPopup: { visible: false, day: '', time: '', date: '' }, // Control the visibility of the popup and store day, time, date
+      isApproved: false,
+      userReservation: ''
     };
   },
   created() {
@@ -94,22 +112,23 @@ export default {
   methods: {
     getWeekDetails(date) {
       const currentDate = new Date(date);
-      const dayOfWeek = currentDate.getDay(); // Get the current day of the week (0-6)
+      let dayOfWeek = currentDate.getDay();
+      if (dayOfWeek === 0) dayOfWeek = 7; // Convert Sunday from 0 to 7 to handle week start correctly
       const startOfWeek = new Date(currentDate);
-      startOfWeek.setDate(currentDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); // Adjust to Monday (start of the week)
+      startOfWeek.setDate(currentDate.getDate() - dayOfWeek + 1); // Set to Monday of the current week
 
       const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6); // Calculate the end of the week
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
 
       // Extract month and year
-      const startMonth = startOfWeek.getMonth() + 1; // Months are zero-based
-      const endMonth = endOfWeek.getMonth() + 1; // Months are zero-based
+      const startMonth = startOfWeek.getMonth() + 1;
+      const endMonth = endOfWeek.getMonth() + 1;
       const startDay = startOfWeek.getDate();
       const endDay = endOfWeek.getDate();
       const year = currentDate.getFullYear();
 
       return {
-        week: Math.ceil((currentDate - new Date(currentDate.getFullYear(), 0, 1)) / 604800000) + 1, // Calculate ISO week number
+        week: Math.ceil((currentDate - new Date(currentDate.getFullYear(), 0, 1)) / 604800000),
         startMonth: startMonth,
         endMonth: endMonth,
         startDay: startDay,
@@ -118,10 +137,16 @@ export default {
       };
     },
     fetchSchedule() {
-      const startOfWeek = new Date(this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay() + 1));
+
+      const currentDate = new Date(this.currentDate);
+      const dayOfWeek = currentDate.getDay();
+      const startOfWeek = new Date(currentDate.setDate(currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)));
+      console.log('Start of the week:', startOfWeek);
       const startDate = startOfWeek.toISOString().split('T')[0];
       const animal_id = 1;
       const user_id = this.getID;
+
+      console.log('Fetching schedule for user:', user_id, 'and animal:', animal_id, 'on date:', startDate);
 
       axios.post('http://localhost:8000/schedule', {
         user_id: user_id,
@@ -167,7 +192,10 @@ export default {
       if (slotStatus === 'green' || slotStatus === 'orange') {
         const dayIndex = this.days.indexOf(day);
         const startOfWeek = new Date(this.currentDate);
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
+        let dayOfWeek = startOfWeek.getDay();
+        if (dayOfWeek === 0) dayOfWeek = 7; // Adjust for Sunday being 0
+        startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek + 1);
+
         const selectedDate = new Date(startOfWeek);
         selectedDate.setDate(startOfWeek.getDate() + dayIndex);
         const formattedDate = selectedDate.toISOString().split('T')[0];
@@ -200,7 +228,10 @@ export default {
     },
     createNewSlot() {
       const startOfWeek = new Date(this.currentDate);
-      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
+      let dayOfWeek = startOfWeek.getDay();
+      if (dayOfWeek === 0) dayOfWeek = 7; // Adjust for Sunday being 0
+      startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek + 1);
+
       const newSlots = this.new_slots.map(slot => {
         const dayIndex = this.days.indexOf(slot.day);
         const selectedDate = new Date(startOfWeek);
@@ -228,7 +259,10 @@ export default {
     },
     confirmSelection() {
       const startOfWeek = new Date(this.currentDate);
-      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
+      let dayOfWeek = startOfWeek.getDay();
+      if (dayOfWeek === 0) dayOfWeek = 7; // Adjust for Sunday being 0
+      startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek + 1);
+
       const selectedSlots = this.selected.map(slot => {
         const dayIndex = this.days.indexOf(slot.day);
         const selectedDate = new Date(startOfWeek);
@@ -272,14 +306,22 @@ export default {
       const timeIndex = this.times.indexOf(time);
 
       if (dayIndex >= 0 && timeIndex >= 0) {
-        this.schedule[dayIndex][timeIndex] = 'blue';
-        this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
         this.showPopup.visible = false;
+        const reservationDate = new Date(date);
+        const currentDate = new Date();
+
+        // Check if the reservation date is in the past
+        if (reservationDate < currentDate) {
+          alert('Cannot cancel reservations for past dates.');
+          return;
+        }
 
         const animalId = 1;
         const userId = this.getID;
         axios.delete(`http://localhost:8000/cancel/${userId}/${animalId}/${date}/${time}`)
             .then(response => {
+              this.schedule[dayIndex][timeIndex] = 'blue';
+              this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
               console.log('Reservation canceled:', response.data);
             })
             .catch(error => {
@@ -292,7 +334,10 @@ export default {
       const timeIndex = this.times.indexOf(time);
 
       const startOfWeek = new Date(this.currentDate);
-      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
+      let dayOfWeek = startOfWeek.getDay();
+      if (dayOfWeek === 0) dayOfWeek = 7; // Adjust for Sunday being 0
+      startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek + 1);
+
       const selectedDate = new Date(startOfWeek);
       selectedDate.setDate(startOfWeek.getDate() + dayIndex);
       const formattedDate = selectedDate.toISOString().split('T')[0];
@@ -310,6 +355,41 @@ export default {
             console.error('Error deleting slot:', error);
           });
       }
+    },
+    approveReservation(){
+      const { day, time, date } = this.showPopup;
+      const dayIndex = this.days.indexOf(day);
+      const timeIndex = this.times.indexOf(time);
+
+      if (dayIndex >= 0 && timeIndex >= 0) {
+        this.schedule[dayIndex][timeIndex] = 'green';
+        this.showPopup.visible = false;
+
+        const animalId = 1;
+        axios.post('http://localhost:8000/approve/',
+            {
+              animal_id: animalId,
+              date: date,
+              time: time
+            })
+            .then(response => {
+              console.log('Reservation approved:', response.data);
+            })
+            .catch(error => {
+              console.error('Error approving reservation:', error);
+            });
+      }
+    },
+    async checkApprovalStatus() {
+    // Implement your method to check approval status from the database
+    // For example:
+    console.log('Checking approval status...');
+    const animal_id = 1;
+    const response = await axios.get(`http://localhost:8000/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
+    this.isApproved = response.data.isApproved;
+    this.userReservation = response.data.username;
+    console.log('Approval status:', this.isApproved);
+    console.log('User:', this.userReservation);
     },
     showInfo(day, time) {
       this.hoveredSlot = {day, time};
