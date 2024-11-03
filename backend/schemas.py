@@ -96,3 +96,8 @@ class UADSlot(BaseModel):
     user_id: int
     animal_id: int
     date: str
+
+class Reservation(BaseModel):
+    approved: bool
+    borrow: object
+    volunteer: object

@@ -1,4 +1,3 @@
-# main.py
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from typing import List
