@@ -8,6 +8,7 @@ from db import Base, engine
 from routers import scheduler
 from routers import login
 from routers import animals
+from routers import users
 from routers import profile
 
 # URL = "http://localhost:8000"
@@ -43,7 +44,7 @@ app.add_middleware(
 app.include_router(login.router)
 app.include_router(animals.router)
 app.include_router(scheduler.router)
-app.include_router(profile.router)
+app.include_router(users.router)
 
 # create tables in the database
 Base.metadata.create_all(bind=engine)

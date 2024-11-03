@@ -17,6 +17,7 @@ def load_image_as_binary(image_name):
 
 def create_example_users():
     users = [
+        User(email="admin@admin.com", password=login.hash_password("admin"), name="Admin", surname="Admin", phone_num="0000000000", role="admin"),
         User(email="caregiver@example.com", password=login.hash_password("password"), name="Bob", surname="Caregiver", phone_num="1234567890", role="caregiver"),
         User(email="vet@example.com", password=login.hash_password("password12"), name="Dr. Alice", surname="Veterinarian", phone_num="0987654321", role="veterinarian"),
         User(email="volunteer@example.com", password=login.hash_password("password123"), name="Charlie", surname="Volunteer", phone_num="1122334455", role="volunteer", verified=True)
@@ -114,11 +115,23 @@ def create_example_medical_records(user_ids, animal_ids):
 def create_example_animal_borrows(animal_ids):
     borrows = [
         AnimalBorrow(
-            date=date(2022, 8, 15), time=time(10, 0), borrowed=True, returned=False,
+            date=date(2024, 11, 3), time=time(10, 0), borrowed=True, returned=False,
             id_animal=animal_ids.get("Bella")
         ),
         AnimalBorrow(
-            date=date(2022, 8, 16), time=time(14, 30), borrowed=True, returned=True,
+            date=date(2024, 11, 2), time=time(10, 0), borrowed=False, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2024, 11, 2), time=time(11, 0), borrowed=False, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2024, 11, 2), time=time(12, 0), borrowed=False, returned=False,
+            id_animal=animal_ids.get("Bella")
+        ),
+        AnimalBorrow(
+            date=date(2022, 8, 16), time=time(14, 30), borrowed=False, returned=False,
             id_animal=animal_ids.get("Mittens")
         )
     ]
@@ -129,8 +142,8 @@ def create_example_animal_borrows(animal_ids):
         db.commit()
         print("Example animal borrows added to the database.")
 
-        # Return mapping of animal names to borrow IDs
-        return {borrow.id_animal: borrow.id for borrow in db.query(AnimalBorrow).all()}
+        # Return mapping of borrow IDs to animal names
+        return {borrow.id: borrow.id_animal for borrow in db.query(AnimalBorrow).all()}
     except Exception as e:
         db.rollback()
         print(f"Error adding example animal borrows: {e}")
@@ -141,10 +154,10 @@ def create_example_reservations(user_ids, borrow_ids):
     volunteer_id = user_ids.get("volunteer")
     reservations = [
         Reservation(
-            approved=True, id_borrow=borrow_ids.get(13), id_volunteer=volunteer_id  # For "Bella"
+            approved=True, id_borrow=borrow_ids.get(1), id_volunteer=volunteer_id  # For "Bella"
         ),
         Reservation(
-            approved=False, id_borrow=borrow_ids.get(14), id_volunteer=volunteer_id  # For "Mittens"
+            approved=False, id_borrow=borrow_ids.get(2), id_volunteer=volunteer_id  # For "Mittens"
         )
     ]
 
@@ -159,10 +172,11 @@ def create_example_reservations(user_ids, borrow_ids):
     finally:
         db.close()
 
+
 if __name__ == "__main__":
     user_ids = create_example_users()
     animal_ids = create_example_animals(user_ids)
-    create_example_examination_requests(user_ids, animal_ids)
-    create_example_medical_records(user_ids, animal_ids)
-    borrow_ids = create_example_animal_borrows(animal_ids)
-    create_example_reservations(user_ids, borrow_ids)
+    # create_example_examination_requests(user_ids, animal_ids)
+    # create_example_medical_records(user_ids, animal_ids)
+    # borrow_ids = create_example_animal_borrows(animal_ids)
+    # create_example_reservations(user_ids, borrow_ids)

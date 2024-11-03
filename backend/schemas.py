@@ -4,17 +4,24 @@ from datetime import date, time
 
 # schemas for shared fields between create and update schemas
 # examples:
+
 class User(BaseModel):
+    id: Optional[int]
     name: str
     surname: str
     email: str
-    password: str
+    password: Optional[str]
     telephone: Optional[str] = None
+    role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
+    verified: Optional[bool] = False
 
-    
+    class Config:
+        orm_mode = True
+
 class LoginRequest(BaseModel):
     email: str
     password: str
+
 
 class LoginResponse(BaseModel):
     message: str
@@ -22,6 +29,9 @@ class LoginResponse(BaseModel):
 
 class SignUpResponse(BaseModel):
     message: str
+
+class UpdatePhoneRequest(BaseModel):
+    phone: str
 
 class Animal(BaseModel):
     id: int
@@ -103,3 +113,13 @@ class Reservation(ReservationBase):
 
     class Config:
         orm_mode = True
+
+class Slot(BaseModel):
+    day: str
+    time: str
+    date: str
+
+class ConfirmSelectionRequest(BaseModel):
+    user_id: int
+    animal_id: int
+    slots: List[Slot]

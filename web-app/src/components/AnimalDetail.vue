@@ -13,7 +13,7 @@
           <p class="text-lg text-gray-600 mb-2">Age: {{ calculateAge(animal.birth_year) }} years</p>
           <p class="text-lg text-gray-600 mb-2">Size: {{ animal.size }}</p>
           <p class="text-lg text-gray-600 mb-2">Admission Date: {{ formatDate(animal.admission_date) }}</p>
-          <p class="text-lg text-gray-600">{{ animal.description }}</p>
+          <p class="text-lg text-gray-600">{{ animal.caregivers_description }}</p>
 
         </div>
       </div>
