@@ -207,6 +207,7 @@ export default {
         caregivers_description: null,
         admission_date: this.getTodayDate(),
         photo: null,
+        selectedFileName: null,
       };
     },
   },
