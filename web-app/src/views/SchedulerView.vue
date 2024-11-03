@@ -157,7 +157,8 @@ export default {
       hoveredSlot: {day: null, time: null}, // Initialize hoveredSlot with default values
       showPopup: { visible: false, day: '', time: '', date: '', user_id: '' }, // Control the visibility of the popup and store day, time, date
       isApproved: false,
-      userReservation: ''
+      userReservation: '',
+      animal_id: ''
     };
   },
   created() {
@@ -165,6 +166,9 @@ export default {
     console.log('User Role:', this.getRole);
     this.currentWeek = this.getWeekDetails(this.currentDate);
     this.fetchSchedule(); // Fetch the schedule when component is created
+    this.animal_id = this.$route.params.id;
+    console.log('Animal ID:', this.animal_id);
+    this.fetchName(this.animal_id);
   },
   methods: {
     getWeekDetails(date) {
@@ -192,6 +196,15 @@ export default {
         endDay: endDay,
         year: year
       };
+    },
+    fetchName(id) {
+      axios.get(`http://localhost:8000/animals/animal_name/${id}`)
+        .then(response => {
+          this.selectedAnimal.name = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching animal:', error);
+        });
     },
     fetchSchedule() {
 
