@@ -30,18 +30,75 @@
         </div>
       </div>
 
-      <button v-if="getRole !== 'caregiver'" class="mt-4 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
+      <!-- Legend -->
+      <div class="mt-7 mb-4">
+        <div v-if="getRole === 'volunteer'" class="flex justify-around">
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-green-400 mr-2"></div>
+            <span>Approved</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-red-400 mr-2"></div>
+            <span>Reserved</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-blue-400 mr-2"></div>
+            <span>Available</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-orange-400 mr-2"></div>
+            <span>Pending</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-yellow-400 mr-2"></div>
+            <span>Selected</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-gray-200 mr-2"></div>
+            <span>Unavailable</span>
+          </div>
+        </div>
+        <div v-else class="flex justify-around">
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-green-400 mr-2"></div>
+            <span>Approved</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-blue-400 mr-2"></div>
+            <span>Available</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-orange-400 mr-2"></div>
+            <span>Pending</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-pink-400 mr-2"></div>
+            <span>New Slot</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-gray-200 mr-2"></div>
+            <span>Unavailable</span>
+          </div>
+        </div>
+      </div>
+
+      <button v-if="getRole !== 'caregiver'" class="mt-5 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
         Confirm Reservation
       </button>
 
-      <button v-if="getRole === 'caregiver'" class="mt-4 p-2 bg-green-500 text-white rounded" @click="createNewSlot">
+      <button v-if="getRole === 'caregiver'" class="mt-5 p-2 bg-green-500 text-white rounded" @click="createNewSlot">
         Create New Slots
       </button>
 
       <!-- Pop-up Window -->
       <div v-if="showPopup.visible" class="popup absolute bg-white border p-4 rounded shadow-lg" style="top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 50;" @click.stop>
         <p class="font-bold">{{ approvalText }}</p>
-        <p>Name: {{ userReserve }}</p>
+        <p>
+          Name:
+          <router-link :to="`/user/${showPopup.user_id}`" class="text-blue-500 underline">
+            {{ userReserve }}
+          </router-link>
+        </p>
         <p>Time: {{ showPopup.time }}</p>
         <p>Date: {{ showPopup.date }}</p>
         <div class="flex justify-evenly">
@@ -98,7 +155,7 @@ export default {
       selected: [],
       new_slots: [],
       hoveredSlot: {day: null, time: null}, // Initialize hoveredSlot with default values
-      showPopup: { visible: false, day: '', time: '', date: '' }, // Control the visibility of the popup and store day, time, date
+      showPopup: { visible: false, day: '', time: '', date: '', user_id: '' }, // Control the visibility of the popup and store day, time, date
       isApproved: false,
       userReservation: ''
     };
@@ -391,6 +448,7 @@ export default {
     const response = await axios.get(`http://localhost:8000/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
     this.isApproved = response.data.isApproved;
     this.userReservation = response.data.username;
+    this.showPopup.user_id = response.data.user_id;
     console.log('Approval status:', this.isApproved);
     console.log('User:', this.userReservation);
     },

@@ -141,3 +141,5 @@ class VetRequest(BaseModel):
     caregiver_id: int
     request_text: str
 
+class UserDetails(BaseModel):
+    id: int
