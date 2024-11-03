@@ -101,3 +101,17 @@ class Reservation(BaseModel):
     animal_id: int
     date: str
     time: str
+
+class ReservationShow(BaseModel):
+    approved: bool
+    borrow: object
+    volunteer: object
+
+    class Config:
+        orm_mode = True
+
+class VetRequest(BaseModel):
+    animal_id: int
+    caregiver_id: int
+    request_text: str
+

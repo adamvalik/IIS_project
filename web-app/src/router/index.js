@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '../auth';
+import axios from 'axios';
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import SignUpView from '@/views/SignUpView.vue';
@@ -8,8 +10,7 @@ import SchedulerView from '@/views/SchedulerView.vue'; // Import the Scheduler c
 import ProfileDetail from "@/components/ProfileDetail.vue";
 import ListUsersView from '@/views/ListUsersView.vue'
 import AddAnimalView from '@/views/AddAnimalView.vue';
-import store from '../auth';
-import axios from 'axios';
+import ReservationsView from '@/views/ReservationsView.vue';
 
 const routes = [
   { path: '/', component: HomeView },
@@ -20,7 +21,8 @@ const routes = [
   { path: '/scheduler', component: SchedulerView }, // Define the route for Scheduler
   { path: '/profile', component: ProfileDetail },
   { path: '/listusers', component: ListUsersView},
-  { path: '/addanimal', component: AddAnimalView }
+  { path: '/addanimal', component: AddAnimalView },
+  { path: '/reservations', component: ReservationsView }
 ]
 
 const router = createRouter({
