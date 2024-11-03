@@ -39,6 +39,10 @@ class SignUpResponse(BaseModel):
 class UpdatePhoneRequest(BaseModel):
     phone: str
 
+class PasswordChangeRequest(BaseModel):
+    oldPassword: str
+    newPassword: str
+
 class Animal(BaseModel):
     id: int
     name: str

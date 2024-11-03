@@ -31,6 +31,11 @@ const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';
 
 router.beforeEach(async (to, from, next) => {
+  console.log('token:', store.getters.tokenExp);
+  console.log('role:', store.getters.userRole);
+  console.log('id:', store.getters.user_id);
+  console.log('auth:', store.getters.isAuthenticated);
+
   if (protectedRoutes.includes(to.path)) {
     const token = store.state.accessToken; // Get the token from Vuex store
     // const fakeToken = 'fake';

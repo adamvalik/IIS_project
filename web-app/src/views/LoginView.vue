@@ -1,8 +1,8 @@
 <template>
   <div class="container mx-auto px-4 py-10 max-w-lg h-screen flex flex-col justify-center">
     <!-- Shelter Name -->
-    <h1 class="text-4xl font-bold text-gray-800 text-center mb-10">DJ Khaled's Animal Shelter</h1>
-    
+    <router-link to="/" class="text-4xl font-bold text-gray-800 text-center mb-10">DJ Khaled's Animal Shelter</router-link>
+
     <!-- Login Form -->
     <div class="bg-white shadow-lg rounded-lg p-8">
       <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Login</h2>
@@ -38,10 +38,10 @@
             class="absolute inset-y-0 right-3 top-7 flex items-center text-gray-500 text-xl"
           >
             <span v-if="passwordFieldType === 'password'">
-              👀 
+              👀
             </span>
             <span v-else>
-              🤫 
+              🤫
             </span>
           </button>
         </div>
@@ -58,7 +58,7 @@
       <!-- Sign Up Redirect -->
       <div class="mt-6 text-center">
         <p class="text-gray-700">
-          Don’t have an account? 
+          Don’t have an account?
           <router-link to="/signup" class="text-blue-500 hover:underline">Sign Up</router-link>
         </p>
       </div>

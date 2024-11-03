@@ -15,11 +15,13 @@ export default createStore({
       const decoded = jwtDecode(token);
       state.userRole = decoded.role;
       state.expiration = decoded.exp;
+      state.user_id = decoded.user_id;
     },
     clearToken(state) {
       state.accessToken = '';
       state.userRole = null;
       state.expiration = null;
+      state.user_id = null;
       localStorage.removeItem('access_token');
     }
   },
