@@ -14,7 +14,7 @@ from db import get_db
 
 SECRET_KEY = "rogalo"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 10
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -22,7 +22,7 @@ router = APIRouter()
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=50)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -73,6 +73,7 @@ def verify_user(token: str = Depends(oauth2_scheme)) -> bool:
 @router.post("/login", response_model=LoginResponse)
 async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
 
+    userFound = None
     if(db.query(UserModel).filter(UserModel.email == login_request.email).first() is not None):
         userFound = db.query(UserModel).filter(UserModel.email == login_request.email).first()
 
@@ -85,7 +86,8 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     token_data = {
         "sub": userFound.email,
         "role": userFound.role,
-        "user_id": userFound.id
+        "user_id": userFound.id,
+        "tokenExp": ACCESS_TOKEN_EXPIRE_MINUTES,
     }
 
     access_token = create_access_token(data=token_data)

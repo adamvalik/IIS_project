@@ -44,7 +44,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'userRole', 'tokenExp']),
+    ...mapGetters(['isAuthenticated', 'userRole']),
 
     isLoggedIn() {
       return this.isAuthenticated;
@@ -70,13 +70,6 @@ export default {
       return [];
     }
   },
-  mounted() {
-    this.checkExpiredToken();
-
-    this.tokenInterval = setInterval(() => {
-      this.checkExpiredToken();
-    }, 120000);
-  },
   methods: {
     toggleActions() {
       this.showActions = !this.showActions;
@@ -85,17 +78,6 @@ export default {
       // Dispatch the logout action from Vuex
       this.$store.dispatch('logout');
       this.$router.push('/');
-    },
-    checkExpiredToken() {
-
-      console.log("Checking token expiration...");
-      console.log(Date.now());
-      console.log(this.$store.state.expiration * 1000);
-
-      if((Date.now() >= this.tokenExp * 1000) && this.isLoggedIn) {
-        alert("Your session has expired. Please log in again.");
-        this.handleLogout();
-      }
     },
     async clickProfile() {
       this.$router.push('/profile');
