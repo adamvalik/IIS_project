@@ -73,7 +73,7 @@
           Approve
         </button>
         <button
-          @click="deleteReservation"
+          @click="denyReservation"
           class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
         >
           Deny
@@ -135,7 +135,14 @@ export default {
       this.$emit('approveReservation', this.reservation.id);
     },
     deleteReservation() {
-      this.$emit('deleteReservation', this.reservation.id);
+      if (confirm('Are you sure you want to delete this reservation?')) {
+        this.$emit('deleteReservation', this.reservation.id);
+      }
+    },
+    denyReservation() {
+      if (confirm('Are you sure you want to deny this reservation?')) {
+        this.$emit('deleteReservation', this.reservation.id);
+      }
     },
   },
 };
