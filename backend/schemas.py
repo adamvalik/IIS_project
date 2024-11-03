@@ -1,27 +1,33 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import date, time
 
-# schemas for shared fields between create and update schemas
-# examples:
-
-class User(BaseModel):
-    id: Optional[int]
+class UserBase(BaseModel):
     name: str
     surname: str
     email: str
-    password: Optional[str]
-    telephone: Optional[str] = None
-    role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
-    verified: Optional[bool] = False
 
-    class Config:
-        orm_mode = True
+class UserSignUp(UserBase):
+    password: str
+    phone: Optional[str] = None
+
+class User(UserBase):
+    id: int
+    role: str
+    phone: Optional[str] = None
+    verified: Optional[bool] = None
+
+class UserCreate(UserBase):
+    role: str
+    password: str
+
+class UserUpdate(UserBase):
+    role: str
+    password: Optional[str] = None
 
 class LoginRequest(BaseModel):
     email: str
     password: str
-
 
 class LoginResponse(BaseModel):
     message: str
@@ -32,6 +38,10 @@ class SignUpResponse(BaseModel):
 
 class UpdatePhoneRequest(BaseModel):
     phone: str
+
+class PasswordChangeRequest(BaseModel):
+    oldPassword: str
+    newPassword: str
 
 class Animal(BaseModel):
     id: int
@@ -48,72 +58,6 @@ class Animal(BaseModel):
     class Config:
         orm_mode = True
 
-class ExaminationRequestBase(BaseModel):
-    caregivers_description: Optional[str] = None
-
-class ExaminationRequestCreate(ExaminationRequestBase):
-    id_animal: int
-    id_caregiver: int
-
-class ExaminationRequest(ExaminationRequestBase):
-    id: int
-    id_animal: int
-    id_caregiver: int
-    id_veterinarian: Optional[int] = None
-
-    class Config:
-        orm_mode = True
-
-class MedicalRecordBase(BaseModel):
-    date: Optional[date] = None
-    weight: Optional[float] = None
-    vaccination: Optional[bool] = None
-    vaccination_type: Optional[str] = None
-    vet_description: Optional[str] = None
-
-class MedicalRecordCreate(MedicalRecordBase):
-    id_animal: int
-    id_veterinarian: int
-
-class MedicalRecord(MedicalRecordBase):
-    id: int
-    id_animal: int
-    id_veterinarian: int
-
-    class Config:
-        orm_mode = True
-
-class AnimalBorrowBase(BaseModel):
-    date: date
-    time: time
-    borrowed: Optional[bool] = None
-    returned: Optional[bool] = None
-
-class AnimalBorrowCreate(AnimalBorrowBase):
-    id_animal: int
-
-class AnimalBorrow(AnimalBorrowBase):
-    id: int
-    id_animal: int
-
-    class Config:
-        orm_mode = True
-
-class ReservationBase(BaseModel):
-    approved: Optional[bool] = None
-
-class ReservationCreate(ReservationBase):
-    id_borrow: int
-    id_volunteer: int
-
-class Reservation(ReservationBase):
-    id: int
-    id_borrow: int
-    id_volunteer: int
-
-    class Config:
-        orm_mode = True
-
 class Slot(BaseModel):
     day: str
     time: str
@@ -123,3 +67,12 @@ class ConfirmSelectionRequest(BaseModel):
     user_id: int
     animal_id: int
     slots: List[Slot]
+
+class CSlot(BaseModel):
+    animal_id: int
+    new_slots: List[Slot]
+
+class UADSlot(BaseModel):
+    user_id: int
+    animal_id: int
+    date: str

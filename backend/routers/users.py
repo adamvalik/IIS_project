@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 from typing import List
 from db import get_db
 from models import User as UserModel
-from schemas import User as UserSchema
+from schemas import User as UserSchema, UserCreate as UserCreateSchema, UserUpdate as UserUpdateSchema, PasswordChangeRequest
 from schemas import UpdatePhoneRequest
 from routers.login import hash_password
-from routers.login import verify_user
+from routers.login import verify_user, verify_password
 
 router = APIRouter()
 
@@ -31,9 +31,8 @@ async def get_volunteers(db: Session = Depends(get_db)):
     volunteers = db.query(UserModel).filter(UserModel.role == "volunteer").all()
     return volunteers
 
-
 @router.post("/users")
-async def create_user(user: UserSchema, db: Session = Depends(get_db)):
+async def create_user(user: UserCreateSchema, db: Session = Depends(get_db)):
 
     if(db.query(UserModel).filter(UserModel.email == user.email).first() is not None):
         raise HTTPException(status_code=400, detail="User already exists.")
@@ -51,13 +50,15 @@ async def create_user(user: UserSchema, db: Session = Depends(get_db)):
 
 @router.get("/users/{user_id}", response_model=UserSchema)
 async def get_user(user_id: int, db: Session = Depends(get_db)):
+    print(user_id)
+
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found.")
     return user
 
 @router.put("/users/{user_id}")
-async def update_user(user_id: int, user: UserSchema, db: Session = Depends(get_db)):
+async def update_user(user_id: int, user: UserUpdateSchema, db: Session = Depends(get_db)):
     user_to_update = db.query(UserModel).filter(UserModel.id == user_id).first()
     if user_to_update is None:
         raise HTTPException(status_code=404, detail="User not found.")
@@ -91,12 +92,15 @@ async def update_phone(user_id: int, request: UpdatePhoneRequest, db: Session = 
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found.")
-    user.phone_num = request.phone
+    user.phone = request.phone
     db.commit()
 
-@router.get("/users/{user_id}/phone")
-async def get_phone(user_id: int, db: Session = Depends(get_db)):
+@router.put("/users/{user_id}/password")
+async def change_password(user_id: int, request: PasswordChangeRequest, db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found.")
-    return {"phone": user.phone_num}
+    if not verify_password(request.oldPassword, user.password):
+        raise HTTPException(status_code=401, detail="Invalid password")
+    user.password = hash_password(request.newPassword)
+    db.commit()

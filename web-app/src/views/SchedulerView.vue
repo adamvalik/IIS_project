@@ -34,6 +34,10 @@
         Confirm Reservation
       </button>
 
+      <button v-if="getRole === 'caregiver'" class="mt-4 p-2 bg-green-500 text-white rounded" @click="createNewSlot">
+        Create New Slot
+      </button>
+
       <!-- Pop-up Window -->
       <div v-if="showPopup.visible" class="popup absolute bg-white border p-4 rounded shadow-lg" style="top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 50;" @click.stop>
         <p class="font-bold">Waiting for approval</p>
@@ -51,8 +55,18 @@
 <script>
 import NavigationBar from '@/components/NavigationBar.vue';
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 
 export default {
+  computed: {
+    ...mapGetters(['isAuthenticated', 'userRole', 'tokenExp', 'user_id']),
+    getID() {
+      return this.user_id;
+    },
+    getRole() {
+      return this.userRole;
+    }
+  },
   components: {
     NavigationBar
   },
@@ -66,26 +80,26 @@ export default {
       times: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'],
       schedule: [],
       selected: [],
+      new_slots: [],
       hoveredSlot: {day: null, time: null}, // Initialize hoveredSlot with default values
       showPopup: { visible: false, day: '', time: '', date: '' } // Control the visibility of the popup and store day, time, date
     };
   },
   created() {
+    console.log('User ID:', this.getID);
+    console.log('User Role:', this.getRole);
     this.currentWeek = this.getWeekDetails(this.currentDate);
     this.fetchSchedule(); // Fetch the schedule when component is created
   },
   methods: {
     getWeekDetails(date) {
       const currentDate = new Date(date);
-      const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
-      const pastDaysOfYear = (currentDate - startOfYear) / 86400000;
+      const dayOfWeek = currentDate.getDay(); // Get the current day of the week (0-6)
+      const startOfWeek = new Date(currentDate);
+      startOfWeek.setDate(currentDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); // Adjust to Monday (start of the week)
 
-      // Calculate the ISO week number
-      const weekNumber = Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
-
-      // Calculate start and end dates of the week
-      const startOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1));
-      const endOfWeek = new Date(currentDate.setDate(startOfWeek.getDate() + 6));
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Calculate the end of the week
 
       // Extract month and year
       const startMonth = startOfWeek.getMonth() + 1; // Months are zero-based
@@ -95,7 +109,7 @@ export default {
       const year = currentDate.getFullYear();
 
       return {
-        week: weekNumber,
+        week: Math.ceil((currentDate - new Date(currentDate.getFullYear(), 0, 1)) / 604800000) + 1, // Calculate ISO week number
         startMonth: startMonth,
         endMonth: endMonth,
         startDay: startDay,
@@ -107,20 +121,24 @@ export default {
       const startOfWeek = new Date(this.currentDate.setDate(this.currentDate.getDate() - this.currentDate.getDay() + 1));
       const startDate = startOfWeek.toISOString().split('T')[0];
       const animal_id = 1;
-      const user_id = 1;
+      const user_id = this.getID;
 
-      axios.get(`http://localhost:8000/schedule/${user_id}/${animal_id}/${startDate}`)
-          .then(response => {
-            const scheduleData = response.data.schedule;
-            this.schedule = Array.from({length: 7}, (_, day) =>
-                Array.from({length: 13}, (_, hour) =>
-                    scheduleData[day]?.[hour + 9] || "blue" // Map backend data to array format
-                )
-            );
-          })
-          .catch(error => {
-            console.error('Error fetching schedule:', error);
-          });
+      axios.post('http://localhost:8000/schedule', {
+        user_id: user_id,
+        animal_id: animal_id,
+        date: startDate
+      })
+        .then(response => {
+          const scheduleData = response.data.schedule;
+          this.schedule = Array.from({ length: 7 }, (_, day) =>
+            Array.from({ length: 13 }, (_, hour) =>
+              scheduleData[day]?.[hour + 9] || "blue" // Map backend data to array format
+            )
+          );
+        })
+        .catch(error => {
+          console.error('Error fetching schedule:', error);
+        });
     },
     getSlot(day, time) {
       const dayIndex = this.days.indexOf(day);
@@ -140,6 +158,7 @@ export default {
       if (slot === 'red') return 'bg-red-400';
       if (slot === 'blue') return 'bg-blue-400';
       if (slot === 'orange') return 'bg-orange-400';
+      if (slot === 'pink') return 'bg-pink-400';
       if (slot === 'selected') return 'bg-yellow-400';
       return 'bg-gray-200';
     },
@@ -165,14 +184,47 @@ export default {
 
       if (dayIndex >= 0 && timeIndex >= 0) {
         const slot = this.schedule[dayIndex][timeIndex];
-        if (slot === 'blue') {
+        if (slot === 'blue' && this.getRole !== 'caregiver') {
           this.schedule[dayIndex][timeIndex] = 'selected';
-          this.selected.push({ day, time });
+          this.selected.push({day, time});
         } else if (slot === 'selected') {
-        this.schedule[dayIndex][timeIndex] = 'blue';
-        this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
+          this.schedule[dayIndex][timeIndex] = 'blue';
+          this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
+        } else if (slot === 'blue' && this.getRole === 'caregiver') {
+          this.deleteSlot(day, time);
+        } else if (slot === 'gray' && this.getRole === 'caregiver') {
+          this.new_slots.push({day, time});
+          this.schedule[dayIndex][timeIndex] = 'pink';
         }
       }
+    },
+    createNewSlot() {
+      const startOfWeek = new Date(this.currentDate);
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
+      const newSlots = this.new_slots.map(slot => {
+        const dayIndex = this.days.indexOf(slot.day);
+        const selectedDate = new Date(startOfWeek);
+        selectedDate.setDate(startOfWeek.getDate() + dayIndex);
+        const formattedDate = selectedDate.toISOString().split('T')[0];
+        return { day: slot.day, time: slot.time, date: formattedDate };
+      });
+
+      axios.post('http://localhost:8000/createslot', {
+        animal_id: 1,
+        new_slots: newSlots
+      })
+        .then(response => {
+          console.log('Slot created:', response.data);
+          newSlots.forEach(slot => {
+            const dayIndex = this.days.indexOf(slot.day);
+            const timeIndex = this.times.indexOf(slot.time);
+            this.schedule[dayIndex][timeIndex] = 'blue';
+          });
+          this.new_slots = []; // Clear the new slots
+        })
+        .catch(error => {
+          console.error('Error creating slot:', error);
+        });
     },
     confirmSelection() {
       const startOfWeek = new Date(this.currentDate);
@@ -184,9 +236,9 @@ export default {
         const formattedDate = selectedDate.toISOString().split('T')[0];
         return { day: slot.day, time: slot.time, date: formattedDate };
       });
-
+      const user_id = this.getID;
       axios.post('http://localhost:8000/confirmselection', {
-        user_id: 1,
+        user_id: user_id,
         animal_id: 1,
         slots: selectedSlots
       })
@@ -225,7 +277,7 @@ export default {
         this.showPopup.visible = false;
 
         const animalId = 1;
-        const userId = 1;
+        const userId = this.getID;
         axios.delete(`http://localhost:8000/cancel/${userId}/${animalId}/${date}/${time}`)
             .then(response => {
               console.log('Reservation canceled:', response.data);
@@ -233,6 +285,30 @@ export default {
             .catch(error => {
               console.error('Error canceling reservation:', error);
             });
+      }
+    },
+    deleteSlot(day, time) {
+      const dayIndex = this.days.indexOf(day);
+      const timeIndex = this.times.indexOf(time);
+
+      const startOfWeek = new Date(this.currentDate);
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Set to the start of the week
+      const selectedDate = new Date(startOfWeek);
+      selectedDate.setDate(startOfWeek.getDate() + dayIndex);
+      const formattedDate = selectedDate.toISOString().split('T')[0];
+
+      if (dayIndex >= 0 && timeIndex >= 0) {
+
+        const animalId = 1;
+        axios.delete(`http://localhost:8000/delete/${animalId}/${formattedDate}/${time}`)
+          .then(response => {
+            console.log('Slot Deleted:', response.data);
+            this.new_slots = this.new_slots.filter(s => !(s.day === day && s.time === time));
+            this.schedule[dayIndex][timeIndex] = 'gray';
+          })
+          .catch(error => {
+            console.error('Error deleting slot:', error);
+          });
       }
     },
     showInfo(day, time) {
