@@ -23,7 +23,7 @@ async def reachProfile(user_verified: bool = Depends(verify_user)):
 async def listUsers(user_verified: bool = Depends(verify_user)):
     if user_verified is None:
         raise HTTPException(status_code=401, detail="User not verified")
-    
+
     role = user_verified.get("role")
     if role not in ["admin", "caregiver"]:
         raise HTTPException(status_code=401, detail="User not authorized")

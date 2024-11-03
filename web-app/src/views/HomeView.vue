@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-6">
+  <div class="container mx-auto px-4 py-6 h-screen">
     <!-- NavigationBar -->
     <NavigationBar />
 
@@ -19,7 +19,10 @@
       <section class="mb-10">
         <h2 class="text-3xl font-bold text-gray-800">About Our Shelter</h2>
         <p class="mt-4 text-gray-600">
-          We are dedicated to providing care and love for abandoned animals. Our shelter works hard to find forever homes for pets and provides resources for adoption, volunteering, and donations.
+          Welcome to our Animal Shelter supported by DJ Khaled himself! Our mission is to provide love, care, and a fresh start to animals in need.
+          Our dedicated team includes caregivers and veterinarians who work around the clock to ensure each animal’s health, happiness, and well-being.
+          <br>
+          <strong>Reservations for Walks:</strong> Once verified, visitors can book time to take our animals out for walks!
         </p>
       </section>
 

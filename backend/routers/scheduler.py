@@ -5,10 +5,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import cast, Date
 from db import get_db
 from typing import Dict, List
-from schemas import ConfirmSelectionRequest, Slot, CSlot, UADSlot
+from schemas import ConfirmSelectionRequest, Slot, CSlot, UADSlot, Reservation
 from models import Animal as AnimalModel
 from models import AnimalBorrow as AnimalBorrowModel
 from models import Reservation as ReservationModel
+from models import User as UserModel
 from routers.login import verify_user
 import pytz
 
@@ -34,7 +35,7 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
 
     user_id = uad_slot.user_id
     animal_id = uad_slot.animal_id
-    start_date = utc_now.strftime("%Y-%m-%d")
+    start_date = uad_slot.date
 
     # Get the animal by name from the database
     animal = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
@@ -51,7 +52,6 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
     cast(end_date, Date)
     print(start_date, end_date)
     print(animal_id, animal.name)
-
 
     all_borrows = db.query(AnimalBorrowModel).all()
     print(f"All borrows: {[(borrow.date, borrow.time, borrow.id_animal) for borrow in all_borrows]}")
@@ -82,8 +82,9 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
         print(day_index, time_index)
 
         reservation = db.query(ReservationModel).filter(ReservationModel.id_borrow == borrow.id).first()
+        role = db.query(UserModel).filter(UserModel.id == user_id).first().role
 
-        if reservation:
+        if reservation and role != "caregiver":
             if reservation.id_volunteer == user_id:
                 my_reservation = True
                 if reservation.approved:
@@ -91,6 +92,12 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
                     my_reservation = False
             elif reservation.id_volunteer != user_id:
                 reservation_exists = True
+
+        if reservation and role == "caregiver":
+            if reservation.approved:
+                approved_reservation = True
+            else:
+                my_reservation = True
 
         if day_index >= 0 and time_index >= 0:
             if my_reservation:
@@ -152,15 +159,24 @@ async def cancel_slot(user_id: int, animal_id: int, date: str, time: str, db: Se
     if not borrow:
         raise HTTPException(status_code=404, detail="Slot not found")
 
-    reservation = db.query(ReservationModel).filter(
-        ReservationModel.id_borrow == borrow.id,
-        ReservationModel.id_volunteer == user_id
-    ).first()
+    user_role = db.query(UserModel).filter(UserModel.id == user_id).first().role
+    print(user_role)
 
-    if not reservation:
-        raise HTTPException(status_code=404, detail="Reservation not found")
+    if user_role == "caregiver":
+        if borrow.reservation:
+            db.delete(borrow.reservation)
+        else:
+            raise HTTPException(status_code=404, detail="Reservation not found")
+    else:
+        reservation = db.query(ReservationModel).filter(
+            ReservationModel.id_borrow == borrow.id,
+            ReservationModel.id_volunteer == user_id
+        ).first()
 
-    db.delete(reservation)
+        if not reservation:
+            raise HTTPException(status_code=404, detail="Reservation not found")
+
+        db.delete(reservation)
 
     try:
         db.commit()
@@ -232,3 +248,52 @@ async def delete_slot(animal_id: int, date: str, time: str, db: Session = Depend
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error deleting slot: {e}")
+
+@router.get('/checkApproval/{animal_id}/{date}/{time}', response_model=dict)
+async def check_approval(animal_id: int, date: str, time: str, db: Session = Depends(get_db)):
+
+    borrow = db.query(AnimalBorrowModel).filter(
+        AnimalBorrowModel.id_animal == animal_id,
+        AnimalBorrowModel.date == date,
+        AnimalBorrowModel.time == time
+    ).first()
+
+    if not borrow:
+        raise HTTPException(status_code=404, detail="Slot not found")
+
+    if borrow.reservation:
+
+        username = db.query(UserModel).filter(UserModel.id == borrow.reservation.id_volunteer).first().name + " " + db.query(UserModel).filter(UserModel.id == borrow.reservation.id_volunteer).first().surname
+
+        if borrow.reservation.approved:
+
+            return {'isApproved': True, 'username': username}
+        else:
+            return {'isApproved': False, 'username': username}
+    else:
+        # shouldnt happen really
+        return {'isApproved': False, 'username': 'No one'}
+
+@router.post('/approve', response_model=dict)
+async def approve_slot(reservation: Reservation, db: Session = Depends(get_db)):
+
+    borrow = db.query(AnimalBorrowModel).filter(
+        AnimalBorrowModel.id_animal == reservation.animal_id,
+        AnimalBorrowModel.date == reservation.date,
+        AnimalBorrowModel.time == reservation.time
+    ).first()
+
+    if not borrow:
+        raise HTTPException(status_code=404, detail="Slot not found")
+
+    if borrow.reservation:
+        borrow.reservation.approved = True
+    else:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+
+    try:
+        db.commit()
+        return {"status": "success", "message": "Slot approved"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error approving slot: {e}")

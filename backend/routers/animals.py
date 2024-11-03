@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from models import Animal as AnimalModel
-from schemas import Animal as AnimalSchema
+from schemas import Animal as AnimalSchema, AnimalCreate as AnimalCreateSchema
 from db import get_db
 import base64
 
@@ -61,3 +61,25 @@ async def get_unique_species(db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No species found")
 
     return unique_species
+
+@router.post("/animals")
+async def create_animal(animal: AnimalCreateSchema, db: Session = Depends(get_db)):
+    try:
+        photo_data = base64.b64decode(animal.photo) if animal.photo else None
+    except (ValueError, TypeError):
+        raise HTTPException(status_code=400, detail="Invalid photo format")
+
+    new_animal = AnimalModel(
+        name=animal.name,
+        species=animal.species,
+        breed=animal.breed,
+        birth_year=animal.birth_year,
+        photo=photo_data,
+        admission_date=animal.admission_date,
+        size=animal.size,
+        caregivers_description=animal.caregivers_description,
+        id_caregiver=animal.id_caregiver
+    )
+    db.add(new_animal)
+    db.commit()
+    db.refresh(new_animal)

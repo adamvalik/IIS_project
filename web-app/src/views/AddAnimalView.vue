@@ -1,10 +1,10 @@
 <template>
-  <div class="container mx-auto py-6 px-4 h-screen">
+  <div class="container mx-auto py-6 px-4">
     <NavigationBar />
 
-    <h2 class="text-2xl font-semibold mb-6">Add New Animal</h2>
+    <h2 class="text-2xl font-semibold my-6 text-center">Add New Animal</h2>
 
-    <form @submit.prevent="addAnimal" class="bg-white shadow-md rounded-lg p-6 space-y-4">
+    <form @submit.prevent="addAnimal" class="bg-white shadow-md rounded-lg p-6 space-y-4 max-w-lg mx-auto">
       <div>
         <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
         <input
@@ -45,7 +45,7 @@
           id="birth_year"
           class="w-full p-2 border border-gray-300 rounded-md text-sm"
           min="1900"
-          max="2100"
+          max="2024"
         />
       </div>
 
@@ -72,27 +72,48 @@
       </div>
 
       <div>
-        <label for="photo" class="block text-sm font-medium text-gray-700">Photo:</label>
+        <label for="admission_date" class="block text-sm font-medium text-gray-700">Admission Date:</label>
         <input
-          type="file"
-          @change="handleFileUpload"
-          id="photo"
+          type="date"
+          v-model="formData.admission_date"
+          id="admission_date"
           class="w-full p-2 border border-gray-300 rounded-md text-sm"
         />
       </div>
 
-      <button
+      <div class="w-full">
+        <label for="photo" class="block text-sm font-medium text-gray-700">Photo:</label>
+        <div class="flex items-center gap-4 mt-2">
+          <label
+            for="photo"
+            class="bg-blue-500 text-white text-sm font-bold py-2 px-4 rounded-md cursor-pointer hover:bg-blue-600"
+          >
+            Select File
+          </label>
+          <span v-if="selectedFileName" class="text-gray-600">{{ selectedFileName }}</span>
+          <span v-else class="text-gray-500">No file selected</span>
+        </div>
+        <!-- hidden default file input design -->
+        <input
+          type="file"
+          @change="handleFileUpload"
+          id="photo"
+          class="hidden"
+        />
+      </div>
+
+      <input
         type="submit"
         class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-md"
-      >
-        Add Animal
-      </button>
+        value="Add Animal"
+      />
     </form>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 import NavigationBar from '@/components/NavigationBar.vue';
 
 export default {
@@ -104,55 +125,87 @@ export default {
       formData: {
         name: '',
         species: '',
-        breed: '',
+        breed: null,
         birth_year: null,
-        size: '',
-        caregivers_description: '',
+        size: null,
+        caregivers_description: null,
+        admission_date: this.getTodayDate(),
         photo: null,
       },
+      selectedFileName: null,
     };
   },
+  computed: {
+    ...mapGetters(['user_id']),
+
+    caregiverID() {
+      return this.user_id;
+    }
+  },
   methods: {
-    handleFileUpload(event) {
+    getTodayDate() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+
+    async handleFileUpload(event) {
       const file = event.target.files[0];
-      this.formData.photo = file;
+      // validate file type
+      const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!file || !validFileTypes.includes(file.type)) {
+        alert('Please upload a valid image file (JPEG, PNG, or GIF)');
+        return;
+      }
+      // MEDIUMBLOB limit (16 MB)
+      const maxSize = 16 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert("File size exceeds 16 MB. Please upload a smaller image.");
+        return;
+      }
+
+      this.selectedFileName = file.name;
+
+      // convert file to bytes
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.formData.photo = reader.result.split(',')[1]; // get base64 part
+      };
+      reader.readAsDataURL(file);
     },
     async addAnimal() {
       try {
-        const formData = new FormData();
-        formData.append('name', this.formData.name);
-        formData.append('species', this.formData.species);
-        formData.append('breed', this.formData.breed || '');
-        formData.append('birth_year', this.formData.birth_year);
-        formData.append('size', this.formData.size);
-        formData.append('caregivers_description', this.formData.caregivers_description);
-
-        if (this.formData.photo) {
-          formData.append('photo', this.formData.photo);
-        }
-
-        await axios.post('http://localhost:8000/animals', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        // Clear the form after submission
+        const payload = {
+          name: this.formData.name,
+          species: this.formData.species,
+          admission_date: this.formData.admission_date,
+          id_caregiver: 2, // this.caregiverID,
+          breed: this.formData.breed,
+          birth_year: this.formData.birth_year,
+          size: this.formData.size,
+          caregivers_description: this.formData.caregivers_description,
+          photo: this.formData.photo,
+        };
+        console.log('Adding animal:', payload);
+        await axios.post('http://localhost:8000/animals', payload);
+        alert('Animal added successfully');
         this.resetForm();
-        alert('Animal added successfully!');
       } catch (error) {
+        alert('Failed to add animal: ' + error.message);
         console.error('Error adding animal:', error);
-        alert('Failed to add animal. Please try again.');
       }
     },
     resetForm() {
       this.formData = {
         name: '',
         species: '',
-        breed: '',
+        breed: null,
         birth_year: null,
-        size: '',
-        caregivers_description: '',
+        size: null,
+        caregivers_description: null,
+        admission_date: this.getTodayDate(),
         photo: null,
       };
     },
