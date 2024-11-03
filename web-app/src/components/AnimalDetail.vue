@@ -54,8 +54,7 @@
           </div>
         </div>
         <div v-if="isAuthenticated" class="flex gap-4">
-          <router-link v-if="this.hasSchedulerPermissions && !editMode" to="/scheduler" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Schedule</router-link>
-          <button v-if="this.hasEditPermissions && !editMode" @click="turnEditMode" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
+          <router-link v-if="this.hasSchedulerPermissions && !editMode" :to="`/scheduler/${animal.id}`" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Schedule</router-link>          <button v-if="this.hasEditPermissions && !editMode" @click="turnEditMode" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
           <button v-if="editMode" @click="saveChanges" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
           <button v-if="editMode" @click="cancelEdit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
           <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>

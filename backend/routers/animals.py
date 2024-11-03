@@ -29,6 +29,14 @@ async def get_animal(animal_id: int, db: Session = Depends(get_db)):
         animal.photo = f"data:image/jpeg;base64,{base64.b64encode(animal.photo).decode()}"
     return animal
 
+@router.get("/animals/animal_name/{animal_id}", response_model=str)
+async def get_animal(animal_id: int, db: Session = Depends(get_db)):
+    animal = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
+    if animal is None:
+        raise HTTPException(status_code=404, detail="Animal not found")
+
+    return animal.name
+
 @router.get("/animals", response_model=List[AnimalSchema])
 async def get_animals(
     filter: Optional[str] = Query(None, description="Filter by species"),
