@@ -28,7 +28,7 @@ const router = createRouter({
   routes
 })
 
-const protectedRoutes = ['/profile'];
+const protectedRoutes = ['/profile', '/scheduler', '/listusers'];
 const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';
 
@@ -64,7 +64,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         console.error('Error fetching protected route:', error.message);
       }
-      alert('Token validation failed.');
+      alert(error.response.data.detail);
       next('/'); // Redirect to the login page on failure
     }
   } else if(loginRoutes.includes(to.path) && store.state.accessToken) {

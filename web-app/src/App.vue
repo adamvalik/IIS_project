@@ -23,6 +23,7 @@ export default {
 
     resetTimer() {
       if (this.isAuthenticated) {
+        console.log(this.sessionExp);
         this.extendExpiration();
       }
     },
@@ -31,11 +32,11 @@ export default {
       if(this.isAuthenticated) {
         console.log("Checking token expiration...");
         console.log(Date.now());
-        console.log(this.sessionExp);
 
         if((Date.now() >= this.sessionExp * 1000)) {
           alert("Your session has expired. Please log in again.");
           this.logout();
+          this.$router.push('');
         }
       }
     }

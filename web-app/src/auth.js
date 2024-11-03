@@ -28,7 +28,7 @@ export default createStore({
       localStorage.removeItem('access_token');
     },
     resetExpiration(state) {
-      state.sessionExpiration = Math.floor(Date.now() / 1000) + state.tokenExpiration;
+      state.sessionExpiration = Math.floor(Date.now() / 1000) + state.tokenExpiration * 60;
     },
   },
   actions: {
