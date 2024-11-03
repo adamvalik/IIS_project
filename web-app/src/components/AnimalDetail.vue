@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-6 h-screen">
+  <div class="container mx-auto px-4 py-6">
     <NavigationBar />
 
     <div class="bg-white shadow-lg rounded-lg p-8">

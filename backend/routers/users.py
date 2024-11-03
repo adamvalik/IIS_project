@@ -134,3 +134,12 @@ async def get_user_details(ida: UserDetails, db: Session = Depends(get_db)):
     phone = user.phone
     role = user.role
     return {"name": name, "surname": surname, "mail": email, "telephone": phone, "role": role}
+
+@router.get("/user/{user_id}")
+async def reachProfile(user_id: int, user_verified: bool = Depends(verify_user)):
+    if user_verified is None:
+        raise HTTPException(status_code=401, detail="User not verified")
+    if(user_verified.get("role") == "volunteer" and (user_verified.get("user_id") != user_id)):
+        raise HTTPException(status_code=401, detail="User not authorized")
+
+    return {"Validation successful"}
