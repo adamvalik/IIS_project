@@ -30,9 +30,9 @@
 
             <div class = "mb-2">
             <p v-if="!editMode" class="text-lg text-gray-600">Size: {{ animal.size }}</p>
-            <select 
-              v-else 
-              v-model="editableAnimal.size" 
+            <select
+              v-else
+              v-model="editableAnimal.size"
               class="text-lg border border-gray-300 p-2 rounded w-full">
               <option value="" disabled>Select size</option>
               <option value="small">Small</option>
@@ -50,7 +50,7 @@
             <p v-if="!editMode" class="text-lg text-gray-600">{{ animal.caregivers_description }}</p>
             <textarea v-else v-model="editableAnimal.caregivers_description" placeholder="caregivers description" class="text-lg text-gray-600 border border-gray-300 p-2 rounded"></textarea>
             </div>
-          
+
           </div>
         </div>
         <div v-if="isAuthenticated" class="flex gap-4">
@@ -59,7 +59,9 @@
           <button v-if="editMode" @click="saveChanges" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
           <button v-if="editMode" @click="cancelEdit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
           <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
-          <button v-if="isCaregiver && !editMode" @click="showVetRequestModal = true" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Medical Request</button>
+          <button v-if="isCaregiver" @click="showVetRequestModal = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Medical Request</button>
+          <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
+          <button @click="openHyperlink" class="bg-green-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Contact Us</button>
         </div>
 
         <div v-else class="flex gap-4 items-center">
@@ -68,8 +70,8 @@
         </div>
 
         <!-- Vet Request Modal -->
-        <div v-if="showVetRequestModal == true" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div class="bg-white p-6 rounded-lg shadow-lg w-1/2">
+        <div v-if="showVetRequestModal == true" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"  @click="showVetRequestModal=false">
+          <div class="bg-white p-6 rounded-lg shadow-lg w-1/2" @click.stop>
             <h2 class="text-2xl font-bold mb-4">Request Specification</h2>
             <textarea v-model="vetRequestText" class="w-full h-40 p-2 border rounded-lg mb-4" placeholder="Enter request details..."></textarea>
             <div class="flex justify-end">
@@ -215,6 +217,9 @@ export default {
       } catch (error) {
         console.error('Error sending request:', error);
       }
+    },
+    openHyperlink() {
+      window.open('https://www.youtube.com/watch?v=AZhWW6URrns', '_blank');
     }
   }
 };

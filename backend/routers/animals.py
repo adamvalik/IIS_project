@@ -13,10 +13,10 @@ router = APIRouter()
 async def addAnimal(user_verified: bool = Depends(verify_user)):
     if user_verified is None:
         raise HTTPException(status_code=401, detail="User not verified")
-    
+
     if user_verified.get("role") not in ["admin", "caregiver"]:
         raise HTTPException(status_code=401, detail="User not authorized")
-    
+
     return {"Validation successful"}
 
 @router.get("/animals/animal/{animal_id}", response_model=AnimalSchema)
