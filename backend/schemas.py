@@ -7,6 +7,9 @@ class UserBase(BaseModel):
     surname: str
     email: str
 
+    class Config:
+        orm_mode = True
+
 class UserSignUp(UserBase):
     password: str
     phone: Optional[str] = None
@@ -39,6 +42,13 @@ class SignUpResponse(BaseModel):
 class UpdatePhoneRequest(BaseModel):
     phone: str
 
+class PasswordChangeRequest(BaseModel):
+    oldPassword: str
+    newPassword: str
+
+    class Config:
+        orm_mode = True
+
 class Animal(BaseModel):
     id: int
     name: str
@@ -50,6 +60,20 @@ class Animal(BaseModel):
     admission_date: Optional[date] = None
     id_caregiver: int
     caregivers_description: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+class AnimalCreate(BaseModel):
+    name: str
+    species: str
+    breed: Optional[str] = None
+    birth_year: Optional[int] = None
+    photo: Optional[str] = None
+    admission_date: Optional[date] = None
+    size: Optional[str] = Field(None, description="Size of the animal, e.g., small, medium, large")
+    caregivers_description: Optional[str] = None
+    id_caregiver: int
 
     class Config:
         orm_mode = True

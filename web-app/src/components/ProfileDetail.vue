@@ -9,28 +9,28 @@
         <form @submit.prevent="updatePhoneNum">
           <div>
             <label for="name" class="block text-sm font-medium py-2">Name:</label>
-            <input type="text" v-model="user.name" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
+            <input type="text" name="name" id="name" v-model="user.name" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
           </div>
 
           <div>
             <label for="surname" class="block text-sm font-medium py-2">Surname:</label>
-            <input type="text" v-model="user.surname" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
+            <input type="text" name="surname" id="surname" v-model="user.surname" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
           </div>
 
           <div>
             <label for="email" class="block text-sm font-medium py-2">Email:</label>
-            <input type="email" v-model="user.email" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
+            <input type="email" name="email" id="email" v-model="user.email" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
           </div>
 
           <div>
-            <label for="telephone" class="block text-sm font-medium py-2">Phone number:</label>
+            <label for="phone" class="block text-sm font-medium py-2">Phone number:</label>
             <div class="flex gap-2">
-              <input type="text" v-model="user.telephone" placeholder="Optional" class="w-3/4 p-2 border border-gray-300 rounded-md text-sm" />
+              <input type="text" v-model="user.phone" name="phone" id="phone" placeholder="Optional" class="w-3/4 p-2 border border-gray-300 rounded-md text-sm" />
               <input type="submit" value="Save" class="w-1/4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded" />
             </div>
           </div>
 
-          <button @click="confirmDelete" type="button" class="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded">
+          <button @click="deleteAccount" type="button" class="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded">
             Delete Account
           </button>
         </form>
@@ -118,11 +118,12 @@ export default {
     },
     async updatePhoneNum() {
       try {
-        if (!this.user.telephone) {
+        if (!this.user.phone) {
           console.log('No phone number provided.');
           return;
         }
-        await axios.put(`http://localhost:8000/users/${this.userID}/phone`, { phone: this.user.telephone });
+        await axios.put(`http://localhost:8000/users/${this.userID}/phone`, { phone: this.user.phone });
+        alert('Phone number updated successfully.');
         this.fetchProfile();
       } catch (error) {
         console.error('Error updating profile:', error);
@@ -131,24 +132,34 @@ export default {
     async changePassword() {
       if (this.newPassword !== this.confirmPassword) {
         alert('Passwords do not match.');
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
         return;
       }
       try {
-        await axios.post('/api/user/change-password', {
-          currentPassword: this.currentPassword,
+        await axios.put(`http://localhost:8000/users/${this.userID}/password`, {
+          oldPassword: this.currentPassword,
           newPassword: this.newPassword,
         });
+        alert('Password changed successfully.');
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
       } catch (error) {
-        console.error('Error changing password:', error);
+        alert('Error changing password. Please check your current password.');
       }
     },
     async deleteAccount() {
       try {
-        await axios.delete('/api/user/delete-account');
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+          await axios.delete(`http://localhost:8000/users/${this.userID}`);
+          this.$store.dispatch('logout');
+          this.$router.push('/');
+        }
       } catch (error) {
         console.error('Error deleting account:', error);
       }
-      this.showDeleteDialog = false;
     },
   },
 };

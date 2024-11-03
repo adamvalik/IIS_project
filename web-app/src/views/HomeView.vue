@@ -1,22 +1,21 @@
 <template>
-  <div class="container mx-auto px-4 py-6">
+  <div class="container mx-auto px-4 py-6 h-screen">
     <!-- NavigationBar -->
     <NavigationBar />
 
-    <router-link to="/scheduler" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
+    <router-link to="/scheduler" v-if="checkSchedulerRole" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
       Skibidi Scheduler
     </router-link>
-    <router-link to="/listusers" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
-      Skibidi List Users
-    </router-link>
 
-    <!-- Main Content -->
     <div class="mt-10">
       <!-- Shelter Info -->
       <section class="mb-10">
         <h2 class="text-3xl font-bold text-gray-800">About Our Shelter</h2>
         <p class="mt-4 text-gray-600">
-          We are dedicated to providing care and love for abandoned animals. Our shelter works hard to find forever homes for pets and provides resources for adoption, volunteering, and donations.
+          Welcome to our Animal Shelter supported by DJ Khaled himself! Our mission is to provide love, care, and a fresh start to animals in need.
+          Our dedicated team includes caregivers and veterinarians who work around the clock to ensure each animal’s health, happiness, and well-being.
+          <br>
+          <strong>Reservations for Walks:</strong> Once verified, visitors can book time to take our animals out for walks!
         </p>
       </section>
 
@@ -51,6 +50,7 @@
 import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import AnimalTile from '@/components/AnimalTile.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -62,6 +62,22 @@ export default {
       recentAnimals: [],
       loading: true,
     };
+  },
+  computed: {
+    ...mapGetters(['isAuthenticated', 'userRole']),
+
+    isLoggedIn() {
+      return this.isAuthenticated;
+    },
+
+    checkListUsersRole() {
+      return (this.isAuthenticated && (this.userRole == 'admin' || this.userRole == 'caregiver'));
+    },
+
+    checkSchedulerRole() {
+      return this.isAuthenticated && this.userRole != 'veterinarian';
+    }
+
   },
   mounted() {
     this.fetchRecentAnimals();

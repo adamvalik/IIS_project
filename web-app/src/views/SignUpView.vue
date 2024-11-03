@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-10 max-w-lg">
     <!-- Shelter Name -->
-    <h1 class="text-4xl font-bold text-gray-800 text-center mb-10">DJ Khaled's Animal Shelter</h1>
+    <router-link to="/" class="text-4xl font-bold text-gray-800 text-center mb-10">DJ Khaled's Animal Shelter</router-link>
 
     <!-- Sign-Up Form -->
     <div class="bg-white shadow-lg rounded-lg p-8">
@@ -97,7 +97,7 @@
       <!-- Log In Redirect -->
       <div class="mt-6 text-center">
         <p class="text-gray-700">
-          Already have an account? 
+          Already have an account?
           <router-link to="/login" class="text-blue-500 hover:underline">Log In</router-link>
         </p>
       </div>

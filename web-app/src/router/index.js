@@ -7,6 +7,7 @@ import AnimalDetail from '@/components/AnimalDetail.vue';
 import SchedulerView from '@/views/SchedulerView.vue'; // Import the Scheduler component
 import ProfileDetail from "@/components/ProfileDetail.vue";
 import ListUsersView from '@/views/ListUsersView.vue'
+import AddAnimalView from '@/views/AddAnimalView.vue';
 import store from '../auth';
 import axios from 'axios';
 
@@ -18,7 +19,8 @@ const routes = [
   { path: '/animal/:id', component: AnimalDetail },
   { path: '/scheduler', component: SchedulerView }, // Define the route for Scheduler
   { path: '/profile', component: ProfileDetail },
-  { path: '/listusers', component: ListUsersView}
+  { path: '/listusers', component: ListUsersView},
+  { path: '/addanimal', component: AddAnimalView }
 ]
 
 const router = createRouter({
@@ -26,11 +28,16 @@ const router = createRouter({
   routes
 })
 
-const protectedRoutes = ['/profile'];
+const protectedRoutes = ['/profile', '/scheduler', '/listusers'];
 const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';
 
 router.beforeEach(async (to, from, next) => {
+  console.log('token:', store.getters.tokenExp);
+  console.log('role:', store.getters.userRole);
+  console.log('id:', store.getters.user_id);
+  console.log('auth:', store.getters.isAuthenticated);
+
   if (protectedRoutes.includes(to.path)) {
     const token = store.state.accessToken; // Get the token from Vuex store
     // const fakeToken = 'fake';
@@ -57,7 +64,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         console.error('Error fetching protected route:', error.message);
       }
-      alert('Token validation failed.');
+      alert(error.response.data.detail);
       next('/'); // Redirect to the login page on failure
     }
   } else if(loginRoutes.includes(to.path) && store.state.accessToken) {
