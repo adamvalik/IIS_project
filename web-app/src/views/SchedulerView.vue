@@ -30,11 +30,63 @@
         </div>
       </div>
 
-      <button v-if="getRole !== 'caregiver'" class="mt-4 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
+      <!-- Legend -->
+      <div class="mt-7 mb-4">
+        <div v-if="getRole === 'volunteer'" class="flex justify-around">
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-green-400 mr-2"></div>
+            <span>Approved</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-red-400 mr-2"></div>
+            <span>Reserved</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-blue-400 mr-2"></div>
+            <span>Available</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-orange-400 mr-2"></div>
+            <span>Pending</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-yellow-400 mr-2"></div>
+            <span>Selected</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-gray-200 mr-2"></div>
+            <span>Unavailable</span>
+          </div>
+        </div>
+        <div v-else class="flex justify-around">
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-green-400 mr-2"></div>
+            <span>Approved</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-blue-400 mr-2"></div>
+            <span>Available</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-orange-400 mr-2"></div>
+            <span>Pending</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-pink-400 mr-2"></div>
+            <span>New Slot</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-4 h-4 bg-gray-200 mr-2"></div>
+            <span>Unavailable</span>
+          </div>
+        </div>
+      </div>
+
+      <button v-if="getRole !== 'caregiver'" class="mt-5 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
         Confirm Reservation
       </button>
 
-      <button v-if="getRole === 'caregiver'" class="mt-4 p-2 bg-green-500 text-white rounded" @click="createNewSlot">
+      <button v-if="getRole === 'caregiver'" class="mt-5 p-2 bg-green-500 text-white rounded" @click="createNewSlot">
         Create New Slots
       </button>
 
