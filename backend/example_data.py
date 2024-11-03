@@ -17,10 +17,10 @@ def load_image_as_binary(image_name):
 
 def create_example_users():
     users = [
-        User(email="admin@admin.com", password=login.hash_password("admin"), name="Admin", surname="Admin", phone_num="0000000000", role="admin"),
-        User(email="caregiver@example.com", password=login.hash_password("password"), name="Bob", surname="Caregiver", phone_num="1234567890", role="caregiver"),
-        User(email="vet@example.com", password=login.hash_password("password12"), name="Dr. Alice", surname="Veterinarian", phone_num="0987654321", role="veterinarian"),
-        User(email="volunteer@example.com", password=login.hash_password("password123"), name="Charlie", surname="Volunteer", phone_num="1122334455", role="volunteer", verified=True)
+        User(email="admin@admin.com", password=login.hash_password("admin"), name="Admin", surname="Admin", phone="0000000000", role="admin"),
+        User(email="caregiver@example.com", password=login.hash_password("password"), name="Bob", surname="Caregiver", phone="1234567890", role="caregiver"),
+        User(email="vet@example.com", password=login.hash_password("password12"), name="Dr. Alice", surname="Veterinarian", phone="0987654321", role="veterinarian"),
+        User(email="volunteer@example.com", password=login.hash_password("password123"), name="Charlie", surname="Volunteer", phone="1122334455", role="volunteer", verified=True)
     ]
     db = SessionLocal()
     try:
