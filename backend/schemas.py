@@ -6,10 +6,11 @@ from datetime import date, time
 # examples:
 
 class User(BaseModel):
+    id: Optional[int]
     name: str
     surname: str
     email: str
-    password: str
+    password: Optional[str]
     telephone: Optional[str] = None
     role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
     verified: Optional[bool] = False
@@ -17,18 +18,10 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
-class UserWithId(BaseModel):
-    id: int
-    name: str
-    surname: str
-    email: str
-    password: Optional[str]
-    role: Optional[str] = Field(None, description="Role of the user, e.g., caregiver, veterinarian, volunteer")
-    verified: Optional[bool] = False
-
 class LoginRequest(BaseModel):
     email: str
     password: str
+
 
 class LoginResponse(BaseModel):
     message: str
@@ -36,6 +29,9 @@ class LoginResponse(BaseModel):
 
 class SignUpResponse(BaseModel):
     message: str
+
+class UpdatePhoneRequest(BaseModel):
+    phone: str
 
 class Animal(BaseModel):
     id: int

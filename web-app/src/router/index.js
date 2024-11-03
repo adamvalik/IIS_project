@@ -5,7 +5,7 @@ import SignUpView from '@/views/SignUpView.vue'
 import AnimalsView from '@/views/AnimalsView.vue'
 import AnimalDetail from '@/components/AnimalDetail.vue'
 import SchedulerView from '@/views/SchedulerView.vue' // Import the Scheduler component
-import ProfileDetails from "@/views/ProfileDetails.vue";
+import ProfileDetail from "@/components/ProfileDetail.vue";
 import ListUsersView from '@/views/ListUsersView.vue'
 
 const routes = [
@@ -15,7 +15,7 @@ const routes = [
   { path: '/animals', component: AnimalsView },
   { path: '/animal/:id', component: AnimalDetail },
   { path: '/scheduler', component: SchedulerView }, // Define the route for Scheduler
-  { path: '/profile', component: ProfileDetails },
+  { path: '/profile', component: ProfileDetail },
   { path: '/listusers', component: ListUsersView}
 ]
 

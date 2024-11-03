@@ -21,8 +21,10 @@
           v-for="user in users"
           :key="user.id"
           :user="user"
+          :isAdmin="isAdmin"
           @editUser="openEditUserModal"
           @deleteUser="deleteUser"
+          @verifyVolunteer="verifyVolunteer"
         />
       </div>
     </div>
@@ -55,7 +57,7 @@ export default {
       loading: true,
       showUserModal: false,
       selectedUser: null,
-      isAdmin: true,
+      isAdmin: false,
     };
   },
   async mounted() {
@@ -98,6 +100,18 @@ export default {
         this.fetchUsers();
       } catch (error) {
         console.error('Error deleting user:', error);
+      }
+    },
+    async verifyVolunteer(userId) {
+      try {
+        if (!userId) {
+          console.error('No user ID provided');
+          return;
+        }
+        await axios.put(`http://localhost:8000/volunteers/${userId}/verify`);
+        this.fetchUsers();
+      } catch (error) {
+        console.error('Error verifying volunteer:', error);
       }
     },
     closeUserModal() {
