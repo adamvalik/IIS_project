@@ -158,17 +158,17 @@ export default {
       showPopup: { visible: false, day: '', time: '', date: '', user_id: '' }, // Control the visibility of the popup and store day, time, date
       isApproved: false,
       userReservation: '',
-      animal_id: ''
+      animal_id: null
     };
   },
   created() {
     console.log('User ID:', this.getID);
     console.log('User Role:', this.getRole);
     this.currentWeek = this.getWeekDetails(this.currentDate);
-    this.fetchSchedule(); // Fetch the schedule when component is created
     this.animal_id = this.$route.params.id;
     console.log('Animal ID:', this.animal_id);
     this.fetchName(this.animal_id);
+    this.fetchSchedule(); // Fetch the schedule when component is created
   },
   methods: {
     getWeekDetails(date) {
@@ -213,7 +213,8 @@ export default {
       const startOfWeek = new Date(currentDate.setDate(currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)));
       console.log('Start of the week:', startOfWeek);
       const startDate = startOfWeek.toISOString().split('T')[0];
-      const animal_id = 1;
+      const animal_id = this.animal_id;
+      console.log(animal_id);
       const user_id = this.getID;
 
       console.log('Fetching schedule for user:', user_id, 'and animal:', animal_id, 'on date:', startDate);
@@ -346,7 +347,7 @@ export default {
       const user_id = this.getID;
       axios.post('http://localhost:8000/confirmselection', {
         user_id: user_id,
-        animal_id: 1,
+        animal_id: this.animal_id,
         slots: selectedSlots
       })
           .then(response => {
@@ -389,7 +390,7 @@ export default {
           return;
         }
 
-        const animalId = 1;
+        const animalId = this.animal_id;
         const userId = this.getID;
         axios.delete(`http://localhost:8000/cancel/${userId}/${animalId}/${date}/${time}`)
             .then(response => {
@@ -417,7 +418,7 @@ export default {
 
       if (dayIndex >= 0 && timeIndex >= 0) {
 
-        const animalId = 1;
+        const animalId = this.animal_id;
         axios.delete(`http://localhost:8000/delete/${animalId}/${formattedDate}/${time}`)
           .then(response => {
             console.log('Slot Deleted:', response.data);
@@ -438,7 +439,7 @@ export default {
         this.schedule[dayIndex][timeIndex] = 'green';
         this.showPopup.visible = false;
 
-        const animalId = 1;
+        const animalId = this.animal_id;
         axios.post('http://localhost:8000/approve/',
             {
               animal_id: animalId,
@@ -457,7 +458,7 @@ export default {
     // Implement your method to check approval status from the database
     // For example:
     console.log('Checking approval status...');
-    const animal_id = 1;
+    const animal_id = this.animal_id;
     const response = await axios.get(`http://localhost:8000/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
     this.isApproved = response.data.isApproved;
     this.userReservation = response.data.username;
