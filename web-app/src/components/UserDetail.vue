@@ -5,18 +5,16 @@
     <div class="bg-white shadow-lg rounded-lg p-8">
       <div class="flex flex-col gap-8">
         <div class="flex flex-col md:flex-row items-center md:space-x-8">
-          <img :src="animal.photo" :alt="animal.name" class="w-full md:w-1/3 h-64 object-cover rounded-lg shadow-md" />
 
           <div class="mt-6 md:mt-0">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ animal.name }}</h2>
-            <p class="text-lg text-gray-600 mb-2">Species: {{ animal.species }}</p>
-            <p class="text-lg text-gray-600 mb-2">Breed: {{ animal.breed }}</p>
-            <p class="text-lg text-gray-600 mb-2">Age: {{ calculateAge(animal.birth_year) }} years</p>
-            <p class="text-lg text-gray-600 mb-2">Size: {{ animal.size }}</p>
-            <p class="text-lg text-gray-600 mb-2">Admission Date: {{ formatDate(animal.admission_date) }}</p>
-            <p class="text-lg text-gray-600">{{ animal.caregivers_description }}</p>
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">{{ user.name }}</h2>
+            <p class="text-lg text-gray-600 mb-2">Surname: {{ user.surname }}</p>
+            <p class="text-lg text-gray-600 mb-2">E-Mail: {{ user.mail }}</p>
+            <p class="text-lg text-gray-600 mb-2">Telephone Number: {{ user.telephone }} years</p>
+            <p class="text-lg text-gray-600 mb-2">Role: {{ user.role }}</p>
           </div>
         </div>
+
         <div v-if="isAuthenticated" class="flex gap-4">
           <router-link v-if="this.hasSchedulerPermissions" to="/scheduler" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Schedule</router-link>
           <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
@@ -30,21 +28,6 @@
           <router-link class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0" to="/signup">Sign Up</router-link>
         </div>
 
-        <!-- Vet Request Modal -->
-        <div v-if="showVetRequestModal == true" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"  @click="showVetRequestModal=false">
-          <div class="bg-white p-6 rounded-lg shadow-lg w-1/2" @click.stop>
-            <h2 class="text-2xl font-bold mb-4">Request Specification</h2>
-            <textarea v-model="vetRequestText" class="w-full h-40 p-2 border rounded-lg mb-4" placeholder="Enter request details..."></textarea>
-            <div class="flex justify-end">
-              <button @click="sendVetRequest" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Send Request</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Request Sent Notification -->
-        <div v-if="showRequestSent" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
-          Request Sent
-        </div>
       </div>
     </div>
   </div>
@@ -61,7 +44,7 @@ export default {
   },
   data() {
     return {
-      animal: {},
+      user: {},
       showSchedulerModal: false,
       showUnverifiedVolunteer: false,
       hasSchedulerPermissions: false,
@@ -71,7 +54,7 @@ export default {
     };
   },
   computed: {
-  ...mapGetters(['isAuthenticated', 'userRole', 'user_id']),
+    ...mapGetters(['isAuthenticated', 'userRole', 'user_id']),
 
     isLoggedIn() {
       return this.isAuthenticated;
@@ -89,20 +72,23 @@ export default {
     this.loadSchedulerPermissions(this.user_id);
   },
   methods: {
-    async fetchAnimal(id) {
+    async fetchUser(id) {
       try {
-        const response = await axios.get(`http://localhost:8000/animals/animal/${id}`);
-        this.animal = response.data;
+        const response = await axios.post('http://localhost:8000/user_detail',
+          {
+            id: id
+          });
+        this.user = response.data;
       } catch (error) {
         console.error("Error fetching recent animals:", error);
       }
     },
     async loadSchedulerPermissions(userId) {
 
-      if(this.isAuthenticated){
+      if (this.isAuthenticated) {
         this.hasSchedulerPermissions = true;
 
-        if(this.userRole === 'veterinarian'){
+        if (this.userRole === 'veterinarian') {
           this.hasSchedulerPermissions = false;
         }
         if (this.userRole === 'volunteer') {
@@ -125,35 +111,6 @@ export default {
           }
         }
       }
-    },
-    calculateAge(birthYear) {
-      const currentYear = new Date().getFullYear();
-      return currentYear - birthYear;
-    },
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleDateString();
-    },
-    async sendVetRequest() {
-      try {
-        const response = await axios.post('http://localhost:8000/vetrequest', {
-          animal_id: this.animal.id,
-          caregiver_id: this.user_id,
-          request_text: this.vetRequestText
-        });
-        console.log('Request sent:', response.data);
-        this.showVetRequestModal = false;
-        this.showRequestSent = true;
-        this.vetRequestText = '';
-        setTimeout(() => {
-          this.showRequestSent = false;
-        }, 3000);
-      } catch (error) {
-        console.error('Error sending request:', error);
-      }
-    },
-    openHyperlink() {
-      window.open('https://www.youtube.com/watch?v=AZhWW6URrns', '_blank');
     }
   }
 };
