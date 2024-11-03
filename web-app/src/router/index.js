@@ -7,6 +7,7 @@ import AnimalDetail from '@/components/AnimalDetail.vue';
 import SchedulerView from '@/views/SchedulerView.vue'; // Import the Scheduler component
 import ProfileDetail from "@/components/ProfileDetail.vue";
 import ListUsersView from '@/views/ListUsersView.vue'
+import AddAnimalView from '@/views/AddAnimalView.vue';
 import store from '../auth';
 import axios from 'axios';
 
@@ -18,7 +19,8 @@ const routes = [
   { path: '/animal/:id', component: AnimalDetail },
   { path: '/scheduler', component: SchedulerView }, // Define the route for Scheduler
   { path: '/profile', component: ProfileDetail },
-  { path: '/listusers', component: ListUsersView}
+  { path: '/listusers', component: ListUsersView},
+  { path: '/addanimal', component: AddAnimalView }
 ]
 
 const router = createRouter({
