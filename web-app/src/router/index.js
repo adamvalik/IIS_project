@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import SignUpView from '@/views/SignUpView.vue'
-import AnimalsView from '@/views/AnimalsView.vue'
-import AnimalDetail from '@/components/AnimalDetail.vue'
-import SchedulerView from '@/views/SchedulerView.vue' // Import the Scheduler component
+import HomeView from '@/views/HomeView.vue';
+import LoginView from '@/views/LoginView.vue';
+import SignUpView from '@/views/SignUpView.vue';
+import AnimalsView from '@/views/AnimalsView.vue';
+import AnimalDetail from '@/components/AnimalDetail.vue';
+import SchedulerView from '@/views/SchedulerView.vue'; // Import the Scheduler component
 import ProfileDetail from "@/components/ProfileDetail.vue";
 import ListUsersView from '@/views/ListUsersView.vue'
+import store from '../auth';
+import axios from 'axios';
 
 const routes = [
   { path: '/', component: HomeView },
@@ -23,6 +25,48 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+const protectedRoutes = ['/profile'];
+const loginRoutes = ['/login', '/signup'];
+const BASE_URL = 'http://localhost:8000';
+
+router.beforeEach(async (to, from, next) => {
+  if (protectedRoutes.includes(to.path)) {
+    const token = store.state.accessToken; // Get the token from Vuex store
+    // const fakeToken = 'fake';
+
+    // If the token is not available, redirect to the login page
+    if (!token) {
+      alert('You must be logged in to view this page.');
+      return next('/login'); // Redirect to the login page
+    }
+
+    // If the token is present, verify it with the backend
+    try {
+      console.log('Fetching protected route:',to.path);
+      await axios.get(`${BASE_URL}${to.path}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      next(); // Proceed to the requested route if the token is valid
+    } catch (error) {
+      if (error.response) {
+        console.error('Error fetching protected route:', error.response.data.detail); // Print error detail
+        console.error('Status code:', error.response.status); // Print status code
+      } else {
+        console.error('Error fetching protected route:', error.message);
+      }
+      alert('Token validation failed.');
+      next('/'); // Redirect to the login page on failure
+    }
+  } else if(loginRoutes.includes(to.path) && store.state.accessToken) {
+    next('/');
+  } else {
+    next(); // Proceed to non-protected routes
+  }
+});
+
 
 // // Set up a global before guard to protect routes
 // router.beforeEach((to, from, next) => {

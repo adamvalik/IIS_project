@@ -12,7 +12,7 @@ class User(Base):
     password = Column(String(255), nullable=False)
     name = Column(String(255), nullable=False)
     surname = Column(String(255), nullable=False)
-    phone_num = Column(String(20), nullable=True)
+    phone = Column(String(20), nullable=True)
     role = Column(Enum('caregiver', 'veterinarian', 'volunteer', 'admin'), nullable=False)
 
     # volunteer specific
