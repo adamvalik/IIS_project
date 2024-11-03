@@ -4,22 +4,43 @@
 
     <h2 v-if="isCaregiver" class="mb-4 text-3xl font-bold text-gray-800 py-8">Manage Reservations</h2>
     <h2 v-else-if="isVolunteer" class="mb-4 text-3xl font-bold text-gray-800 py-8">My Reservations</h2>
-    <h2 v-else class="mb-4 text-3xl font-bold text-gray-800 py-8" style="display:none;">Manage Users or Volunteers</h2>
 
-    <div class="grid grid-cols-1">
-      <ReservationRow
-        v-for="reservation in reservations"
-        :key="reservation.id"
-        :reservation="reservation"
-        :isCaregiver="isCaregiver"
-        @toggleBorrowed="toggleBorrowed"
-        @toggleReturned="toggleReturned"
-        @approveReservation="approveReservation"
-        @deleteReservation="deleteReservation"
-      />
+    <div v-if="futureReservations.length" class="mb-8">
+      <h3 class="text-xl font-semibold text-gray-700 mb-4">Upcoming Reservations</h3>
+      <div class="grid grid-cols-1">
+        <ReservationRow
+          v-for="reservation in futureReservations"
+          :key="reservation.id"
+          :reservation="reservation"
+          :isCaregiver="isCaregiver"
+          :isPast="false"
+          @toggleBorrowed="toggleBorrowed"
+          @toggleReturned="toggleReturned"
+          @approveReservation="approveReservation"
+          @deleteReservation="deleteReservation"
+        />
+      </div>
+    </div>
+
+    <div v-if="pastReservations.length">
+      <h3 class="text-xl font-semibold text-gray-700 mb-4">Past Reservations</h3>
+      <div class="grid grid-cols-1">
+        <ReservationRow
+          v-for="reservation in pastReservations"
+          :key="reservation.id"
+          :reservation="reservation"
+          :isCaregiver="isCaregiver"
+          :isPast="true"
+          @toggleBorrowed="toggleBorrowed"
+          @toggleReturned="toggleReturned"
+          @approveReservation="approveReservation"
+          @deleteReservation="deleteReservation"
+        />
+      </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -39,6 +60,20 @@ export default {
       isVolunteer: false,
     };
   },
+  computed: {
+    futureReservations() {
+      const currentDate = new Date();
+      return this.reservations.filter(
+        reservation => new Date(reservation.borrow.date) >= currentDate
+      );
+    },
+    pastReservations() {
+      const currentDate = new Date();
+      return this.reservations.filter(
+        reservation => new Date(reservation.borrow.date) < currentDate
+      );
+    },
+  },
   async mounted() {
     this.isCaregiver = this.$store.getters.userRole === 'caregiver' || this.$store.getters.userRole === 'admin';
     this.isVolunteer = this.$store.getters.userRole === 'volunteer';
@@ -52,7 +87,7 @@ export default {
           const response = await axios.get("http://localhost:8000/reservations");
           this.reservations = response.data;
         } else if (this.isVolunteer) {
-          const response = await axios.get(`http://localhost:8000/reservations/volunteer/{this.$store.getters.user_id}`);
+          const response = await axios.get(`http://localhost:8000/reservations/volunteer/${this.$store.getters.user_id}`);
           this.reservations = response.data;
         }
       } catch (error) {
