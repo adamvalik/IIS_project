@@ -54,7 +54,6 @@ export default {
       if (this.userRole === 'caregiver') {
         return [
           { name: 'Manage Animals', link: '/manage-animals' },
-          { name: 'List users', link: '/listusers' },
           { name: 'Add animal', link: '/addanimal' },
         ];
       } else if (this.userRole === 'veterinarian') {
@@ -67,7 +66,6 @@ export default {
         ];
       } else if (this.userRole === 'admin') {
         return [
-          { name: 'List users', link: '/listusers' },
           { name: 'Add animal', link: '/addanimal' },
         ];
       }

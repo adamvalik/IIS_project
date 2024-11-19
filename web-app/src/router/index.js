@@ -32,7 +32,7 @@ const router = createRouter({
   routes
 })
 
-const protectedRoutes = ['/profile', '/scheduler', '/listusers', '/addanimal', '/reservations'];
+const protectedRoutes = ['/profile', '/listusers', '/addanimal', '/reservations'];
 const userInfoRoutes = /^\/user\/\d+$/;
 const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';
