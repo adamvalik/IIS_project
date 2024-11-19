@@ -13,6 +13,7 @@ import AddAnimalView from '@/views/AddAnimalView.vue';
 import ReservationsView from '@/views/ReservationsView.vue';
 import UserDetail from "@/views/UserDetail.vue";
 import MedicalRecordsList from "@/views/MedicalRecordsList.vue";
+import RequestsView from '@/views/RequestsView.vue';
 
 const routes = [
   { path: '/', component: HomeView },
@@ -20,12 +21,13 @@ const routes = [
   { path: '/signup', component: SignUpView },
   { path: '/animals', component: AnimalsView },
   { path: '/animal/:id', component: AnimalDetail },
-  { path: '/scheduler/:id', component: SchedulerView }, // Define the route for Scheduler
+  { path: '/scheduler/:id', component: SchedulerView },
   { path: '/profile', component: ProfileDetail },
   { path: '/listusers', component: ListUsersView},
   { path: '/addanimal', component: AddAnimalView },
   { path: '/reservations', component: ReservationsView },
   { path: '/user/:id', component: UserDetail },
+  { path: '/requests', component: RequestsView }
   { path: '/medicalrecords/:id', component: MedicalRecordsList }
 ]
 
@@ -34,7 +36,7 @@ const router = createRouter({
   routes
 })
 
-const protectedRoutes = ['/profile', '/scheduler', '/listusers', '/addanimal'];
+const protectedRoutes = ['/profile', '/listusers', '/addanimal', '/reservations'];
 const userInfoRoutes = /^\/user\/\d+$/;
 const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';

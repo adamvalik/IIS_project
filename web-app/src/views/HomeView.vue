@@ -3,11 +3,11 @@
     <!-- NavigationBar -->
     <NavigationBar />
 
-    <router-link to="/scheduler" v-if="checkSchedulerRole" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
-      Skibidi Scheduler
-    </router-link>
     <router-link to="/reservations" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
       Skibidi Reservations
+    </router-link>
+    <router-link to="/requests" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4 inline-block">
+      Skibidi Requests
     </router-link>
 
     <div class="mt-10">

@@ -25,7 +25,7 @@
 
             <div class = "mb-2">
             <p v-if="!editMode" class="text-lg text-gray-600">Age: {{ calculateAge(animal.birth_year) }} years</p>
-            <input v-else v-model="editableAnimal.birth_year" placeholder="age" type="number" class="text-lg text-gray-600 border border-gray-300 p-2 rounded" />
+            <input v-else v-model="editableAnimal.birth_year" placeholder="Age" type="number" class="text-lg text-gray-600 border border-gray-300 p-2 rounded" />
             </div>
 
             <div class = "mb-2">
@@ -35,9 +35,9 @@
               v-model="editableAnimal.size"
               class="text-lg border border-gray-300 p-2 rounded w-full">
               <option value="" disabled>Select size</option>
-              <option value="small">Small</option>
-              <option value="medium">Medium</option>
-              <option value="big">Big</option>
+              <option value="small">small</option>
+              <option value="medium">medium</option>
+              <option value="large">large</option>
             </select>
             </div>
 
@@ -54,7 +54,8 @@
           </div>
         </div>
         <div v-if="isAuthenticated" class="flex gap-4">
-          <router-link v-if="this.hasSchedulerPermissions && !editMode" :to="`/scheduler/${animal.id}`" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Schedule</router-link>          <button v-if="this.hasEditPermissions && !editMode" @click="turnEditMode" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
+          <router-link v-if="this.hasSchedulerPermissions && !editMode" :to="`/scheduler/${animal.id}`" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Schedule</router-link>
+          <button v-if="this.hasEditPermissions && !editMode" @click="turnEditMode" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
           <button v-if="editMode" @click="saveChanges" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
           <button v-if="editMode" @click="cancelEdit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
           <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
@@ -70,7 +71,7 @@
         </div>
 
         <!-- Vet Request Modal -->
-        <div v-if="showVetRequestModal == true" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"  @click="showVetRequestModal=false">
+        <div v-if="showVetRequestModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"  @click="showVetModal">
           <div class="bg-white p-6 rounded-lg shadow-lg w-1/2" @click.stop>
             <h2 class="text-2xl font-bold mb-4">Request Specification</h2>
             <textarea v-model="vetRequestText" class="w-full h-40 p-2 border rounded-lg mb-4" placeholder="Enter request details..."></textarea>
@@ -83,6 +84,9 @@
         <!-- Request Sent Notification -->
         <div v-if="showRequestSent" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
           Request Sent
+        </div>
+        <div v-if="showEmptyRequest" class="fixed bottom-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg">
+          Empty request not allowed
         </div>
       </div>
     </div>
@@ -110,6 +114,7 @@ export default {
       showVetRequestModal: false,
       vetRequestText: '',
       showRequestSent: false,
+      showEmptyRequest: false,
     };
   },
   computed: {
@@ -131,6 +136,7 @@ export default {
     this.loadSchedulerPermissions(this.user_id);
     this.loadEditPermissions();
   },
+
   methods: {
     async fetchAnimal(id) {
       try {
@@ -177,6 +183,10 @@ export default {
         }
       }
     },
+    computeBirthYear(newValue) {
+      this.editableAnimal.birth_year = new Date().getFullYear() - newValue;
+      console.log(this.editableAnimal.birth_year);
+    },
     calculateAge(birthYear) {
       const currentYear = new Date().getFullYear();
       return currentYear - birthYear;
@@ -187,12 +197,12 @@ export default {
     },
     turnEditMode(){
       this.editMode = !this.editMode;
-      this.editableAnimal.birth_year = this.calculateAge(this.editableAnimal.birth_year);
     },
     async saveChanges(){
       try {
         await axios.put(`http://localhost:8000/animals/edit/${this.animal.id}`, this.editableAnimal);
         this.animal = { ...this.editableAnimal };
+        this.animal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
         this.editMode = false;
       } catch (error) {
         console.error("Error updating animal:", error);
@@ -202,8 +212,15 @@ export default {
       this.editMode = false;
     },
     async sendVetRequest() {
+      if (this.vetRequestText === '') {
+        this.showEmptyRequest = true;
+        setTimeout(() => {
+          this.showEmptyRequest = false;
+        }, 3000);
+        return;
+      }
       try {
-        const response = await axios.post('http://localhost:8000/vetrequest', {
+        const response = await axios.post('http://localhost:8000/request', {
           animal_id: this.animal.id,
           caregiver_id: this.user_id,
           request_text: this.vetRequestText
@@ -221,6 +238,10 @@ export default {
     },
     openHyperlink() {
       window.open('https://www.youtube.com/watch?v=AZhWW6URrns', '_blank');
+    },
+    showVetModal() {
+      this.vetRequestText = '';
+      this.showVetRequestModal = false;
     }
   }
 };

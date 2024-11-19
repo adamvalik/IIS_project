@@ -55,7 +55,6 @@ export default {
   data() {
     return {
       reservations: [],
-      selectedReservation: null,
       isCaregiver: false,
       isVolunteer: false,
     };
@@ -81,7 +80,6 @@ export default {
   },
   methods: {
     async fetchReservations() {
-      this.errorMessage = '';
       try {
         if (this.isCaregiver) {
           const response = await axios.get("http://localhost:8000/reservations");
