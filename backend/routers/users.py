@@ -4,7 +4,7 @@ from typing import List
 from db import get_db
 from models import User as UserModel
 from schemas import User as UserSchema, UserCreate as UserCreateSchema, UserUpdate as UserUpdateSchema, PasswordChangeRequest
-from schemas import UpdatePhoneRequest, UserDetails
+from schemas import UpdatePhoneRequest, UserDetails, Veternarian as VeternarianSchema
 from routers.login import hash_password
 from routers.login import verify_user, verify_password
 
@@ -143,3 +143,10 @@ async def reachProfile(user_id: int, user_verified: bool = Depends(verify_user))
         raise HTTPException(status_code=401, detail="User not authorized")
 
     return {"Validation successful"}
+
+@router.get("/vet/{vet_id}", response_model=VeternarianSchema)
+async def get_vet(vet_id: int, db: Session = Depends(get_db)):
+    vet = db.query(UserModel).filter(UserModel.id == vet_id).first()
+    if vet is None:
+        raise HTTPException(status_code=404, detail="Veterinarian not found.")
+    return vet
