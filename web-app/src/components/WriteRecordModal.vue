@@ -111,7 +111,6 @@ export default {
         await axios.post("http://localhost:8000/medical_records", payload);
         await axios.put(`http://localhost:8000/requests/${this.request.id}/processed/${this.$store.getters.user_id}`);
 
-        alert("Medical record successfully submitted!");
         this.$emit("close");
       } catch (error) {
         console.error("Error submitting medical record:", error);

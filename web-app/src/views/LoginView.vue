@@ -96,6 +96,7 @@ export default {
       })
       .catch(error => {
         alert("Login failed, reason: " + error.response.data.detail);
+        this.password = '';
         // Handle the error (e.g., display an error message to the user)
       });
     }
