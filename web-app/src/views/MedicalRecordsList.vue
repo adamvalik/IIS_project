@@ -7,7 +7,7 @@
     <h3 v-if="animal_id" class="text-xl font-semibold text-gray-700 mb-4">Medical Records for {{animal_name}}</h3>
     <h3 v-else class="text-xl font-semibold text-gray-700 mb-4">All Medical Records</h3>
     <div v-if="records.length">
-      <div class="grid grid-cols-1">
+      <div class="grid grid-cols-1 gap-3">
         <MedicalRecordRow
           v-for="record in records"
           :key="record.id"

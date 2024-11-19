@@ -21,23 +21,33 @@
           Actions
         </button>
         <!-- dropdown for role-based actions -->
-        <div v-if="showActions" class="absolute right-0 mt-4 bg-white p-2 shadow-lg rounded-lg py-2 w-64 z-10">
-          <router-link
-            v-for="action in roleActions"
-            :key="action.name"
-            :to="action.link"
-            class="block pl-4 py-2 rounded-md hover:bg-gray-100 transition duration-150"
-            >
-            {{ action.name }}
-          </router-link>
-          <div class="flex justify-end items-center mr-3">
-            <button v-if="isLoggedIn" @click="handleLogout" class="bg-red-500 text-white font-semibold py-1 px-4 rounded-lg hover:bg-red-600 transition duration-150">
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
+        <transition
+          name="dropdown"
+          enter-active-class="transition ease-out duration-300 transform"
+          enter-from-class="opacity-0 scale-90"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition ease-in duration-200 transform"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-90"
+        >
 
+          <div v-if="showActions" class="absolute right-0 mt-4 bg-white p-2 shadow-lg rounded-lg py-2 w-64 z-10">
+            <router-link
+              v-for="action in roleActions"
+              :key="action.name"
+              :to="action.link"
+              class="block pl-4 py-2 rounded-md hover:bg-gray-100 transition duration-150"
+              >
+              {{ action.name }}
+            </router-link>
+            <div class="flex justify-end items-center mr-3">
+              <button v-if="isLoggedIn" @click="handleLogout" class="bg-red-500 text-white font-semibold py-1 px-4 rounded-lg hover:bg-red-600 transition duration-150">
+                Logout
+              </button>
+            </div>
+          </div>
+        </transition>
+      </div>
     </div>
   </nav>
 </template>
