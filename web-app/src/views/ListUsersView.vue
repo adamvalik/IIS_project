@@ -64,6 +64,7 @@ export default {
     };
   },
   async mounted() {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     this.isAdmin = this.$store.getters.userRole === 'admin';
     this.isCaregiver = this.$store.getters.userRole === 'caregiver';
     await this.fetchUsers();
