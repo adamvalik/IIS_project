@@ -69,10 +69,10 @@
 </template>
 
 <script>
-import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import AnimalTile from '@/components/AnimalTile.vue';
 import { mapGetters } from 'vuex';
+import apiClient from '@/api';
 
 export default {
   components: {
@@ -107,7 +107,7 @@ export default {
   methods: {
     async fetchRecentAnimals() {
       try {
-        const response = await axios.get("http://localhost:8000/animals/recent");
+        const response = await apiClient.get("/animals/recent");
         this.recentAnimals = response.data;
       } catch (error) {
         console.error("Error fetching recent animals:", error);

@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import apiClient from '@/api';
 import axios from 'axios';
 export default {
   data() {
@@ -83,7 +84,7 @@ export default {
     },
     handleSubmit() {
 
-      axios.post('http://localhost:8000/login', {
+      apiClient.post('/login', {
         email: this.email,
         password: this.password
       })

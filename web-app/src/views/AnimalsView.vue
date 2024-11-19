@@ -46,9 +46,9 @@
 </template>
 
 <script>
+import apiClient from '@/api';
 import AnimalTile from '@/components/AnimalTile.vue';
 import NavigationBar from '@/components/NavigationBar.vue';
-import axios from 'axios';
 
 export default {
   components: {
@@ -75,7 +75,7 @@ export default {
           filter: this.filterType !== "all" ? this.filterType : undefined,
           sort: this.sortType,
         };
-        const response = await axios.get("http://localhost:8000/animals/", { params });
+        const response = await apiClient.get("/animals/", { params });
         this.animals = response.data;
       } catch (error) {
         console.error("Error fetching animals:", error);
@@ -85,7 +85,7 @@ export default {
     },
     async extractSpecies() {
       try {
-        const response = await axios.get("http://localhost:8000/animals/species");
+        const response = await apiClient.get("/animals/species");
         this.uniqueSpecies = response.data;
       } catch (error) {
         console.error("Error fetching species:", error);

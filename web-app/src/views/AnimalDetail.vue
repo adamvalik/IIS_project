@@ -93,8 +93,8 @@
 </template>
 
 <script>
+import apiClient from '@/api';
 import NavigationBar from '@/components/NavigationBar.vue';
-import axios from 'axios';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -142,7 +142,7 @@ export default {
   methods: {
     async fetchAnimal(id) {
       try {
-        const response = await axios.get(`http://localhost:8000/animals/animal/${id}`);
+        const response = await apiClient.get(`/animals/animal/${id}`);
         this.animal = response.data;
         this.editableAnimal = { ...this.animal };
       } catch (error) {
@@ -168,7 +168,7 @@ export default {
           console.log("User is a volunteer");
           console.log("User ID: ", userId);
           try {
-            const response = await axios.get(`http://localhost:8000/users/volunteers/${userId}/verify`, {
+            const response = await apiClient.get(`/users/volunteers/${userId}/verify`, {
                 headers: {
                   Authorization: `Bearer ${this.$store.state.accessToken}`,
                 }
@@ -209,7 +209,7 @@ export default {
     async saveChanges(){
       try {
         this.editableAnimal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
-        await axios.put(`http://localhost:8000/animals/edit/${this.animal.id}`,
+        await apiClient.put(`/animals/edit/${this.animal.id}`,
           this.editableAnimal,
           {
             headers: {
@@ -234,7 +234,7 @@ export default {
         return;
       }
       try {
-        const response = await axios.post('http://localhost:8000/request', {
+        const response = await apiClient.post('/request', {
           animal_id: this.animal.id,
           caregiver_id: this.user_id,
           request_text: this.vetRequestText

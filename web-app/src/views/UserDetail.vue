@@ -59,6 +59,7 @@
 </template>
 
 <script>
+import apiClient from '@/api';
 import NavigationBar from '../components/NavigationBar.vue';
 import axios from 'axios';
 import { mapGetters } from 'vuex';
@@ -87,7 +88,7 @@ export default {
   methods: {
     async fetchUser(id) {
       try {
-        const response = await axios.post('http://localhost:8000/user_detail', {
+        const response = await apiClient.post('/user_detail', {
           id: id,
         });
         this.user = response.data;

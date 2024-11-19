@@ -50,6 +50,7 @@
 import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import ReservationRow from '@/components/ReservationRow.vue';
+import apiClient from '@/api';
 
 export default {
   components: {
@@ -87,10 +88,10 @@ export default {
     async fetchReservations() {
       try {
         if (this.isCaregiver) {
-          const response = await axios.get("http://localhost:8000/reservations");
+          const response = await apiClient.get("/reservations");
           this.reservations = response.data;
         } else if (this.isVolunteer) {
-          const response = await axios.get(`http://localhost:8000/reservations/volunteer/${this.$store.getters.user_id}`);
+          const response = await apiClient.get(`/reservations/volunteer/${this.$store.getters.user_id}`);
           this.reservations = response.data;
         }
       } catch (error) {
@@ -103,7 +104,7 @@ export default {
           console.error('No reservation ID provided');
           return;
         }
-        await axios.put(`http://localhost:8000/reservations/${reservationId}/toggle_borrowed`);
+        await apiClient.put(`/reservations/${reservationId}/toggle_borrowed`);
         this.fetchReservations();
       } catch (error) {
         console.error('Error toggling borrowed:', error);
@@ -115,7 +116,7 @@ export default {
           console.error('No reservation ID provided');
           return;
         }
-        await axios.put(`http://localhost:8000/reservations/${reservationId}/toggle_returned`);
+        await apiClient.put(`/reservations/${reservationId}/toggle_returned`);
         this.fetchReservations();
       } catch (error) {
         console.error('Error toggling returned:', error);
@@ -127,7 +128,7 @@ export default {
           console.error('No reservation ID provided');
           return;
         }
-        await axios.put(`http://localhost:8000/reservations/${reservationId}/approve`);
+        await apiClient.put(`/reservations/${reservationId}/approve`);
         this.fetchReservations();
       } catch (error) {
         console.error('Error approving reservation:', error);
@@ -139,7 +140,7 @@ export default {
           console.error('No reservation ID provided');
           return;
         }
-        await axios.delete(`http://localhost:8000/reservations/${reservationId}`);
+        await apiClient.delete(`/reservations/${reservationId}`);
         this.fetchReservations();
       } catch (error) {
         console.error('Error deleting reservation:', error);

@@ -43,7 +43,7 @@ const userInfoRoutes = /^\/user\/\d+$/;
 const schedulerRoutes = /^\/scheduler\/\d+$/;
 const medicalRecordsRoutes = /^\/medicalrecords\/\d+$/;
 const loginRoutes = ['/login', '/signup'];
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = process.env.VUE_APP_BACKEND_URL || 'http://localhost:8000';
 
 router.beforeEach(async (to, from, next) => {
   // console.log('token:', store.getters.tokenExp);

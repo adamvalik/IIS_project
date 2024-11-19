@@ -46,6 +46,7 @@ import axios from 'axios';
 import UserRow from '@/components/UserRow.vue';
 import UserModal from '@/components/UserModal.vue';
 import NavigationBar from '@/components/NavigationBar.vue';
+import apiClient from '@/api';
 
 export default {
   components: {
@@ -75,10 +76,10 @@ export default {
       this.errorMessage = '';
       try {
         if (this.isAdmin) {
-          const response = await axios.get("http://localhost:8000/users");
+          const response = await apiClient.get("/users");
           this.users = response.data;
         } else {
-          const response = await axios.get("http://localhost:8000/volunteers");
+          const response = await apiClient.get("/volunteers");
           this.users = response.data;
         }
       } catch (error) {
@@ -102,7 +103,7 @@ export default {
           console.error('No user ID provided');
           return;
         }
-        await axios.delete(`http://localhost:8000/users/${userId}`);
+        await apiClient.delete(`/users/${userId}`);
         this.fetchUsers();
       } catch (error) {
         console.error('Error deleting user:', error);
@@ -114,7 +115,7 @@ export default {
           console.error('No user ID provided');
           return;
         }
-        await axios.put(`http://localhost:8000/volunteers/${userId}/verify`);
+        await apiClient.put(`/volunteers/${userId}/verify`);
         this.fetchUsers();
       } catch (error) {
         console.error('Error verifying volunteer:', error);

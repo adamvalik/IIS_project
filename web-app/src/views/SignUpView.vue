@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/api';
 
 export default {
   name: 'SignUpPage',
@@ -149,7 +149,7 @@ export default {
       // Submit the form (e.g., make an API call to the backend)
       // Example: axios.post('/signup', newUser)
 
-      axios.post('http://localhost:8000/signup', newUser)
+      apiClient.post('/signup', newUser)
         .then(response => {
           console.log("Sign up successful:", response.data);
           alert("Account created succesfully, now please log in.");

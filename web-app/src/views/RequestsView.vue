@@ -57,6 +57,7 @@ import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import RequestRow from '@/components/RequestRow.vue';
 import WriteRecordModal from '@/components/WriteRecordModal.vue';
+import apiClient from '@/api';
 
 export default {
   components: {
@@ -87,7 +88,7 @@ export default {
   methods: {
     async fetchRequests() {
       try {
-        const response = await axios.get("http://localhost:8000/requests");
+        const response = await apiClient.get("/requests");
         this.requests = response.data;
       } catch (error) {
         console.error(error);

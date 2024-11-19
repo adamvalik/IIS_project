@@ -112,6 +112,7 @@
 </template>
 
 <script>
+import apiClient from '@/api';
 import NavigationBar from '@/components/NavigationBar.vue';
 import axios from 'axios';
 import { mapGetters } from 'vuex';
@@ -198,7 +199,7 @@ export default {
       };
     },
     fetchName(id) {
-      axios.get(`http://localhost:8000/animals/animal_name/${id}`)
+      apiClient.get(`/animals/animal_name/${id}`)
         .then(response => {
           this.selectedAnimal.name = response.data;
         })
@@ -219,7 +220,7 @@ export default {
 
       console.log('Fetching schedule for user:', user_id, 'and animal:', animal_id, 'on date:', startDate);
 
-      axios.post('http://localhost:8000/schedule', {
+      apiClient.post('/schedule', {
         user_id: user_id,
         animal_id: animal_id,
         date: startDate
@@ -319,7 +320,7 @@ export default {
         return { day: slot.day, time: slot.time, date: formattedDate };
       });
       const animal_id = this.animal_id;
-      axios.post('http://localhost:8000/createslot', {
+      apiClient.post('/createslot', {
         animal_id: animal_id,
         new_slots: newSlots
       })
@@ -350,7 +351,7 @@ export default {
         return { day: slot.day, time: slot.time, date: formattedDate };
       });
       const user_id = this.getID;
-      axios.post('http://localhost:8000/confirmselection', {
+      apiClient.post('/confirmselection', {
         user_id: user_id,
         animal_id: this.animal_id,
         slots: selectedSlots
@@ -401,7 +402,7 @@ export default {
 
         const animalId = this.animal_id;
         const userId = this.getID;
-        axios.delete(`http://localhost:8000/cancel/${userId}/${animalId}/${date}/${time}`)
+        apiClient.delete(`/cancel/${userId}/${animalId}/${date}/${time}`)
             .then(response => {
               this.schedule[dayIndex][timeIndex] = 'blue';
               this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
@@ -428,7 +429,7 @@ export default {
       if (dayIndex >= 0 && timeIndex >= 0) {
 
         const animalId = this.animal_id;
-        axios.delete(`http://localhost:8000/delete/${animalId}/${formattedDate}/${time}`)
+        apiClient.delete(`/delete/${animalId}/${formattedDate}/${time}`)
           .then(response => {
             console.log('Slot Deleted:', response.data);
             this.new_slots = this.new_slots.filter(s => !(s.day === day && s.time === time));
@@ -449,7 +450,7 @@ export default {
         this.showPopup.visible = false;
 
         const animalId = this.animal_id;
-        axios.post('http://localhost:8000/approve/',
+        apiClient.post('/approve/',
             {
               animal_id: animalId,
               date: date,
@@ -468,7 +469,7 @@ export default {
     // For example:
     console.log('Checking approval status...');
     const animal_id = this.animal_id;
-    const response = await axios.get(`http://localhost:8000/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
+    const response = await axios.get(`/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
     this.isApproved = response.data.isApproved;
     this.userReservation = response.data.username;
     this.showPopup.user_id = response.data.user_id;

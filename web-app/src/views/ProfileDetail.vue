@@ -86,6 +86,7 @@
 import axios from 'axios';
 import { mapGetters } from 'vuex';
 import NavigationBar from '@/components/NavigationBar.vue';
+import apiClient from '@/api';
 
 export default {
   components: {
@@ -120,7 +121,7 @@ export default {
       try {
         console.log('Fetching profile...');
         console.log('User ID:', this.userID);
-        const response = await axios.get(`http://localhost:8000/users/${this.userID}`);
+        const response = await apiClient.get(`/users/${this.userID}`);
         this.user = response.data;
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -139,7 +140,7 @@ export default {
           return;
         }
 
-        await axios.put(`http://localhost:8000/users/${this.userID}/phone`, { phone: this.user.phone });
+        await apiClient.put(`/users/${this.userID}/phone`, { phone: this.user.phone });
         this.fetchProfile();
         this.showPhoneUpdated = true;
         setTimeout(() => {
@@ -158,7 +159,7 @@ export default {
         return;
       }
       try {
-        await axios.put(`http://localhost:8000/users/${this.userID}/password`, {
+        await apiClient.put(`/users/${this.userID}/password`, {
           oldPassword: this.currentPassword,
           newPassword: this.newPassword,
         });
@@ -180,7 +181,7 @@ export default {
     async deleteAccount() {
       try {
         if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-          await axios.delete(`http://localhost:8000/users/${this.userID}`);
+          await apiClient.delete(`/users/${this.userID}`);
           this.$store.dispatch('logout');
           this.$router.push('/');
         }

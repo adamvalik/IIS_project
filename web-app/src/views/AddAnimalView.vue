@@ -115,6 +115,7 @@
 import axios from 'axios';
 import { mapGetters } from 'vuex';
 import NavigationBar from '@/components/NavigationBar.vue';
+import apiClient from '@/api';
 
 export default {
   components: {
@@ -191,7 +192,7 @@ export default {
           photo: this.formData.photo,
         };
         console.log('Adding animal:', payload);
-        await axios.post('http://localhost:8000/animals', payload);
+        await apiClient.post('/animals', payload);
         alert('Animal added successfully');
         this.resetForm();
       } catch (error) {

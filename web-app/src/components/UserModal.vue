@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/api';
 
 export default {
   props: {
@@ -89,10 +89,10 @@ export default {
       try {
         if (this.user) {
           // update existing user
-          await axios.put(`http://localhost:8000/users/${this.user.id}`, this.formData);
+          await apiClient.put(`/users/${this.user.id}`, this.formData);
         } else {
           // create new user
-          await axios.post("http://localhost:8000/users", this.formData);
+          await apiClient.post("/users", this.formData);
         }
         this.$emit("saveUser");
         this.$emit("close");

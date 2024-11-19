@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/api';
 
 export default {
   props: {
@@ -58,7 +58,7 @@ export default {
     async fetchVeterinarianName() {
       try {
         console.log(this.record.id_veterinarian);
-        const response = await axios.get(`http://localhost:8000/vet/${this.record.id_veterinarian}`);
+        const response = await apiClient.get(`/vet/${this.record.id_veterinarian}`);
         this.veterinarian = response.data.name + " " + response.data.surname;
       } catch (error) {
         console.error(error);

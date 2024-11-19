@@ -7,5 +7,8 @@ backend/routers/__pycache__/
 
 web-app/node_modules/
 web-app/dist/
+web-app/.env.local
+web-app/.env.*.local
+
 
 mysql_data/

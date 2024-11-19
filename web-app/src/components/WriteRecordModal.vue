@@ -62,6 +62,7 @@
 
 <script>
 
+import apiClient from "@/api";
 import axios from "axios";
 
 export default {
@@ -111,8 +112,8 @@ export default {
           id_veterinarian: this.$store.getters.user_id,
         };
 
-        await axios.post("http://localhost:8000/medical_records", payload);
-        await axios.put(`http://localhost:8000/requests/${this.request.id}/processed/${this.$store.getters.user_id}`);
+        await apiClient.post("/medical_records", payload);
+        await apiClient.put(`/requests/${this.request.id}/processed/${this.$store.getters.user_id}`);
         this.$emit("submitted");
         this.$emit("close");
       } catch (error) {

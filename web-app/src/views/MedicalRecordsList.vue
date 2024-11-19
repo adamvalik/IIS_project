@@ -42,6 +42,7 @@ import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import MedicalRecordRow from "@/components/MedicalRecordRow.vue";
 import RecordDetail from "@/components/RecordDetail.vue";
+import apiClient from '@/api';
 
 export default {
   components: {
@@ -74,7 +75,7 @@ export default {
       if (!this.animal_id) {
         //fetch all
         try {
-          const response = await axios.get(`http://localhost:8000/all_medical_records`);
+          const response = await apiClient.get(`/all_medical_records`);
           this.records = response.data;
           for (let record of this.records) {
             record.animal_name = await this.fetchAnimalName(record.id_animal);
@@ -86,7 +87,7 @@ export default {
       else {
         try {
           console.log(this.animal_id);
-          const response = await axios.get(`http://localhost:8000/medical_records/${this.animal_id}`);
+          const response = await apiClient.get(`/medical_records/${this.animal_id}`);
           this.records = response.data;
           for (let record of this.records) {
             record.animal_name = await this.fetchAnimalName(record.id_animal);
@@ -106,7 +107,7 @@ export default {
       let animalName = null;
 
       try {
-        const response = await axios.get(`http://localhost:8000/medical_record_get/${recordId}`);
+        const response = await apiClient.get(`/medical_record_get/${recordId}`);
         record = response.data;
         console.log("xxx", record);
         console.log("s",record.id_veterinarian);
@@ -117,13 +118,13 @@ export default {
       if (record) {
         try{
           console.log(record.id_veterinarian);
-          const response = await axios.get(`http://localhost:8000/vet/${record.id_veterinarian}`);
+          const response = await apiClient.get(`/vet/${record.id_veterinarian}`);
           veterinarianName = response.data.name + " " + response.data.surname;
         } catch (error) {
           console.error("Error fetching veterinarian:", error);
         }
         try{
-          const response = await axios.get(`http://localhost:8000/animals/animal_name/${record.id_animal}`);
+          const response = await apiClient.get(`/animals/animal_name/${record.id_animal}`);
           animalName = response.data;
           console.log("a", animalName);
         } catch (error) {
@@ -145,7 +146,7 @@ export default {
     },
     deleteRecord(recordId) {
       if (confirm("Are you sure you want to delete this record?")) {
-        axios.delete(`http://localhost:8000/medical_record_delete/${recordId}`)
+        apiClient.delete(`/medical_record_delete/${recordId}`)
           .then(() => {
             this.fetchMedicalRecords();
           })
@@ -164,7 +165,7 @@ export default {
       }
       console.log("a", animalId);
       try {
-        const response = await axios.get(`http://localhost:8000/animals/animal_name/${animalId}`);
+        const response = await apiClient.get(`/animals/animal_name/${animalId}`);
         return response.data;
       } catch (error) {
         console.error("Error fetching animal:", error);

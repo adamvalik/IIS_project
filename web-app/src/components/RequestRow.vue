@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/api';
+
 export default {
   props: {
     request: {
@@ -46,7 +47,7 @@ export default {
   async mounted() {
     if (!this.pending) {
       try {
-        const response = await axios.get(`http://localhost:8000/vet/${this.request.id_veterinarian}`);
+        const response = await apiClient.get(`/vet/${this.request.id_veterinarian}`);
         this.veterinarian = response.data;
       } catch (error) {
         console.error(error);
