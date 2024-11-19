@@ -143,3 +143,12 @@ class VetRequest(BaseModel):
 
 class UserDetails(BaseModel):
     id: int
+
+class MedicalRecord(BaseModel):
+    date: date
+    weight: float
+    vaccination: bool
+    vaccination_type: str
+    vet_description: str
+    id_animal: int
+    id_veterinarian: int
