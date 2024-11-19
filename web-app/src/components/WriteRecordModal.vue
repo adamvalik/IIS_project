@@ -85,6 +85,9 @@ export default {
       currentDate: new Date().toLocaleDateString(),
     };
   },
+  mounted() {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
+  },
   methods: {
     async submitRecord() {
       if (!this.formData.description.trim()) {
@@ -108,12 +111,7 @@ export default {
           id_veterinarian: this.$store.getters.user_id,
         };
 
-        await axios.post("http://localhost:8000/medical_records", payload,
-        {
-          headers: {
-            Authorization: `Bearer ${this.$store.getters.token}`,
-          }
-        });
+        await axios.post("http://localhost:8000/medical_records", payload);
         await axios.put(`http://localhost:8000/requests/${this.request.id}/processed/${this.$store.getters.user_id}`);
         this.$emit("submitted");
         this.$emit("close");
