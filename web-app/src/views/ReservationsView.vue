@@ -38,6 +38,10 @@
         />
       </div>
     </div>
+
+    <div v-if="!pastReservations.length && !futureReservations.length">
+      <p class="text-gray-700">No reservations found.</p>
+    </div>
   </div>
 </template>
 

@@ -4,6 +4,6 @@ pydantic
 bcrypt
 sqlalchemy
 python-jose
-pymysql
+psycopg2
 cryptography
 pytz

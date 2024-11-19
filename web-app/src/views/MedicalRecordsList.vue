@@ -2,7 +2,7 @@
   <div class="container mx-auto px-4 py-6 h-screen">
     <NavigationBar />
 
-    <h2 v-if="isCaregiver" class="mb-4 text-3xl font-bold text-gray-800 py-8">List Medical Records</h2>
+    <h2 class="mb-4 text-3xl font-bold text-gray-800 py-8">List Medical Records</h2>
 
     <h3 v-if="animal_id" class="text-xl font-semibold text-gray-700 mb-4">Medical Records for {{animal_name}}</h3>
     <h3 v-else class="text-xl font-semibold text-gray-700 mb-4">All Medical Records</h3>
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div v-else>
-      <p v-if="animal_id" class="text-gray-700">No medical records for {{animal_name}} records found.</p>
+      <p v-if="animal_id" class="text-gray-700">No medical records for {{animal_name}} found.</p>
       <p v-else class="text-gray-700">No medical records found.</p>
     </div>
     <RecordDetail

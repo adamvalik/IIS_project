@@ -115,7 +115,7 @@ export default {
           }
         });
         await axios.put(`http://localhost:8000/requests/${this.request.id}/processed/${this.$store.getters.user_id}`);
-
+        this.$emit("submitted");
         this.$emit("close");
       } catch (error) {
         console.error("Error submitting medical record:", error);

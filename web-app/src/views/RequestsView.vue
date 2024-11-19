@@ -41,6 +41,7 @@
       :show="showRecordModal"
       :request="selectedRequest"
       @close="closeRecordModal"
+      @submitted="submitted"
     />
 
     <div v-if="showRecordSent" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
@@ -96,14 +97,16 @@ export default {
       this.showRecordModal = true;
       this.selectedRequest = this.requests.find((request) => request.id === id);
     },
-    closeRecordModal() {
-      this.showRecordModal = false;
-      this.selectedRequest = null;
-      this.fetchRequests();
+    submitted() {
       this.showRecordSent = true;
       setTimeout(() => {
         this.showRecordSent = false;
       }, 3000);
+    },
+    closeRecordModal() {
+      this.showRecordModal = false;
+      this.selectedRequest = null;
+      this.fetchRequests();
     },
   },
 };

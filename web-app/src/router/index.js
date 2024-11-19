@@ -93,7 +93,7 @@ router.beforeEach(async (to, from, next) => {
     //If user is already logged in, redirect to the home page
     next('/');
   } else {
-    next(); 
+    next();
   }
 });
 

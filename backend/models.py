@@ -1,8 +1,10 @@
 # translation of /doc/tables.sql to SQLAlchemy ORM
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Enum, Text, DECIMAL, Time
-from sqlalchemy.dialects.mysql import MEDIUMBLOB
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Enum, Text, DECIMAL, Time, LargeBinary
 from sqlalchemy.orm import relationship
 from db import Base
+
+role_enum = Enum('caregiver', 'veterinarian', 'volunteer', 'admin', name="role_enum_type")
+size_enum = Enum('small', 'medium', 'large', name="size_enum_type")
 
 class User(Base):
     __tablename__ = "users"
@@ -13,7 +15,7 @@ class User(Base):
     name = Column(String(255), nullable=False)
     surname = Column(String(255), nullable=False)
     phone = Column(String(20), nullable=True)
-    role = Column(Enum('caregiver', 'veterinarian', 'volunteer', 'admin'), nullable=False)
+    role = Column(role_enum, nullable=False)
 
     # volunteer specific
     verified = Column(Boolean, nullable=True)
@@ -32,9 +34,9 @@ class Animal(Base):
     species = Column(String(255), nullable=False)
     breed = Column(String(255), nullable=True)
     birth_year = Column(Integer, nullable=True)
-    photo = Column(MEDIUMBLOB, nullable=True)
+    photo = Column(LargeBinary, nullable=True)
     admission_date = Column(Date, nullable=True)
-    size = Column(Enum('small', 'medium', 'large'), nullable=True)
+    size = Column(size_enum, nullable=True)
     caregivers_description = Column(Text, nullable=True)
     id_caregiver = Column(Integer, ForeignKey("users.ID_user"), nullable=False)
 
@@ -48,7 +50,7 @@ class ExaminationRequest(Base):
 
     id = Column("ID_request", Integer, primary_key=True, autoincrement=True)
     caregivers_description = Column(Text, nullable=True)
-    id_animal = Column(Integer, ForeignKey("animals.ID_animal"), primary_key=True)
+    id_animal = Column(Integer, ForeignKey("animals.ID_animal"), nullable=False)
     id_caregiver = Column(Integer, ForeignKey("users.ID_user"), nullable=False)
     id_veterinarian = Column(Integer, ForeignKey("users.ID_user"), nullable=True)
 
@@ -65,7 +67,7 @@ class MedicalRecord(Base):
     vaccination = Column(Boolean, nullable=True)
     vaccination_type = Column(String(255), nullable=True)
     vet_description = Column(Text, nullable=True)
-    id_animal = Column(Integer, ForeignKey("animals.ID_animal"), primary_key=True)
+    id_animal = Column(Integer, ForeignKey("animals.ID_animal"), nullable=False)
     id_veterinarian = Column(Integer, ForeignKey("users.ID_user"), nullable=False)
 
     animal = relationship("Animal", back_populates="medical_records")

@@ -9,7 +9,7 @@ This project uses Docker Compose, which is included with Docker Desktop (downloa
 - web-app: Contains the Vue.js frontend code.
 - doc: Placeholder directory.
 - docker-compose.yml: Docker Compose configuration to manage all services.
-- mysql_data: Docker volume for MySQL persistent storage.
+- postgres_data: Docker volume for PostgreSQL persistent storage.
 
 ## Using Docker Compose
 > **Note**: If the command `docker-compose` does not work, try using `docker compose` (without the hyphen) instead.
@@ -43,7 +43,7 @@ docker exec -it mysql mysql -uuser -p
 Services will be available at:
 - [http://localhost:8080](http://localhost:8080) - Web App frontend
 - [http://localhost:8000](http://localhost:8000) - FastAPI backend
-- [http://localhost:3306](http://localhost:3306) - MySQL database
+- [http://localhost:5432](http://localhost:5432) - PostgreSQL database
 
 API Documentation:
 - [http://localhost:8000/docs](http://localhost:8000/docs) - FastAPI Swagger UI
