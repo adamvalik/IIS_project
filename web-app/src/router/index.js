@@ -27,7 +27,7 @@ const routes = [
   { path: '/addanimal', component: AddAnimalView },
   { path: '/reservations', component: ReservationsView },
   { path: '/user/:id', component: UserDetail },
-  { path: '/requests', component: RequestsView }
+  { path: '/requests', component: RequestsView },
   { path: '/medicalrecords/:id', component: MedicalRecordsList }
 ]
 

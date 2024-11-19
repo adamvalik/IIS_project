@@ -57,9 +57,11 @@ export default {
       const maxLength = 100;
       const description = this.request.caregivers_description || '';
       if (description.length > maxLength) {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.showShowMore = true;
         return description.slice(0, maxLength) + '...';
       } else {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.showShowMore = false;
         return description;
       }
