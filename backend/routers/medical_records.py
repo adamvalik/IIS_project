@@ -5,10 +5,20 @@ from db import get_db
 from models import MedicalRecord as MedicalRecordModel
 from models import Animal as AnimalModel
 from models import User as UserModel
+from routers.login import verify_user
 
 from schemas import MedicalRecord, MedicalRecordGet
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(verify_user)]
+)
+
+@router.get("/medicalrecords/{record_id}")
+async def validateRoute(record_id: int, user_verified = Depends(verify_user)):
+    if (user_verified.get("role") == "volunteer"):
+        raise HTTPException(status_code=401, detail="Volunteer not authorized")
+
+    return {"Validation successful"}
 
 @router.get("/all_medical_records", response_model=List[MedicalRecordGet])
 async def get_all_medical_records(db: Session = Depends(get_db)):

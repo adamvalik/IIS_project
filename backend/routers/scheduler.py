@@ -18,15 +18,20 @@ utc_now = datetime.now(pytz.utc)
 local_tz = pytz.timezone('Europe/Prague')
 utc_now = utc_now.astimezone(local_tz)
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(verify_user)]
+)
 
 @router.get("/scheduler/{id}")
-async def listUsers(user_verified: bool = Depends(verify_user)):
-    if user_verified is None:
-        raise HTTPException(status_code=401, detail="User not verified")
+async def listUsers(user_verified = Depends(verify_user), db: Session = Depends(get_db)):
 
-    if user_verified.get("role") == "volunteer" and not user_verified.get("verified", False):
-        raise HTTPException(status_code=401, detail="User not authorized")
+    userToVerify = db.query(UserModel).filter(UserModel.id == user_verified.get("user_id")).first()
+    if not userToVerify:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user_verified.get("role") == "volunteer":
+        if(not userToVerify.verified):
+            raise HTTPException(status_code=401, detail=user_verified.get("role") + " not authorized")
     # If the user is verified, return the list of users
     return {"Validation successful"}
 

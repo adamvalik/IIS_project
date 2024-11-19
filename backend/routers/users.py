@@ -8,18 +8,17 @@ from schemas import UpdatePhoneRequest, UserDetails, Veternarian as VeternarianS
 from routers.login import hash_password
 from routers.login import verify_user, verify_password
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(verify_user)]
+)
 
 @router.get("/profile")
-async def reachProfile(user_verified: bool = Depends(verify_user)):
-    if user_verified is None:
-        raise HTTPException(status_code=401, detail="User not verified")
-
+async def reachProfile():
     # If the user is verified, return the user's profile
     return {"Validation successful"}
 
 @router.get("/listusers")
-async def listUsers(user_verified: bool = Depends(verify_user)):
+async def listUsers(user_verified = Depends(verify_user)):
     if user_verified is None:
         raise HTTPException(status_code=401, detail="User not verified")
 
@@ -136,9 +135,7 @@ async def get_user_details(ida: UserDetails, db: Session = Depends(get_db)):
     return {"name": name, "surname": surname, "mail": email, "telephone": phone, "role": role}
 
 @router.get("/user/{user_id}")
-async def reachProfile(user_id: int, user_verified: bool = Depends(verify_user)):
-    if user_verified is None:
-        raise HTTPException(status_code=401, detail="User not verified")
+async def reachProfile(user_id: int, user_verified = Depends(verify_user)):
     if(user_verified.get("role") == "volunteer" and (user_verified.get("user_id") != user_id)):
         raise HTTPException(status_code=401, detail="User not authorized")
 

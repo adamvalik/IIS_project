@@ -1,32 +1,58 @@
 <template>
-  <div class="container mx-auto px-4 py-6 h-screen">
-    <NavigationBar />
+  <div class="container mx-auto px-4 py-6 min-h-scree">
+    <NavigationBar class="mb-4" />
 
-    <div class="bg-white shadow-lg rounded-lg p-8">
-      <div class="flex flex-col gap-8">
-        <div class="flex flex-col md:flex-row items-center md:space-x-8">
+    <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+      <div class="p-8 space-y-6">
+        <h1 class="text-2xl font-semibold text-gray-800">User Details</h1>
 
-          <div class="mt-6 md:mt-0">
-            <p class="text-lg text-gray-600 mb-2">Name: {{ user.name }}</p>
-            <p class="text-lg text-gray-600 mb-2">Surname: {{ user.surname }}</p>
-            <p class="text-lg text-gray-600 mb-2">E-Mail: {{ user.mail }}</p>
-            <p class="text-lg text-gray-600 mb-2">Telephone Number: {{ user.telephone }}</p>
-            <p class="text-lg text-gray-600 mb-2">Role: {{ user.role }}</p>
+        <div class="flex flex-col gap-6 md:flex-row items-center md:items-start md:gap-10">
+          <!-- Placeholder Avatar -->
+          <div class="flex-shrink-0">
+            <div class="h-32 w-32 rounded-full overflow-hidden bg-gray-100 shadow-md">
+              <div
+                class="h-full w-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 text-gray-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-16 w-16 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2a6 6 0 100 12 6 6 0 000-12zM4 20.25a8.25 8.25 0 1116.5 0v.25a.75.75 0 01-.75.75h-15a.75.75 0 01-.75-.75v-.25z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="flex flex-col gap-3">
+            <div>
+              <p class="font-semibold text-gray-700">Name</p>
+              <p class="text-lg text-gray-600">{{ user.name }}</p>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-700">Surname</p>
+              <p class="text-lg text-gray-600">{{ user.surname }}</p>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-700">E-mail</p>
+              <p class="text-lg text-gray-600">{{ user.mail }}</p>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-700">Phone number</p>
+              <p class="text-lg text-gray-600">{{ user.telephone }}</p>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-700">Role</p>
+              <p class="text-lg text-gray-600 capitalize">{{ user.role }}</p>
+            </div>
           </div>
         </div>
-
-        <div v-if="isAuthenticated" class="flex gap-4">
-          <!-- TOTO MUSITE NEKDO FIXNOUT -->
-          <router-link v-if="this.satek" to="/scheduler" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Reservations</router-link>
-<!--          <h1 v-if="this.satek" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>-->
-          <button @click="openHyperlink" class="bg-green-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Contact Us</button>
-        </div>
-
-        <div v-else class="flex gap-4 items-center">
-          <h1 class="text-lg"><b>You are not logged in. To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</b></h1>
-          <router-link class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0" to="/signup">Sign Up</router-link>
-        </div>
-
       </div>
     </div>
   </div>
@@ -39,52 +65,36 @@ import { mapGetters } from 'vuex';
 
 export default {
   components: {
-    NavigationBar
+    NavigationBar,
   },
   data() {
     return {
       user: {},
-      showSchedulerModal: false,
-      showUnverifiedVolunteer: false,
-      hasSchedulerPermissions: false,
-      showVetRequestModal: false,
-      vetRequestText: '',
-      showRequestSent: false,
-      satek: true,
     };
   },
   computed: {
     ...mapGetters(['isAuthenticated', 'userRole', 'user_id']),
 
-    // isLoggedIn() {
-    //   return this.isAuthenticated;
-    // },
-    // isVeterinarian() {
-    //   return this.userRole === 'veterinarian';
-    // },
     isCaregiver() {
       return this.userRole === 'caregiver';
     },
   },
   async mounted() {
-    const animalId = this.$route.params.id;
-    this.fetchUser(animalId);
+    const userID = this.$route.params.id;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
+    this.fetchUser(userID);
   },
   methods: {
     async fetchUser(id) {
       try {
-        const response = await axios.post('http://localhost:8000/user_detail',
-          {
-            id: id
-          });
+        const response = await axios.post('http://localhost:8000/user_detail', {
+          id: id,
+        });
         this.user = response.data;
       } catch (error) {
-        console.error("Error fetching recent animals:", error);
+        console.error(error);
       }
     },
-    openHyperlink() {
-      window.open('https://www.youtube.com/watch?v=AZhWW6URrns', '_blank');
-    }
-  }
+  },
 };
 </script>
