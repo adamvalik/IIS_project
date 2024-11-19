@@ -43,6 +43,10 @@
       @close="closeRecordModal"
     />
 
+    <div v-if="showRecordSent" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+      Medical record submitted
+    </div>
+
   </div>
 </template>
 
@@ -64,6 +68,7 @@ export default {
       requests: [],
       showRecordModal: false,
       selectedRequest: null,
+      showRecordSent: false,
     };
   },
   computed: {
@@ -94,6 +99,10 @@ export default {
       this.showRecordModal = false;
       this.selectedRequest = null;
       this.fetchRequests();
+      this.showRecordSent = true;
+      setTimeout(() => {
+        this.showRecordSent = false;
+      }, 3000);
     },
   },
 };

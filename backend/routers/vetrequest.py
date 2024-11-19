@@ -5,11 +5,12 @@ from typing import List
 from schemas import VetRequest as VetRequestSchema, VetRequestShow as VetRequestShowSchema
 from models import Animal as AnimalModel
 from models import ExaminationRequest as ExaminationRequestModel
+from routers.login import verify_user
 
 router = APIRouter()
 
 @router.post("/request")
-async def create_vet_request(vet_request: VetRequestSchema, db: Session = Depends(get_db)):
+async def create_vet_request(vet_request: VetRequestSchema, db: Session = Depends(get_db), user_verified: bool = Depends(verify_user)):
     animal_id = vet_request.animal_id
     caregivers_description = vet_request.request_text
     caregiver_id = vet_request.caregiver_id

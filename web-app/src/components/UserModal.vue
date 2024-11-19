@@ -29,11 +29,11 @@
           <input v-model="formData.password" type="password" class="w-full border rounded p-2">
         </div>
 
-        <div class="flex justify-end gap-4">
-          <button type="button" @click="$emit('close')" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600">
+        <div class="flex justify-between">
+          <button type="button" @click="$emit('close')" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600">
             Cancel
           </button>
-          <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+          <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">
             {{ user ? "Update" : "Create" }}
           </button>
         </div>

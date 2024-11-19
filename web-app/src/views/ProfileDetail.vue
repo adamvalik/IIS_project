@@ -9,23 +9,23 @@
         <form @submit.prevent="updatePhoneNum">
           <div>
             <label for="name" class="block text-sm font-medium py-2">Name:</label>
-            <input type="text" name="name" id="name" v-model="user.name" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
+            <input type="text" name="name" id="name" v-model="user.name" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled/>
           </div>
 
           <div>
             <label for="surname" class="block text-sm font-medium py-2">Surname:</label>
-            <input type="text" name="surname" id="surname" v-model="user.surname" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
+            <input type="text" name="surname" id="surname" v-model="user.surname" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled />
           </div>
 
           <div>
             <label for="email" class="block text-sm font-medium py-2">Email:</label>
-            <input type="email" name="email" id="email" v-model="user.email" class="w-full p-2 border border-gray-300 rounded-md text-sm" readonly />
+            <input type="email" name="email" id="email" v-model="user.email" class="w-full p-2 border border-gray-300 rounded-md text-sm" disabled />
           </div>
 
           <div>
             <label for="phone" class="block text-sm font-medium py-2">Phone number:</label>
             <div class="flex gap-2">
-              <input type="text" v-model="user.phone" name="phone" id="phone" placeholder="Optional" class="w-3/4 p-2 border border-gray-300 rounded-md text-sm" />
+              <input type="text" v-model="user.phone" name="phone" id="phone" placeholder="Enter your phone number (optional)" class="w-3/4 p-2 border border-gray-300 rounded-md text-sm" />
               <input type="submit" value="Save" class="w-1/4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded" />
             </div>
           </div>
@@ -72,6 +72,13 @@
         </div>
       </div>
     </div>
+
+    <div v-if="showPhoneUpdated" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+      Phone number updated
+    </div>
+    <div v-if="showPwdUpdated" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+      Password changed successfully
+    </div>
   </div>
 </template>
 
@@ -93,6 +100,8 @@ export default {
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
+      showPhoneUpdated: false,
+      showPwdUpdated: false,
     };
   },
   computed: {
@@ -118,13 +127,23 @@ export default {
     },
     async updatePhoneNum() {
       try {
-        if (!this.user.phone) {
-          console.log('No phone number provided.');
+        const phoneRegex = /^[+]?[0-9]{10,15}$/;
+        if (!this.user.phone || this.user.phone === '') {
+          alert('Phone number is required.');
+          this.user.phone = null;
+          return;
+        } else if (!phoneRegex.test(this.user.phone)) {
+          alert('Invalid phone number format.');
+          this.user.phone = null;
           return;
         }
+
         await axios.put(`http://localhost:8000/users/${this.userID}/phone`, { phone: this.user.phone });
-        alert('Phone number updated successfully.');
         this.fetchProfile();
+        this.showPhoneUpdated = true;
+        setTimeout(() => {
+          this.showPhoneUpdated = false;
+        }, 3000);
       } catch (error) {
         console.error('Error updating profile:', error);
       }
@@ -142,12 +161,19 @@ export default {
           oldPassword: this.currentPassword,
           newPassword: this.newPassword,
         });
-        alert('Password changed successfully.');
+        this.showPwdUpdated = true;
+        setTimeout(() => {
+          this.showPwdUpdated = false;
+        }, 3000);
         this.currentPassword = '';
         this.newPassword = '';
         this.confirmPassword = '';
       } catch (error) {
         alert('Error changing password. Please check your current password.');
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+
       }
     },
     async deleteAccount() {

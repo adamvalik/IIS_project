@@ -108,10 +108,14 @@ export default {
           id_veterinarian: this.$store.getters.user_id,
         };
 
-        await axios.post("http://localhost:8000/medical_records", payload);
+        await axios.post("http://localhost:8000/medical_records", payload,
+        {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters.token}`,
+          }
+        });
         await axios.put(`http://localhost:8000/requests/${this.request.id}/processed/${this.$store.getters.user_id}`);
 
-        alert("Medical record successfully submitted!");
         this.$emit("close");
       } catch (error) {
         console.error("Error submitting medical record:", error);

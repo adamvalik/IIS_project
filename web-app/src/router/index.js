@@ -5,9 +5,9 @@ import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import SignUpView from '@/views/SignUpView.vue';
 import AnimalsView from '@/views/AnimalsView.vue';
-import AnimalDetail from '@/components/AnimalDetail.vue';
+import AnimalDetail from '@/views/AnimalDetail.vue';
 import SchedulerView from '@/views/SchedulerView.vue'; // Import the Scheduler component
-import ProfileDetail from "@/components/ProfileDetail.vue";
+import ProfileDetail from "@/views/ProfileDetail.vue";
 import ListUsersView from '@/views/ListUsersView.vue'
 import AddAnimalView from '@/views/AddAnimalView.vue';
 import ReservationsView from '@/views/ReservationsView.vue';
@@ -29,6 +29,7 @@ const routes = [
   { path: '/user/:id', component: UserDetail },
   { path: '/requests', component: RequestsView },
   { path: '/medicalrecords/:id', component: MedicalRecordsList }
+  // { path: '/medicalrecords', component: MedicalRecordsList } toto povede na vycet uplne vsech medical records
 ]
 
 const router = createRouter({
@@ -38,6 +39,7 @@ const router = createRouter({
 
 const protectedRoutes = ['/profile', '/listusers', '/addanimal', '/reservations'];
 const userInfoRoutes = /^\/user\/\d+$/;
+const schedulerRoutes = /^\/scheduler\/\d+$/;
 const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';
 
@@ -49,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
 
   const token = store.state.accessToken; // Get the token from Vuex store
 
-  if (protectedRoutes.includes(to.path) || userInfoRoutes.test(to.path)) {
+  if (protectedRoutes.includes(to.path) || userInfoRoutes.test(to.path) || schedulerRoutes.test(to.path)) {
 
     // const fakeToken = 'fake';
     // If the token is not available, redirect to the login page

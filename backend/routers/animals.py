@@ -104,7 +104,8 @@ async def create_animal(animal: AnimalCreateSchema, db: Session = Depends(get_db
     db.refresh(new_animal)
 
 @router.put("/animals/edit/{animal_id}")
-async def update_animal(animal_id: int, animal: AnimalCreateSchema, db: Session = Depends(get_db)):
+async def update_animal(animal_id: int, animal: AnimalCreateSchema, db: Session = Depends(get_db), user_verified: bool = Depends(verify_user)):
+
     animal_to_update = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
     if animal_to_update is None:
         raise HTTPException(status_code=404, detail="Animal not found")

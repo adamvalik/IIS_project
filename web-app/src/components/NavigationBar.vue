@@ -1,6 +1,10 @@
 <template>
   <nav class="flex justify-between items-center py-4 border-b">
-    <router-link to="/" class="text-2xl font-bold text-gray-800">DJ Khaled's Animal Shelter</router-link>
+
+    <router-link to="/" class="text-2xl font-bold text-gray-800 flex gap-2">
+      <img src="/assets/logo.png" alt="Logo" class="h-8 object-cover" />
+      DJ Khaled's Animal Shelter
+    </router-link>
 
     <div class="flex space-x-4 items-center">
       <!-- role-based actions -->
@@ -9,8 +13,13 @@
           Actions
         </button>
         <!-- dropdown for role-based actions -->
-        <div v-if="showActions" class="absolute right-0 mt-2 bg-white shadow-lg rounded-lg py-2 w-48 z-10">
-          <router-link v-for="action in roleActions" :key="action.name" :to="action.link" class="block px-4 py-2 hover:bg-gray-100">
+        <div v-if="showActions" class="absolute right-0 mt-2 bg-white shadow-lg rounded-lg py-2 w-60 z-10">
+          <router-link
+            v-for="action in roleActions"
+            :key="action.name"
+            :to="action.link"
+            class="block px-5 py-2 hover:bg-gray-100"
+            >
             {{ action.name }}
           </router-link>
         </div>
@@ -53,20 +62,29 @@ export default {
     roleActions() {
       if (this.userRole === 'caregiver') {
         return [
-          { name: 'Manage Animals', link: '/manage-animals' },
-          { name: 'Add animal', link: '/addanimal' },
+          { name: 'All animals 🐾', link: '/animals' },
+          { name: 'Add animal 🐕', link: '/addanimal' },
+          { name: 'Manage volunteers 👨🏻', link: '/listusers' },
+          { name: 'Reservations 📝', link: '/reservations' },
         ];
       } else if (this.userRole === 'veterinarian') {
         return [
-          { name: 'Medical Records', link: '/medical-records' }
+          { name: 'Examination requests 🩺', link: '/requests' },
+          { name: 'Medical records 💉', link: '/records' },
         ];
       } else if (this.userRole === 'volunteer') {
         return [
-          { name: 'Task List', link: '/tasks' },
+          { name: 'My reservations 📝', link: '/reservations' },
+          { name: 'All animals 🐾', link: '/animals' },
         ];
       } else if (this.userRole === 'admin') {
         return [
-          { name: 'Add animal', link: '/addanimal' },
+          { name: 'Manage users 👨🏻', link: '/listusers' },
+          { name: 'Add animal 🐕', link: '/addanimal' },
+          { name: 'All animals 🐾', link: '/animals' },
+          { name: 'Reservations 📝', link: '/reservations' },
+          { name: 'Examination requests 🩺', link: '/requests' },
+          { name: 'Medical records 💉', link: '/records' },
         ];
       }
       return [];

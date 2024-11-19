@@ -60,13 +60,12 @@
           <button v-if="editMode" @click="cancelEdit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
           <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
           <button v-if="isCaregiver && !editMode" @click="showVetRequestModal = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Medical Request</button>
-          <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
           <button v-if="!editMode" @click="openHyperlink" class="bg-green-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Contact Us</button>
           <router-link v-if="isCaregiver || isAdmin && !editMode" :to="`/medicalrecords/${animal.id}`" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg">Medical Records</router-link>
         </div>
 
         <div v-else class="flex gap-4 items-center">
-          <h1 class="text-lg"><b>You are not logged in. To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</b></h1>
+          <h1 class="text-md text-gray-500">To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</h1>
           <router-link class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0" to="/signup">Sign Up</router-link>
         </div>
 
@@ -94,7 +93,7 @@
 </template>
 
 <script>
-import NavigationBar from './NavigationBar.vue';
+import NavigationBar from '@/components/NavigationBar.vue';
 import axios from 'axios';
 import { mapGetters } from 'vuex';
 
@@ -205,7 +204,13 @@ export default {
     async saveChanges(){
       try {
         this.editableAnimal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
-        await axios.put(`http://localhost:8000/animals/edit/${this.animal.id}`, this.editableAnimal);
+        await axios.put(`http://localhost:8000/animals/edit/${this.animal.id}`,
+          this.editableAnimal,
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.state.accessToken}`,
+            }
+          });
         this.animal = { ...this.editableAnimal };
         this.editMode = false;
       } catch (error) {
@@ -228,6 +233,10 @@ export default {
           animal_id: this.animal.id,
           caregiver_id: this.user_id,
           request_text: this.vetRequestText
+        }, {
+          headers: {
+            Authorization: `Bearer ${this.$store.state.accessToken}`,
+          },
         });
         console.log('Request sent:', response.data);
         this.showVetRequestModal = false;

@@ -20,12 +20,12 @@ utc_now = utc_now.astimezone(local_tz)
 
 router = APIRouter()
 
-@router.get("/scheduler")
+@router.get("/scheduler/{id}")
 async def listUsers(user_verified: bool = Depends(verify_user)):
     if user_verified is None:
         raise HTTPException(status_code=401, detail="User not verified")
 
-    if user_verified.get("role") == "veterinarian":
+    if user_verified.get("role") == "volunteer" and not user_verified.get("verified", False):
         raise HTTPException(status_code=401, detail="User not authorized")
     # If the user is verified, return the list of users
     return {"Validation successful"}
