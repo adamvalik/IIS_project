@@ -17,8 +17,18 @@
         </div>
       </div>
     <div v-else>
-      <p class="text-gray-700">No medical for {{this.animal_name}} records found.</p>
+      <p class="text-gray-700">No medical records for {{this.animal_name}} records found.</p>
     </div>
+    <RecordDetail
+      v-if="selectedRecord"
+      :show="showModal"
+      :animalName="animal_name"
+      :veterinarianName="selectedRecord.veterinarianName"
+      :date="selectedRecord.date"
+      :vaccination="selectedRecord.vaccination"
+      :description="selectedRecord.description"
+      @close="closeModal"
+    />
   </div>
 </template>
 
@@ -27,18 +37,21 @@
 import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import MedicalRecordRow from "@/components/MedicalRecordRow.vue";
+import RecordDetail from "@/components/RecordDetail.vue";
 
 export default {
   components: {
     /** eslint-disable */
     MedicalRecordRow,
     NavigationBar,
+    RecordDetail,
   },
   data() {
     return {
       records: [],
       selectedRecord: null,
       isCaregiver: false,
+      showModal: false,
       animal_id: null,
       animal_name: null
     };
@@ -69,16 +82,51 @@ export default {
       }
     },
     async toggleDetail(recordId) {
+      console.log(recordId);
+      let record = null;
+      let veterinarianName = null;
+      let animalName = null;
+
       try {
-        if (!recordId) {
-          console.error('No reservation ID provided');
-          return;
-        }
-        await axios.put(`http://localhost:8000/reservations/${recordId}/toggle_borrowed`);
-        await this.fetchMedicalRecords();
+        const response = await axios.get(`http://localhost:8000/medical_record_get/${recordId}`);
+        record = response.data;
+        console.log("xxx", record);
+        console.log("s",record.id_veterinarian);
+
       } catch (error) {
-        console.error('Error toggling borrowed:', error);
+        console.error("Error fetching record details:", error);
       }
+      if (record) {
+        try{
+          console.log(record.id_veterinarian);
+          const response = await axios.get(`http://localhost:8000/vet/${record.id_veterinarian}`);
+          veterinarianName = response.data.name + " " + response.data.surname;
+        } catch (error) {
+          console.error("Error fetching veterinarian:", error);
+        }
+        try{
+          const response = await axios.get(`http://localhost:8000/animals/animal_name/${record.id_animal}`);
+          animalName = response.data;
+        } catch (error) {
+          console.error("Error fetching animal:", error);
+        }
+      }
+      let vaccination_name = null;
+      if (record && record.vaccination){
+        vaccination_name = record.vaccination_type;
+      }
+      this.selectedRecord = {
+        veterinarianName: veterinarianName,
+        animalName: animalName,
+        date: record.date,
+        vaccination: vaccination_name,
+        description: record.description,
+      };
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.selectedRecord = null;
     },
     async fetchAnimalName() {
       try {

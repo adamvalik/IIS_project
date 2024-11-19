@@ -6,7 +6,7 @@
     </div>
 
     <div class="flex gap-2">
-      <button @click="$emit('toggleDetail', record.id)" class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600">
+      <button @click="toggleDetail" class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600">
         Show Details
       </button>
     </div>
@@ -37,13 +37,12 @@ export default {
   },
   methods: {
     toggleDetail() {
-      if (confirm(`Are you sure you want to delete ${this.user.name} ${this.user.surname}?`)) {
-        this.$emit('deleteUser', this.user.id);
-      }
+      console.log("det", this.record.id);
+      this.$emit('toggleDetail', this.record.id);
     },
     async fetchVeterinarianName() {
       try {
-        console.log(this.record.veterinarian_id);
+        console.log(this.record.id_veterinarian);
         const response = await axios.get(`http://localhost:8000/vet/${this.record.id_veterinarian}`);
         this.veterinarian = response.data.name + " " + response.data.surname;
       } catch (error) {
