@@ -16,6 +16,9 @@
         />
       </div>
     </div>
+    <div v-else>
+      <p class="text-gray-600">No pending requests</p>
+    </div>
 
     <div v-if="processedRequests.length">
       <h3 class="text-xl font-semibold text-gray-700 mb-4">Processed Requests</h3>
@@ -28,6 +31,9 @@
           @writeMedicalRecord="writeMedicalRecord"
         />
       </div>
+    </div>
+    <div v-else>
+      <p class="text-gray-600">No processed requests</p>
     </div>
 
     <WriteRecordModal

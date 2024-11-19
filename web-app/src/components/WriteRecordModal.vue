@@ -5,6 +5,7 @@
 
       <p class="text-sm text-gray-600 mb-4">Date: {{ currentDate }}</p>
 
+      <!-- Vaccination Type -->
       <div class="mb-4">
         <label for="vaccinationType" class="block text-sm font-medium text-gray-800 mb-1">Vaccination Type (if applied):</label>
         <input
@@ -14,6 +15,18 @@
           placeholder="Enter vaccination type or leave empty"
           class="w-full border border-gray-300 rounded-md p-2 text-sm"
         />
+      </div>
+
+      <!-- Weight -->
+      <div class="mb-4 flex items-center gap-4">
+        <label for="weight" class="block text-sm font-medium text-gray-800">Weight:</label>
+        <input
+          type="number"
+          id="weight"
+          v-model="formData.weight"
+          class="w-16 border border-gray-300 rounded-md p-2 font-bold text-sm"
+        />
+        <p class="text-sm">kg</p>
       </div>
 
       <!-- Vet's Description -->
@@ -28,6 +41,7 @@
         ></textarea>
       </div>
 
+      <!-- Action Buttons -->
       <div class="flex justify-between">
         <button
           @click="$emit('close')"
@@ -47,6 +61,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   props: {
     show: {
@@ -63,6 +79,7 @@ export default {
       formData: {
         vaccinationType: "",
         description: "",
+        weight: null,
       },
       currentDate: new Date().toLocaleDateString(),
     };
@@ -74,16 +91,24 @@ export default {
         return;
       }
 
+      if (!this.formData.weight || this.formData.weight <= 0) {
+        alert("Please enter a valid weight.");
+        return;
+      }
+
       try {
         const payload = {
-          vaccinationType: this.formData.vaccinationType || null,
-          description: this.formData.description,
-          date: this.currentDate,
-          vetId: this.$store.getters.user_id, // Assuming vet ID is stored in Vuex
-          requestId: this.request.id,
+          date: new Date().toISOString().split("T")[0],
+          weight: this.formData.weight,
+          vaccination: this.formData.vaccinationType == "" ? false : true,
+          vaccination_type: this.formData.vaccinationType,
+          vet_description: this.formData.description,
+          id_animal: this.request.animal.id,
+          id_veterinarian: this.$store.getters.user_id,
         };
 
-        // Send data to the backend
+        console.log("Medical record payload:", payload);
+
         await axios.post("http://localhost:8000/medical_records", payload);
 
         alert("Medical record successfully submitted!");
@@ -92,7 +117,7 @@ export default {
         console.error("Error submitting medical record:", error);
         alert("Failed to submit the medical record.");
       }
-    }
+    },
   },
 };
 </script>
