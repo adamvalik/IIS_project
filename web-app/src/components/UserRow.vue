@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-between items-center bg-white shadow p-4 rounded-lg">
     <div>
-      <p class="text-lg font-semibold text-gray-700">{{ user.name }} {{ user.surname }}</p>
+      <p class="text-lg font-semibold text-gray-800">{{ user.name }} {{ user.surname }}</p>
       <p class="text-sm text-gray-600">{{ user.email }}</p>
       <p class="text-sm text-gray-600">Role: {{ user.role }}</p>
       <p v-if="user.role === 'volunteer' && !isAdmin" class="text-sm text-gray-600">

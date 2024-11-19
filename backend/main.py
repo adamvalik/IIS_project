@@ -13,6 +13,7 @@ from routers import animals
 from routers import users
 from routers import vetrequest
 from routers import reservations
+from routers import medical_records
 
 # URL = "http://localhost:8000"
 
@@ -60,6 +61,7 @@ app.include_router(scheduler.router)
 app.include_router(users.router)
 app.include_router(reservations.router)
 app.include_router(vetrequest.router)
+app.include_router(medical_records.router)
 
 # create tables in the database
 Base.metadata.create_all(bind=engine)

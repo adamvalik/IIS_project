@@ -49,6 +49,14 @@ class PasswordChangeRequest(BaseModel):
     class Config:
         orm_mode = True
 
+class Veternarian(BaseModel):
+    id: int
+    name: str
+    surname: str
+
+    class Config:
+        orm_mode = True
+
 class Animal(BaseModel):
     id: int
     name: str
@@ -136,10 +144,37 @@ class ReservationShow(BaseModel):
     class Config:
         orm_mode = True
 
+#-------------------------------------------
+
 class VetRequest(BaseModel):
     animal_id: int
     caregiver_id: int
     request_text: str
 
+    class Config:
+        orm_mode = True
+
+class VetRequestShow(BaseModel):
+    id: int
+    caregivers_description: str
+    animal: ReservationAnimal
+    caregiver: ReservationUser
+    id_veterinarian: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+#-------------------------------------------
+
+
 class UserDetails(BaseModel):
     id: int
+
+class MedicalRecord(BaseModel):
+    date: date
+    weight: float
+    vaccination: bool
+    vaccination_type: str
+    vet_description: str
+    id_animal: int
+    id_veterinarian: int

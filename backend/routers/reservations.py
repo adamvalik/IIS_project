@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session #, joinedload
+from sqlalchemy.orm import Session
 from typing import List
 from db import get_db
 from models import Reservation as ReservationModel
@@ -11,13 +11,6 @@ router = APIRouter()
 async def get_all_reservations(db: Session = Depends(get_db)):
     # default - get all reservations sorted from the newest to the oldest
     reservations = db.query(ReservationModel).order_by(ReservationModel.id.desc()).all()
-
-    # reservations = (
-    #     db.query(ReservationModel)
-    #     .options(joinedload(ReservationModel.borrow), joinedload(ReservationModel.volunteer))
-    #     .all()
-    # )
-
     if not reservations:
         raise HTTPException(status_code=404, detail="No reservations found")
     return reservations
