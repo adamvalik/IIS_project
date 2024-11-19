@@ -178,3 +178,6 @@ class MedicalRecord(BaseModel):
     vet_description: str
     id_animal: int
     id_veterinarian: int
+
+class MedicalRecordGet(MedicalRecord):
+    id: int
