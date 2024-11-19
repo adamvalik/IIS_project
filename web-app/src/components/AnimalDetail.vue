@@ -25,7 +25,7 @@
 
             <div class = "mb-2">
             <p v-if="!editMode" class="text-lg text-gray-600">Age: {{ calculateAge(animal.birth_year) }} years</p>
-            <input v-else v-model="editableAnimal.birth_year" placeholder="age" type="number" class="text-lg text-gray-600 border border-gray-300 p-2 rounded" />
+            <input v-else v-model="editableAnimal.birth_year" placeholder="Age" type="number" class="text-lg text-gray-600 border border-gray-300 p-2 rounded" />
             </div>
 
             <div class = "mb-2">
@@ -35,9 +35,9 @@
               v-model="editableAnimal.size"
               class="text-lg border border-gray-300 p-2 rounded w-full">
               <option value="" disabled>Select size</option>
-              <option value="small">Small</option>
-              <option value="medium">Medium</option>
-              <option value="big">Big</option>
+              <option value="small">small</option>
+              <option value="medium">medium</option>
+              <option value="large">large</option>
             </select>
             </div>
 
@@ -135,6 +135,7 @@ export default {
     this.loadSchedulerPermissions(this.user_id);
     this.loadEditPermissions();
   },
+
   methods: {
     async fetchAnimal(id) {
       try {
@@ -181,6 +182,10 @@ export default {
         }
       }
     },
+    computeBirthYear(newValue) {
+      this.editableAnimal.birth_year = new Date().getFullYear() - newValue;
+      console.log(this.editableAnimal.birth_year);
+    },
     calculateAge(birthYear) {
       const currentYear = new Date().getFullYear();
       return currentYear - birthYear;
@@ -191,12 +196,12 @@ export default {
     },
     turnEditMode(){
       this.editMode = !this.editMode;
-      this.editableAnimal.birth_year = this.calculateAge(this.editableAnimal.birth_year);
     },
     async saveChanges(){
       try {
         await axios.put(`http://localhost:8000/animals/edit/${this.animal.id}`, this.editableAnimal);
         this.animal = { ...this.editableAnimal };
+        this.animal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
         this.editMode = false;
       } catch (error) {
         console.error("Error updating animal:", error);
