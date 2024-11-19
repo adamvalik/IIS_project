@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto px-4 py-6">
-    <NavigationBar />
+    <NavigationBar class="mb-4" />
 
     <div class="bg-white shadow-lg rounded-lg p-8">
       <div class="flex flex-col gap-8">
