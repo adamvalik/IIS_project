@@ -9,6 +9,9 @@
       <button @click="toggleDetail" class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600">
         Show Details
       </button>
+      <button v-if="isAdmin" @click="deleteRecord" class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600">
+        Delete
+      </button>
     </div>
   </div>
 </template>
@@ -24,6 +27,10 @@ export default {
     },
     animal_name: {
       type: String,
+      required: true
+    },
+    isAdmin: {
+      type: Boolean,
       required: true
     }
   },
@@ -48,6 +55,9 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    },
+    deleteRecord() {
+      this.$emit('deleteRecord', this.record.id);
     }
   }
 };
