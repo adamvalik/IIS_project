@@ -4,51 +4,51 @@
 
     <div class="bg-white shadow-lg rounded-lg p-8">
       <div class="flex flex-col gap-8">
-        <div class="flex flex-col md:flex-row items-center md:space-x-8">
-          <img :src="animal.photo" :alt="animal.name" class="w-full md:w-1/3 h-64 object-cover rounded-lg shadow-md" />
+        <div class="flex flex-col md:flex-row items-center md:space-x-8 overflow-">
+          <img :src="animal.photo" :alt="animal.name" class="w-full md:w-1/3 h-64 object-cover rounded-lg shadow-md self-start" />
 
           <div class="mt-6 md:mt-0">
-            <div class = "mb-4">
-            <h2 v-if="!editMode" class="text-3xl font-bold text-gray-800">{{ animal.name }}</h2>
-            <input v-else v-model="editableAnimal.name" placeholder="Name" class="text-3xl font-bold text-gray-800 border border-gray-300 p-2 rounded" />
+            <div>
+              <h2 v-if="!editMode" class="mb-4 text-3xl font-bold text-gray-800">{{ animal.name }}</h2>
+              <input v-else v-model="editableAnimal.name" placeholder="Name" class="text-gray-800 border border-gray-300 p-2 rounded w-full" />
             </div>
 
-            <div class = "mb-2">
-            <p v-if="!editMode" class="text-lg text-gray-600">Species: {{ animal.species }}</p>
-            <input v-else v-model="editableAnimal.species" placeholder="species" class="text-lg text-gray-600 border border-gray-300 p-2 rounded" />
+            <div>
+              <p v-if="!editMode" class="mb-2 text-lg text-gray-600">Species: {{ animal.species }}</p>
+              <input v-else v-model="editableAnimal.species" placeholder="species" class="text-gray-600 border border-gray-300 p-2 rounded w-full" />
             </div>
 
-            <div class = "mb-2">
-            <p v-if="!editMode" class="text-lg text-gray-600">Breed: {{ animal.breed }}</p>
-            <input v-else v-model="editableAnimal.breed" placeholder="breed" class="text-lg text-gray-600 border border-gray-300 p-2 rounded" />
+            <div>
+              <p v-if="!editMode" class="mb-2 text-lg text-gray-600">Breed: {{ animal.breed }}</p>
+              <input v-else v-model="editableAnimal.breed" placeholder="breed" class="text-gray-600 border border-gray-300 p-2 rounded w-full" />
             </div>
 
-            <div class = "mb-2">
-            <p v-if="!editMode" class="text-lg text-gray-600">Age: {{ calculateAge(animal.birth_year) }} years</p>
-            <input v-else v-model="editableAnimal.birth_year" placeholder="Age" type="number" class="text-lg text-gray-600 border border-gray-300 p-2 rounded" />
+            <div>
+              <p v-if="!editMode" class="mb-2 text-lg text-gray-600">Age: {{ calculateAge(animal.birth_year) }} years</p>
+              <input v-else v-model="editableAnimal.birth_year" placeholder="Age" type="number" class=" text-gray-600 border border-gray-300 p-2 rounded w-full" />
             </div>
 
-            <div class = "mb-2">
-            <p v-if="!editMode" class="text-lg text-gray-600">Size: {{ animal.size }}</p>
-            <select
-              v-else
-              v-model="editableAnimal.size"
-              class="text-lg border border-gray-300 p-2 rounded w-full">
-              <option value="" disabled>Select size</option>
-              <option value="small">small</option>
-              <option value="medium">medium</option>
-              <option value="large">large</option>
-            </select>
+            <div>
+              <p v-if="!editMode" class="mb-2 text-lg text-gray-600">Size: {{ animal.size }}</p>
+              <select
+                v-else
+                v-model="editableAnimal.size"
+                class="border border-gray-300 p-2 rounded w-full">
+                <option value="" disabled>Select size</option>
+                <option value="small">small</option>
+                <option value="medium">medium</option>
+                <option value="large">large</option>
+              </select>
             </div>
 
-            <div class = "mb-2">
-            <p v-if="!editMode" class="text-lg text-gray-600 mb-2">Admission Date: {{ formatDate(animal.admission_date) }}</p>
-            <input v-else v-model="editableAnimal.admission_date" placeholder="admission date" type="date" class="text-lg text-gray-600 border border-gray-300 p-2 rounded" />
+            <div>
+              <p v-if="!editMode" class="text-lg text-gray-600 mb-2">Admission Date: {{ formatDate(animal.admission_date) }}</p>
+              <input v-else v-model="editableAnimal.admission_date" placeholder="admission date" type="date" class="text-gray-600 border border-gray-300 p-2 rounded w-full" />
             </div>
 
-            <div class = "mb-2">
-            <p v-if="!editMode" class="text-lg text-gray-600">{{ animal.caregivers_description }}</p>
-            <textarea v-else v-model="editableAnimal.caregivers_description" placeholder="caregivers description" class="text-lg text-gray-600 border border-gray-300 p-2 rounded"></textarea>
+            <div>
+              <p v-if="!editMode" class="mb-2 text-lg text-gray-600 break-words">{{ animal.caregivers_description }}</p>
+              <textarea v-else v-model="editableAnimal.caregivers_description" placeholder="caregivers description" rows="1" class="text-gray-600 border border-gray-300 p-2 rounded w-full"></textarea>
             </div>
 
           </div>
