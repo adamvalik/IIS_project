@@ -43,13 +43,17 @@ def verify_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_d
         userFound = None
         if(db.query(UserModel).filter(UserModel.email == email).first() is not None):
             userFound = db.query(UserModel).filter(UserModel.email == email).first()
+            
         
         if userFound is None or userFound.id != user_id or userFound.role != role:
-            return None
+            raise HTTPException(status_code=401, detail="User not verified")
 
         return payload
     except JWTError:
-        return None 
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 @router.post("/login", response_model=LoginResponse)
 async def login(login_request: LoginRequest, db: Session = Depends(get_db)):

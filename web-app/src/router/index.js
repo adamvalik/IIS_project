@@ -38,6 +38,7 @@ const router = createRouter({
 
 const protectedRoutes = ['/profile', '/listusers', '/addanimal', '/reservations'];
 const userInfoRoutes = /^\/user\/\d+$/;
+const schedulerRoutes = /^\/scheduler\/\d+$/;
 const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';
 
@@ -49,7 +50,7 @@ router.beforeEach(async (to, from, next) => {
 
   const token = store.state.accessToken; // Get the token from Vuex store
 
-  if (protectedRoutes.includes(to.path) || userInfoRoutes.test(to.path)) {
+  if (protectedRoutes.includes(to.path) || userInfoRoutes.test(to.path) || schedulerRoutes.test(to.path)) {
 
     // const fakeToken = 'fake';
     // If the token is not available, redirect to the login page

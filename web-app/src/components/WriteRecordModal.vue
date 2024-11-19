@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   props: {
     show: {
@@ -84,7 +85,12 @@ export default {
         };
 
         // Send data to the backend
-        await axios.post("http://localhost:8000/medical_records", payload);
+        await axios.post("http://localhost:8000/medical_records", payload,
+        {
+          headers: {
+            Authorization: `Bearer ${this.$store.getters.token}`,
+          }
+        });
 
         alert("Medical record successfully submitted!");
         this.$emit("close");
