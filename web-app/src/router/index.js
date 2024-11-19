@@ -28,8 +28,8 @@ const routes = [
   { path: '/reservations', component: ReservationsView },
   { path: '/user/:id', component: UserDetail },
   { path: '/requests', component: RequestsView },
-  { path: '/medicalrecords/:id', component: MedicalRecordsList }
-  // { path: '/medicalrecords', component: MedicalRecordsList } toto povede na vycet uplne vsech medical records
+  { path: '/medicalrecords/:id', component: MedicalRecordsList },
+  { path: '/medicalrecords', component: MedicalRecordsList }
 ]
 
 const router = createRouter({

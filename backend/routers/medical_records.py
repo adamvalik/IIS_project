@@ -10,6 +10,11 @@ from schemas import MedicalRecord, MedicalRecordGet
 
 router = APIRouter()
 
+@router.get("/all_medical_records", response_model=List[MedicalRecordGet])
+async def get_all_medical_records(db: Session = Depends(get_db)):
+    records = db.query(MedicalRecordModel).all()
+    return records
+
 @router.get("/medical_records/{animal_id}", response_model=List[MedicalRecordGet])
 async def get_medical_records(animal_id: int, db: Session = Depends(get_db)):
     records = db.query(MedicalRecordModel).filter(MedicalRecordModel.id_animal == animal_id).all()
