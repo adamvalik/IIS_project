@@ -10,7 +10,7 @@ import base64
 router = APIRouter()
 
 @router.get("/addanimal")
-async def addAnimal(user_verified: bool = Depends(verify_user)):
+async def addAnimal(user_verified = Depends(verify_user)):
     if user_verified is None:
         raise HTTPException(status_code=401, detail="User not verified")
 
@@ -82,7 +82,7 @@ async def get_unique_species(db: Session = Depends(get_db)):
     return unique_species
 
 @router.post("/animals")
-async def create_animal(animal: AnimalCreateSchema, db: Session = Depends(get_db)):
+async def create_animal(animal: AnimalCreateSchema, db: Session = Depends(get_db), user_verified = Depends(verify_user)):
     try:
         photo_data = base64.b64decode(animal.photo) if animal.photo else None
     except (ValueError, TypeError):

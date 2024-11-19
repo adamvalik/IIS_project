@@ -68,6 +68,7 @@ export default {
   },
   async mounted() {
     const animalId = this.$route.params.id;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     this.fetchUser(animalId);
   },
   methods: {
