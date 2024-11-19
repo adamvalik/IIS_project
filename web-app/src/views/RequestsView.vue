@@ -86,7 +86,7 @@ export default {
   methods: {
     async fetchRequests() {
       try {
-        const response = await axios.get("http://localhost:8000/requests-get");
+        const response = await axios.get("http://localhost:8000/requests");
         this.requests = response.data;
       } catch (error) {
         console.error(error);
