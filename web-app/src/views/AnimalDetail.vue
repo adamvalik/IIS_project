@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import NavigationBar from './NavigationBar.vue';
+import NavigationBar from '@/components/NavigationBar.vue';
 import axios from 'axios';
 import { mapGetters } from 'vuex';
 

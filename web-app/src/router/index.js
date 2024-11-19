@@ -5,9 +5,9 @@ import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import SignUpView from '@/views/SignUpView.vue';
 import AnimalsView from '@/views/AnimalsView.vue';
-import AnimalDetail from '@/components/AnimalDetail.vue';
+import AnimalDetail from '@/views/AnimalDetail.vue';
 import SchedulerView from '@/views/SchedulerView.vue'; // Import the Scheduler component
-import ProfileDetail from "@/components/ProfileDetail.vue";
+import ProfileDetail from "@/views/ProfileDetail.vue";
 import ListUsersView from '@/views/ListUsersView.vue'
 import AddAnimalView from '@/views/AddAnimalView.vue';
 import ReservationsView from '@/views/ReservationsView.vue';
