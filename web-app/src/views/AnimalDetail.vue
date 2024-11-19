@@ -61,11 +61,11 @@
           <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
           <button v-if="isCaregiver && !editMode" @click="showVetRequestModal = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Medical Request</button>
           <button v-if="!editMode" @click="openHyperlink" class="bg-green-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Contact Us</button>
-          <router-link v-if="hasMedPermissions && !editMode" :to="`/medicalrecords/${animal.id}`" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg">Medical Records</router-link>
+          <router-link v-if="isCaregiver || isAdmin && !editMode" :to="`/medicalrecords/${animal.id}`" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg">Medical Records</router-link>
         </div>
 
         <div v-else class="flex gap-4 items-center">
-          <h1 class="text-lg"><b>You are not logged in. To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</b></h1>
+          <h1 class="text-md text-gray-500">To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</h1>
           <router-link class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0" to="/signup">Sign Up</router-link>
         </div>
 
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import NavigationBar from './NavigationBar.vue';
+import NavigationBar from '@/components/NavigationBar.vue';
 import axios from 'axios';
 import { mapGetters } from 'vuex';
 
@@ -128,6 +128,9 @@ export default {
     isCaregiver() {
       return this.userRole === 'caregiver';
     },
+    isAdmin() {
+      return this.userRole === 'admin';
+    },
   },
   async mounted() {
     const animalId = this.$route.params.id;
@@ -137,9 +140,6 @@ export default {
   },
 
   methods: {
-    hasMedPermissions() {
-      return this.userRole === 'veterinarian' || this.userRole === 'caregiver';
-    },
     async fetchAnimal(id) {
       try {
         const response = await axios.get(`http://localhost:8000/animals/animal/${id}`);
@@ -165,15 +165,20 @@ export default {
           this.hasSchedulerPermissions = false;
         }
         if (this.userRole === 'volunteer') {
+          console.log("User is a volunteer");
+          console.log("User ID: ", userId);
           try {
             const response = await axios.get(`http://localhost:8000/users/volunteers/${userId}/verify`);
-            if (response.data) {
+            if (response.data === true) {
+              console.log("User is verified");
               this.VolunteerVetification = true;
             } else {
+              console.log("User is not verified");
               this.showUnverifiedVolunteer = true;
               this.hasSchedulerPermissions = false;
             }
           } catch (error) {
+            console.error("Error fetching user permissions:", error);
             this.hasSchedulerPermissions = false;
             this.VolunteerVetification = false;
           }
@@ -194,11 +199,11 @@ export default {
     },
     turnEditMode(){
       this.editMode = !this.editMode;
-      this.computeBirthYear(this.animal.birth_year);
+      this.editableAnimal.birth_year = new Date().getFullYear() - this.animal.birth_year;
     },
     async saveChanges(){
       try {
-        this.computeBirthYear(this.editableAnimal.birth_year);
+        this.editableAnimal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
         await axios.put(`http://localhost:8000/animals/edit/${this.animal.id}`,
           this.editableAnimal,
           {

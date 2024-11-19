@@ -15,7 +15,7 @@
     </div>
 
     <div v-if="pending" class="flex" :class="showFullDescription ? 'absolute right-4 top-5' : 'items-center'">
-      <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" @click="writeMedicalRecord">Write Medical Record</button>
+      <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" @click="writeMedicalRecord" :disabled="isAdmin">Write Medical Record</button>
     </div>
     <div v-else class="flex" :class="showFullDescription ? 'absolute right-4 top-4' : 'items-center'">
       <p class="text-sm text-gray-600 px-2 py-4">Processed by {{ veterinarian.name }} {{ veterinarian.surname }}</p>
@@ -40,6 +40,7 @@ export default {
       showFullDescription: false,
       showShowMore: false,
       veterinarian: {name: '', surname: ''},
+      isAdmin: false,
     };
   },
   async mounted() {
@@ -51,6 +52,7 @@ export default {
         console.error(error);
       }
     }
+    this.isAdmin = this.$store.getters.userRole === 'admin';
   },
   computed: {
     truncatedDescription() {

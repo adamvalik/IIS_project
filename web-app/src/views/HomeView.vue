@@ -1,10 +1,9 @@
 <template>
   <div class="container mx-auto px-4 py-6 h-screen">
-    <!-- NavigationBar -->
     <NavigationBar />
 
     <div class="mt-10">
-      <!-- Shelter Info -->
+      <!-- shelter Info -->
       <section class="mb-10">
         <h2 class="text-3xl font-bold text-gray-800">About Our Shelter</h2>
         <p class="mt-4 text-gray-600">
@@ -15,11 +14,10 @@
         </p>
       </section>
 
-      <!-- Last 3 Added Animals -->
       <section class="mb-10">
         <div class="flex justify-between">
           <h3 class="text-2xl font-semibold text-gray-800 mb-6">Recently Added Animals</h3>
-          <router-link to="/animals" class="mt-6 block text-blue-500 font-semibold hover:underline">See all animals</router-link>
+          <router-link to="/animals" class="mt-6 block text-blue-500 font-semibold hover:text-blue-600">See all animals</router-link>
         </div>
 
         <div v-if="loading" class="text-center">Loading...</div>

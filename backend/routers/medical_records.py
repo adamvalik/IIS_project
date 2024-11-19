@@ -20,6 +20,11 @@ async def validateRoute(record_id: int, user_verified = Depends(verify_user)):
 
     return {"Validation successful"}
 
+@router.get("/all_medical_records", response_model=List[MedicalRecordGet])
+async def get_all_medical_records(db: Session = Depends(get_db)):
+    records = db.query(MedicalRecordModel).all()
+    return records
+
 @router.get("/medical_records/{animal_id}", response_model=List[MedicalRecordGet])
 async def get_medical_records(animal_id: int, db: Session = Depends(get_db)):
     records = db.query(MedicalRecordModel).filter(MedicalRecordModel.id_animal == animal_id).all()
@@ -47,3 +52,10 @@ async def create_medical_record(record: MedicalRecord, db: Session = Depends(get
     db.commit()
     db.refresh(new_record)
 
+@router.delete("/medical_record_delete/{record_id}")
+async def delete_medical_record(record_id: int, db: Session = Depends(get_db)):
+    record = db.query(MedicalRecordModel).filter(MedicalRecordModel.id == record_id).first()
+    if record is None:
+        raise HTTPException(status_code=404, detail="Record not found")
+    db.delete(record)
+    db.commit()
