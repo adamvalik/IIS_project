@@ -4,8 +4,8 @@
 
     <h2 class="mb-4 text-3xl font-bold text-gray-800 py-8">Manage Examination Requests</h2>
 
+    <h3 class="text-xl font-semibold text-gray-700 mb-4">Pending Requests</h3>
     <div v-if="pendingRequests.length" class="mb-8">
-      <h3 class="text-xl font-semibold text-gray-700 mb-4">Pending Requests</h3>
       <div class="grid grid-cols-1">
         <RequestRow
           v-for="request in pendingRequests"
@@ -17,11 +17,11 @@
       </div>
     </div>
     <div v-else>
-      <p class="text-gray-600">No pending requests</p>
+      <p class="text-gray-600 mb-4">No pending requests...</p>
     </div>
 
+    <h3 class="text-xl font-semibold text-gray-700 mb-4">Processed Requests</h3>
     <div v-if="processedRequests.length">
-      <h3 class="text-xl font-semibold text-gray-700 mb-4">Processed Requests</h3>
       <div class="grid grid-cols-1">
         <RequestRow
           v-for="request in processedRequests"
@@ -40,7 +40,7 @@
       v-if="showRecordModal"
       :show="showRecordModal"
       :request="selectedRequest"
-      @close="showRecordModal = false"
+      @close="closeRecordModal"
     />
 
   </div>
@@ -87,18 +87,13 @@ export default {
       }
     },
     writeMedicalRecord(id) {
-      // try {
-      //   if (!id) {
-      //     console.error('No reservation ID provided');
-      //     return;
-      //   }
-      //   await axios.put(`http://localhost:8000/requests/${id}/processed/${this.$store.getters.user_id}`);
-      //   this.fetchRequests();
-      // } catch (error) {
-      //   console.error('Error toggling returned:', error);
-      // }
       this.showRecordModal = true;
       this.selectedRequest = this.requests.find((request) => request.id === id);
+    },
+    closeRecordModal() {
+      this.showRecordModal = false;
+      this.selectedRequest = null;
+      this.fetchRequests();
     },
   },
 };
