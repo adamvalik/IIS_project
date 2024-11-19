@@ -34,7 +34,14 @@ async def create_vet_request(vet_request: VetRequestSchema, db: Session = Depend
     db.refresh(vet_request)
     return {"message": "Request created successfully"}
 
-@router.get("/requests", response_model=List[VetRequestShowSchema])
+@router.get("/requests")
+async def validateRoute(user_verified = Depends(verify_user)):
+    if (user_verified.get("role") == "volunteer"):
+        raise HTTPException(status_code=401, detail="Volunteer not authorized")
+
+    return {"Validation successful"}
+
+@router.get("/requests-get", response_model=List[VetRequestShowSchema])
 async def get_vet_requests(db: Session = Depends(get_db), user_verified = Depends(verify_user)):
     role = user_verified.get("role")
     if role not in ["admin", "veterinarian"]:

@@ -161,6 +161,7 @@ export default {
     };
   },
   created() {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     console.log('User ID:', this.getID);
     console.log('User Role:', this.getRole);
     this.currentWeek = this.getWeekDetails(this.currentDate);

@@ -80,12 +80,13 @@ export default {
     },
   },
   async mounted() {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     await this.fetchRequests();
   },
   methods: {
     async fetchRequests() {
       try {
-        const response = await axios.get("http://localhost:8000/requests");
+        const response = await axios.get("http://localhost:8000/requests-get");
         this.requests = response.data;
       } catch (error) {
         console.error(error);
