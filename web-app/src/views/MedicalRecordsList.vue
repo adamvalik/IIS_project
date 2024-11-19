@@ -12,7 +12,9 @@
             :key="record.id"
             :animal_name="animal_name"
             :record="record"
+            :isAdmin="isAdmin"
             @toggleDetail="toggleDetail"
+            @deleteRecord="deleteRecord"
           />
         </div>
       </div>
@@ -53,7 +55,8 @@ export default {
       isCaregiver: false,
       showModal: false,
       animal_id: null,
-      animal_name: null
+      animal_name: null,
+      isAdmin: this.$store.getters.userRole === 'admin',
     };
   },
   computed: {
@@ -120,9 +123,20 @@ export default {
         animalName: animalName,
         date: record.date,
         vaccination: vaccination_name,
-        description: record.description,
+        description: record.vet_description,
       };
       this.showModal = true;
+    },
+    deleteRecord(recordId) {
+      if (confirm("Are you sure you want to delete this record?")) {
+        axios.delete(`http://localhost:8000/medical_record_delete/${recordId}`)
+          .then(() => {
+            this.fetchMedicalRecords();
+          })
+          .catch(error => {
+            console.error("Error deleting record:", error);
+          });
+      }
     },
     closeModal() {
       this.showModal = false;

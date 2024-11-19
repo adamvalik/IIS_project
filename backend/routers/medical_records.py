@@ -37,3 +37,10 @@ async def create_medical_record(record: MedicalRecord, db: Session = Depends(get
     db.commit()
     db.refresh(new_record)
 
+@router.delete("/medical_record_delete/{record_id}")
+async def delete_medical_record(record_id: int, db: Session = Depends(get_db)):
+    record = db.query(MedicalRecordModel).filter(MedicalRecordModel.id == record_id).first()
+    if record is None:
+        raise HTTPException(status_code=404, detail="Record not found")
+    db.delete(record)
+    db.commit()

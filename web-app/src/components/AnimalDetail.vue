@@ -62,7 +62,7 @@
           <button v-if="isCaregiver && !editMode" @click="showVetRequestModal = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Medical Request</button>
           <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
           <button v-if="!editMode" @click="openHyperlink" class="bg-green-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Contact Us</button>
-          <router-link v-if="isCaregiver && !editMode" :to="`/medicalrecords/${animal.id}`" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg">Medical Records</router-link>
+          <router-link v-if="isCaregiver || isAdmin && !editMode" :to="`/medicalrecords/${animal.id}`" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg">Medical Records</router-link>
         </div>
 
         <div v-else class="flex gap-4 items-center">
@@ -128,6 +128,9 @@ export default {
     },
     isCaregiver() {
       return this.userRole === 'caregiver';
+    },
+    isAdmin() {
+      return this.userRole === 'admin';
     },
   },
   async mounted() {
