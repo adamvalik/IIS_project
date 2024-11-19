@@ -190,7 +190,7 @@ async def cancel_slot(user_id: int, animal_id: int, date: str, time: str, db: Se
 async def create_slot(request: CSlot, db: Session = Depends(get_db)):
 
     for slot in request.new_slots:
-        print(f"Day: {slot.day}, Time: {slot.time}, Date: {slot.date}")
+        print(f"Day: {slot.day}, Time: {slot.time}, Date: {slot.date}, Animal ID: {request.animal_id}")
         # Check if the `AnimalBorrow` already exists for this slot
         borrow = db.query(AnimalBorrowModel).filter(
             AnimalBorrowModel.id_animal == request.animal_id,

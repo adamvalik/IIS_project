@@ -5,16 +5,15 @@
     <NavigationBar />
 
     <div class="py-10 px-20">
-
       <div class="text-center font-bold mb-4">
         Selected Animal: {{ selectedAnimal ? selectedAnimal.name : 'Bella' }}
       </div>
       <div class="flex justify-between items-center mb-4">
-        <button @click="previousWeek" class="p-2 bg-gray-300 rounded">&lt;</button>
+        <button @click="previousWeek" class="px-3 py-2 bg-gray-300 rounded">&#9664;</button>
         <div class="text-center font-bold">
           Week {{ currentWeek.week }}. {{ currentWeek.startDay }}.{{ currentWeek.startMonth }}. - {{ currentWeek.endDay }}.{{ currentWeek.endMonth }}. year {{ currentWeek.year }}
         </div>
-        <button @click="nextWeek" class="p-2 bg-gray-300 rounded">&gt;</button>
+        <button @click="nextWeek" class="px-3 py-2 bg-gray-300 rounded">&#9654;</button>
       </div>
 
       <div class="grid grid-cols-14 gap-2">
@@ -32,7 +31,7 @@
 
       <!-- Legend -->
       <div class="mt-7 mb-4">
-        <div v-if="getRole === 'volunteer'" class="flex justify-around">
+        <div v-if="getRole === 'volunteer'" class="flex justify-around flex-col md:flex-row">
           <div class="flex items-center">
             <div class="w-4 h-4 bg-green-400 mr-2"></div>
             <span>Approved</span>
@@ -58,7 +57,7 @@
             <span>Unavailable</span>
           </div>
         </div>
-        <div v-else class="flex justify-around">
+        <div v-else class="flex justify-around flex-col md:flex-row">
           <div class="flex items-center">
             <div class="w-4 h-4 bg-green-400 mr-2"></div>
             <span>Approved</span>
@@ -259,9 +258,10 @@ export default {
       return 'bg-gray-200';
     },
     toggleSelection(day, time) {
-      const slotStatus = this.getSlot(day, time);
-      if (slotStatus === 'green' || slotStatus === 'orange') {
-        const dayIndex = this.days.indexOf(day);
+      const dayIndex = this.days.indexOf(day);
+      const timeIndex = this.times.indexOf(time);
+
+      if (dayIndex >= 0 && timeIndex >= 0) {
         const startOfWeek = new Date(this.currentDate);
         let dayOfWeek = startOfWeek.getDay();
         if (dayOfWeek === 0) dayOfWeek = 7; // Adjust for Sunday being 0
@@ -271,30 +271,34 @@ export default {
         selectedDate.setDate(startOfWeek.getDate() + dayIndex);
         const formattedDate = selectedDate.toISOString().split('T')[0];
 
-        this.showPopup = { visible: true, day, time, date: formattedDate };
-      } else {
-        if (this.showPopup.visible) {
-          this.showPopup.visible = false;
+        // Check if the selected date and time are older than the current date and time
+        const currentDate = new Date();
+        const selectedDateTime = new Date(`${formattedDate}T${time}:00`);
+        if (selectedDateTime < currentDate) {
+          return;
         }
-      }
 
-      const dayIndex = this.days.indexOf(day);
-      const timeIndex = this.times.indexOf(time);
+        const slotStatus = this.getSlot(day, time);
+        if (slotStatus === 'green' || slotStatus === 'orange') {
+          this.showPopup = { visible: true, day, time, date: formattedDate };
+        } else {
+          if (this.showPopup.visible) {
+            this.showPopup.visible = false;
+          }
+        }
 
-      if (dayIndex >= 0 && timeIndex >= 0) {
-        const slot = this.schedule[dayIndex][timeIndex];
-        if (slot === 'blue' && this.getRole !== 'caregiver') {
+        if (slotStatus === 'blue' && this.getRole !== 'caregiver') {
           this.schedule[dayIndex][timeIndex] = 'selected';
-          this.selected.push({day, time});
-        } else if (slot === 'selected') {
+          this.selected.push({ day, time });
+        } else if (slotStatus === 'selected') {
           this.schedule[dayIndex][timeIndex] = 'blue';
           this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
-        } else if (slot === 'blue' && this.getRole === 'caregiver') {
+        } else if (slotStatus === 'blue' && this.getRole === 'caregiver') {
           this.deleteSlot(day, time);
-        } else if (slot === 'gray' && this.getRole === 'caregiver') {
-          this.new_slots.push({day, time});
+        } else if (slotStatus === 'gray' && this.getRole === 'caregiver') {
+          this.new_slots.push({ day, time });
           this.schedule[dayIndex][timeIndex] = 'pink';
-        } else if (slot === 'pink' && this.getRole === 'caregiver') {
+        } else if (slotStatus === 'pink' && this.getRole === 'caregiver') {
           this.schedule[dayIndex][timeIndex] = 'gray';
           this.new_slots = this.new_slots.filter(s => !(s.day === day && s.time === time));
         }
@@ -313,9 +317,9 @@ export default {
         const formattedDate = selectedDate.toISOString().split('T')[0];
         return { day: slot.day, time: slot.time, date: formattedDate };
       });
-
+      const animal_id = this.animal_id;
       axios.post('http://localhost:8000/createslot', {
-        animal_id: 1,
+        animal_id: animal_id,
         new_slots: newSlots
       })
         .then(response => {
@@ -370,6 +374,10 @@ export default {
       this.fetchSchedule(); // Fetch new week data
     },
     nextWeek() {
+      if (this.new_slots.length > 0) {
+        alert('Please save or cancel the new slots before proceeding to the next week.');
+        return;
+      }
       this.currentDate.setDate(this.currentDate.getDate() + 7);
       this.currentWeek = this.getWeekDetails(this.currentDate);
       this.fetchSchedule(); // Fetch new week data
