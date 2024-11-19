@@ -197,12 +197,13 @@ export default {
     },
     turnEditMode(){
       this.editMode = !this.editMode;
+      this.editableAnimal.birth_year = new Date().getFullYear() - this.animal.birth_year;
     },
     async saveChanges(){
       try {
+        this.editableAnimal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
         await axios.put(`http://localhost:8000/animals/edit/${this.animal.id}`, this.editableAnimal);
         this.animal = { ...this.editableAnimal };
-        this.animal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
         this.editMode = false;
       } catch (error) {
         console.error("Error updating animal:", error);

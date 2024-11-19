@@ -2,8 +2,10 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from routers import login
+from example_data import create_example_users, create_example_animals
 
 from db import Base, engine
+from contextlib import asynccontextmanager
 
 from routers import scheduler
 from routers import login
@@ -31,6 +33,16 @@ from routers import medical_records
 #         # Optionally modify the response here
 
 #         return response  # Return the response back to the client
+
+
+
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     user_ids = create_example_users()
+#     animal_ids = create_example_animals(user_ids)
+#     yield 
+
+# app = FastAPI(lifespan=lifespan)
 
 app = FastAPI()
 
