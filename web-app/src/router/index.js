@@ -28,8 +28,8 @@ const routes = [
   { path: '/reservations', component: ReservationsView },
   { path: '/user/:id', component: UserDetail },
   { path: '/requests', component: RequestsView },
-  { path: '/medicalrecords/:id', component: MedicalRecordsList }
-  // { path: '/medicalrecords', component: MedicalRecordsList } toto povede na vycet uplne vsech medical records
+  { path: '/medicalrecords/:id', component: MedicalRecordsList },
+  { path: '/medicalrecords', component: MedicalRecordsList }
 ]
 
 const router = createRouter({
@@ -37,30 +37,35 @@ const router = createRouter({
   routes
 })
 
-const protectedRoutes = ['/profile', '/listusers', '/addanimal', '/reservations'];
+//Specify routes that require authentication
+const protectedRoutes = ['/profile', '/listusers', '/addanimal', '/reservations', '/requests'];
 const userInfoRoutes = /^\/user\/\d+$/;
 const schedulerRoutes = /^\/scheduler\/\d+$/;
+const medicalRecordsRoutes = /^\/medicalrecords\/\d+$/;
 const loginRoutes = ['/login', '/signup'];
 const BASE_URL = 'http://localhost:8000';
 
 router.beforeEach(async (to, from, next) => {
-  console.log('token:', store.getters.tokenExp);
-  console.log('role:', store.getters.userRole);
-  console.log('id:', store.getters.user_id);
-  console.log('auth:', store.getters.isAuthenticated);
+  // console.log('token:', store.getters.tokenExp);
+  // console.log('role:', store.getters.userRole);
+  // console.log('id:', store.getters.user_id);
+  // console.log('auth:', store.getters.isAuthenticated);
 
-  const token = store.state.accessToken; // Get the token from Vuex store
+  //Obtain token from Vuex store
+  const token = store.state.accessToken;
 
-  if (protectedRoutes.includes(to.path) || userInfoRoutes.test(to.path) || schedulerRoutes.test(to.path)) {
+  if (protectedRoutes.includes(to.path) ||
+      userInfoRoutes.test(to.path) ||
+      schedulerRoutes.test(to.path) ||
+      medicalRecordsRoutes.test(to.path)) {
 
-    // const fakeToken = 'fake';
-    // If the token is not available, redirect to the login page
+    // If the token does not exist, redirect to the login page
     if (!token) {
       alert('You must be logged in to view this page.');
-      return next('/login'); // Redirect to the login page
+      return next('/login');
     }
 
-    // If the token is present, verify it with the backend
+    // If the token is present, verify that user checks out and has appropriate role
     try {
       console.log('Fetching protected route:',to.path);
       await axios.get(`${BASE_URL}${to.path}`, {
@@ -68,88 +73,29 @@ router.beforeEach(async (to, from, next) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      next(); // Proceed to the requested route if the token is valid
+
+      //Proceed to the requested route if the token is valid
+      next();
     } catch (error) {
       if (error.response) {
-        console.error('Error fetching protected route:', error.response.data.detail); // Print error detail
-        console.error('Status code:', error.response.status); // Print status code
+        console.error('Error fetching protected route:', error.response.data.detail);
+        console.error('Status code:', error.response.status);
       } else {
         console.error('Error fetching protected route:', error.message);
       }
+
+      //If the token is invalid, redirect to the home page
       alert(error.response.data.detail);
-      next('/'); // Redirect to the login page on failure
+      next('/');
     }
-  } else if(loginRoutes.includes(to.path) && store.state.accessToken) {
+  } else if(loginRoutes.includes(to.path) && token) {
+
+    //If user is already logged in, redirect to the home page
     next('/');
   } else {
-    next(); // Proceed to non-protected routes
+    next(); 
   }
 });
-
-
-// // Set up a global before guard to protect routes
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = !!localStorage.getItem('access_token'); // Check if token exists in localStorage
-
-//   // Define routes that require authentication
-//   const publicPages = ['/login', '/', '/signup']; // Add public routes here
-//   const authRequired = !publicPages.includes(to.path);
-
-//   // If the route requires authentication and the user is not authenticated
-//   if (authRequired && !isAuthenticated) {
-//     next('/login'); // Redirect to login page
-//   } else if (isAuthenticated && (to.path === '/login' || to.path === '/signup')) {
-//     next('/'); // Redirect logged-in users from login or signup to homepage
-//   } else {
-//     next(); // Proceed to the requested route
-//   }
-// });
-
-// router/index.js
-// import { createRouter, createWebHistory } from 'vue-router';
-// import store from '../store'; // Import your Vuex store
-// import Home from '../views/Home.vue';
-// import CaregiverDashboard from '../views/CaregiverDashboard.vue'; // Example view
-
-// const routes = [
-//   { path: '/', component: Home },
-//   {
-//     path: '/caregiver-dashboard',
-//     component: CaregiverDashboard,
-//     meta: { requiresAuth: true, role: 'caregiver' } // Define meta properties
-//   },
-//   // Add other routes here
-// ];
-
-// const router = createRouter({
-//   history: createWebHistory(process.env.BASE_URL),
-//   routes
-// });
-
-// // Navigation guard
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = store.getters.isAuthenticated;
-//   const userRole = store.getters.userRole;
-
-//   // Check if the route requires authentication
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     if (!isAuthenticated) {
-//       // Redirect to login if not authenticated
-//       next({ path: '/login' });
-//     } else if (to.meta.role && to.meta.role !== userRole) {
-//       // Redirect to home or another page if role does not match
-//       next({ path: '/' }); // Change to your desired redirect
-//     } else {
-//       // Proceed to the route if authenticated and has the proper role
-//       next();
-//     }
-//   } else {
-//     // Proceed to the route if it does not require authentication
-//     next();
-//   }
-// });
-
-// export default router;
 
 
 export default router

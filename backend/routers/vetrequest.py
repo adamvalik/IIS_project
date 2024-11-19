@@ -7,10 +7,12 @@ from models import Animal as AnimalModel
 from models import ExaminationRequest as ExaminationRequestModel
 from routers.login import verify_user
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(verify_user)]
+)
 
 @router.post("/request")
-async def create_vet_request(vet_request: VetRequestSchema, db: Session = Depends(get_db), user_verified: bool = Depends(verify_user)):
+async def create_vet_request(vet_request: VetRequestSchema, db: Session = Depends(get_db)):
     animal_id = vet_request.animal_id
     caregivers_description = vet_request.request_text
     caregiver_id = vet_request.caregiver_id
@@ -33,7 +35,11 @@ async def create_vet_request(vet_request: VetRequestSchema, db: Session = Depend
     return {"message": "Request created successfully"}
 
 @router.get("/requests", response_model=List[VetRequestShowSchema])
-async def get_vet_requests(db: Session = Depends(get_db)):
+async def get_vet_requests(db: Session = Depends(get_db), user_verified = Depends(verify_user)):
+    role = user_verified.get("role")
+    if role not in ["admin", "veterinarian"]:
+        raise HTTPException(status_code=401, detail=user_verified.get("role") + " not authorized")
+    
     requests = db.query(ExaminationRequestModel).all()
     if not requests:
         raise HTTPException(status_code=404, detail="No requests found")

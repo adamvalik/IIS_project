@@ -4,27 +4,30 @@
 
     <h2 v-if="isCaregiver" class="mb-4 text-3xl font-bold text-gray-800 py-8">List Medical Records</h2>
 
-    <h3 class="text-xl font-semibold text-gray-700 mb-4">Medical Records for {{this.animal_name}}</h3>
+    <h3 v-if="animal_id" class="text-xl font-semibold text-gray-700 mb-4">Medical Records for {{animal_name}}</h3>
+    <h3 v-else class="text-xl font-semibold text-gray-700 mb-4">All Medical Records</h3>
     <div v-if="records.length">
-        <div class="grid grid-cols-1">
-          <MedicalRecordRow
-            v-for="record in records"
-            :key="record.id"
-            :animal_name="animal_name"
-            :record="record"
-            :isAdmin="isAdmin"
-            @toggleDetail="toggleDetail"
-            @deleteRecord="deleteRecord"
-          />
-        </div>
+      <div class="grid grid-cols-1">
+        <MedicalRecordRow
+          v-for="record in records"
+          :key="record.id"
+          :showAnimalName="animal_id"
+          :animal_name="record.animal_name"
+          :record="record"
+          :isAdmin="isAdmin"
+          @toggleDetail="toggleDetail"
+          @deleteRecord="deleteRecord"
+        />
       </div>
+    </div>
     <div v-else>
-      <p class="text-gray-700">No medical records for {{this.animal_name}} records found.</p>
+      <p v-if="animal_id" class="text-gray-700">No medical records for {{animal_name}} records found.</p>
+      <p v-else class="text-gray-700">No medical records found.</p>
     </div>
     <RecordDetail
       v-if="selectedRecord"
       :show="showModal"
-      :animalName="animal_name"
+      :animalName="selectedRecord.animal_name"
       :veterinarianName="selectedRecord.veterinarianName"
       :date="selectedRecord.date"
       :vaccination="selectedRecord.vaccination"
@@ -34,7 +37,6 @@
   </div>
 </template>
 
-
 <script>
 import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
@@ -43,7 +45,6 @@ import RecordDetail from "@/components/RecordDetail.vue";
 
 export default {
   components: {
-    /** eslint-disable */
     MedicalRecordRow,
     NavigationBar,
     RecordDetail,
@@ -59,29 +60,42 @@ export default {
       isAdmin: this.$store.getters.userRole === 'admin',
     };
   },
-  computed: {
-    // medicalRecords() {
-    //   // const currentDate = new Date();
-    //   // return this.reservations.filter(
-    //   //   reservation => new Date(reservation.borrow.date) < currentDate
-    //   // );
-    // },
-  },
   async created() {
     this.animal_id = this.$route.params.id;
+    console.log(this.animal_id);
     this.isCaregiver = this.$store.getters.userRole === 'caregiver' || this.$store.getters.userRole === 'admin';
     this.isVolunteer = this.$store.getters.userRole === 'volunteer';
     await this.fetchMedicalRecords();
-    await this.fetchAnimalName();
+    this.animal_name = await this.fetchAnimalName(this.animal_id);
   },
   methods: {
     async fetchMedicalRecords() {
-      try {
+      if (!this.animal_id) {
+        //fetch all
+        try {
+          const response = await axios.get(`http://localhost:8000/all_medical_records`);
+          this.records = response.data;
+          for (let record of this.records) {
+            record.animal_name = await this.fetchAnimalName(record.id_animal);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      else {
+        try {
           console.log(this.animal_id);
           const response = await axios.get(`http://localhost:8000/medical_records/${this.animal_id}`);
           this.records = response.data;
-      } catch (error) {
-        console.error(error);
+          for (let record of this.records) {
+            record.animal_name = await this.fetchAnimalName(record.id_animal);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      for (let record of this.records) {
+        console.log(record);
       }
     },
     async toggleDetail(recordId) {
@@ -110,6 +124,7 @@ export default {
         try{
           const response = await axios.get(`http://localhost:8000/animals/animal_name/${record.id_animal}`);
           animalName = response.data;
+          console.log("a", animalName);
         } catch (error) {
           console.error("Error fetching animal:", error);
         }
@@ -120,7 +135,7 @@ export default {
       }
       this.selectedRecord = {
         veterinarianName: veterinarianName,
-        animalName: animalName,
+        animal_name: animalName,
         date: record.date,
         vaccination: vaccination_name,
         description: record.vet_description,
@@ -142,10 +157,14 @@ export default {
       this.showModal = false;
       this.selectedRecord = null;
     },
-    async fetchAnimalName() {
+    async fetchAnimalName(animalId) {
+      if (!animalId) {
+        return null;
+      }
+      console.log("a", animalId);
       try {
-        const response = await axios.get(`http://localhost:8000/animals/animal_name/${this.animal_id}`);
-        this.animal_name = response.data;
+        const response = await axios.get(`http://localhost:8000/animals/animal_name/${animalId}`);
+        return response.data;
       } catch (error) {
         console.error("Error fetching animal:", error);
       }

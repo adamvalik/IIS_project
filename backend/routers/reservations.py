@@ -4,8 +4,11 @@ from typing import List
 from db import get_db
 from models import Reservation as ReservationModel
 from schemas import ReservationShow as ReservationSchema
+from routers.login import verify_user
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(verify_user)]
+)
 
 @router.get("/reservations", response_model=List[ReservationSchema])
 async def get_all_reservations(db: Session = Depends(get_db)):

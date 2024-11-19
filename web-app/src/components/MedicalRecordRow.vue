@@ -2,6 +2,7 @@
   <div class="flex justify-between items-center bg-white shadow p-4 rounded-lg">
     <div>
       <p class="text-lg font-semibold text-gray-700">{{ record.date }}</p>
+      <p v-if="!showAnimal" class="text-sm text-gray-600">Animal: {{ animal_name }}</p>
       <p class="text-sm text-gray-600">Veterinarian: {{ veterinarian }}</p>
     </div>
 
@@ -25,6 +26,10 @@ export default {
       type: Object,
       required: true
     },
+    showAnimalName: {
+      type: Number,
+      required: false
+    },
     animal_name: {
       type: String,
       required: true
@@ -36,11 +41,14 @@ export default {
   },
   data() {
     return {
-      veterinarian : null
+      veterinarian : null,
+      showAnimal : null
     };
   },
   created() {
     this.fetchVeterinarianName();
+    this.showAnimal = this.showAnimalName;
+    console.log("skrrrrrrr", this.showAnimal);
   },
   methods: {
     toggleDetail() {
