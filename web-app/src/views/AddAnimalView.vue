@@ -137,10 +137,12 @@ export default {
   },
   computed: {
     ...mapGetters(['user_id']),
-
     caregiverID() {
       return this.user_id;
     }
+  },
+  mounted() {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
   },
   methods: {
     getTodayDate() {
