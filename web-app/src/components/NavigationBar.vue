@@ -76,6 +76,7 @@ export default {
           { name: 'Add animal 🐕', link: '/addanimal' },
           { name: 'Manage volunteers 👨🏻', link: '/listusers' },
           { name: 'Reservations 📝', link: '/reservations' },
+          { name: 'Medical records 💉', link: '/medicalrecords' },
         ];
       } else if (this.userRole === 'veterinarian') {
         return [
