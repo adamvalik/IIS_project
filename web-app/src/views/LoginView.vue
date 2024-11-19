@@ -68,7 +68,6 @@
 
 <script>
 import apiClient from '@/api';
-import axios from 'axios';
 export default {
   data() {
     return {
