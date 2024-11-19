@@ -1,11 +1,12 @@
 <template>
   <div class="container mx-auto px-4 py-10 max-w-lg">
-    <!-- Shelter Name -->
-    <router-link to="/" class="text-4xl font-bold text-gray-800 text-center mb-10">DJ Khaled's Animal Shelter</router-link>
+    <div class="flex justify-center items-center mb-3">
+      <router-link to="/" class="text-4xl font-bold text-gray-800">DJ Khaled's Animal Shelter</router-link>
+    </div>
 
     <!-- Sign-Up Form -->
     <div class="bg-white shadow-lg rounded-lg p-8">
-      <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Sign Up</h2>
+      <!-- <h2 class="text-2xl font-semibold text-gray-800 text-center">Sign Up</h2> -->
       <form @submit.prevent="handleSubmit">
         <!-- Name Input -->
         <div class="mb-4">

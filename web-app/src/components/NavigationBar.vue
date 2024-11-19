@@ -1,6 +1,10 @@
 <template>
   <nav class="flex justify-between items-center py-4 border-b">
-    <router-link to="/" class="text-2xl font-bold text-gray-800">DJ Khaled's Animal Shelter</router-link>
+
+    <router-link to="/" class="text-2xl font-bold text-gray-800 flex gap-2">
+      <img src="/assets/logo.png" alt="Logo" class="h-8 object-cover" />
+      DJ Khaled's Animal Shelter
+    </router-link>
 
     <div class="flex space-x-4 items-center">
       <!-- role-based actions -->

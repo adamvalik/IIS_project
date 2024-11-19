@@ -65,7 +65,7 @@
         </div>
 
         <div v-else class="flex gap-4 items-center">
-          <h1 class="text-lg"><b>You are not logged in. To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</b></h1>
+          <h1 class="text-md text-gray-500">To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</h1>
           <router-link class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0" to="/signup">Sign Up</router-link>
         </div>
 

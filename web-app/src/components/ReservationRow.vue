@@ -4,14 +4,14 @@
       <p class="text-lg font-semibold text-gray-800">
         <router-link
           :to="`/animal/${reservation.borrow.animal.id}`"
-          class="text-blue-500 hover:underline"
+          class="text-blue-500 hover:text-blue-600"
         >
           {{ reservation.borrow.animal.name }}
         </router-link>
         : Reservation from
         <router-link
-          :to="`/volunteer/${reservation.volunteer.id}`"
-          class="text-blue-500 hover:underline"
+          :to="`/user/${reservation.volunteer.id}`"
+          class="text-blue-500 hover:text-blue-600"
         >
           {{ reservation.volunteer.name }} {{ reservation.volunteer.surname }}
         </router-link>
@@ -25,7 +25,7 @@
         Reservation for
         <router-link
           :to="`/animal/${reservation.borrow.animal.id}`"
-          class="text-blue-500 hover:underline"
+          class="text-blue-500 hover:text-blue-600"
         >
           {{ reservation.borrow.animal.name }}
         </router-link>
