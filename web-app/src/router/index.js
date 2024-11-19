@@ -12,6 +12,7 @@ import ListUsersView from '@/views/ListUsersView.vue'
 import AddAnimalView from '@/views/AddAnimalView.vue';
 import ReservationsView from '@/views/ReservationsView.vue';
 import UserDetail from "@/views/UserDetail.vue";
+import RequestsView from '@/views/RequestsView.vue';
 
 const routes = [
   { path: '/', component: HomeView },
@@ -19,12 +20,13 @@ const routes = [
   { path: '/signup', component: SignUpView },
   { path: '/animals', component: AnimalsView },
   { path: '/animal/:id', component: AnimalDetail },
-  { path: '/scheduler/:id', component: SchedulerView }, // Define the route for Scheduler
+  { path: '/scheduler/:id', component: SchedulerView },
   { path: '/profile', component: ProfileDetail },
   { path: '/listusers', component: ListUsersView},
   { path: '/addanimal', component: AddAnimalView },
   { path: '/reservations', component: ReservationsView },
-  { path: '/user/:id', component: UserDetail }
+  { path: '/user/:id', component: UserDetail },
+  { path: '/requests', component: RequestsView }
 ]
 
 const router = createRouter({
@@ -46,7 +48,7 @@ router.beforeEach(async (to, from, next) => {
   const token = store.state.accessToken; // Get the token from Vuex store
 
   if (protectedRoutes.includes(to.path) || userInfoRoutes.test(to.path)) {
-    
+
     // const fakeToken = 'fake';
     // If the token is not available, redirect to the login page
     if (!token) {
