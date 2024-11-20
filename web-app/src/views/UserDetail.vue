@@ -61,7 +61,6 @@
 <script>
 import apiClient from '@/api';
 import NavigationBar from '../components/NavigationBar.vue';
-import axios from 'axios';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -82,7 +81,6 @@ export default {
   },
   async mounted() {
     const userID = this.$route.params.id;
-    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     this.fetchUser(userID);
   },
   methods: {

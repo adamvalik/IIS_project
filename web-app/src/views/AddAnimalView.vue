@@ -112,7 +112,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { mapGetters } from 'vuex';
 import NavigationBar from '@/components/NavigationBar.vue';
 import apiClient from '@/api';
@@ -141,9 +140,6 @@ export default {
     caregiverID() {
       return this.user_id;
     }
-  },
-  mounted() {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
   },
   methods: {
     getTodayDate() {

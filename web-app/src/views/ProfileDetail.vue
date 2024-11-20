@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import { mapGetters } from 'vuex';
 import NavigationBar from '@/components/NavigationBar.vue';
 import apiClient from '@/api';
@@ -113,7 +113,7 @@ export default {
     }
   },
   async mounted() {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
+    // axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     await this.fetchProfile();
   },
   methods: {

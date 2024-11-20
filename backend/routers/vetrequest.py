@@ -34,7 +34,6 @@ async def create_vet_request(vet_request: VetRequestSchema, db: Session = Depend
     db.refresh(vet_request)
     return {"message": "Request created successfully"}
 
-
 @router.get("/requests", response_model=List[VetRequestShowSchema])
 async def get_vet_requests(db: Session = Depends(get_db), user_verified = Depends(verify_user)):
     role = user_verified.get("role")

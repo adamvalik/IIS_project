@@ -63,7 +63,6 @@
 <script>
 
 import apiClient from "@/api";
-import axios from "axios";
 
 export default {
   props: {
@@ -85,9 +84,6 @@ export default {
       },
       currentDate: new Date().toLocaleDateString(),
     };
-  },
-  mounted() {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
   },
   methods: {
     async submitRecord() {

@@ -46,11 +46,10 @@ const loginRoutes = ['/login', '/signup'];
 const BASE_URL = process.env.VUE_APP_BACKEND_URL || 'http://localhost:8000';
 
 router.beforeEach(async (to, from, next) => {
-  // console.log('token:', store.getters.tokenExp);
-  // console.log('role:', store.getters.userRole);
-  // console.log('id:', store.getters.user_id);
-  // console.log('auth:', store.getters.isAuthenticated);
-
+  console.log('token:', store.getters.tokenExp);
+  console.log('role:', store.getters.userRole);
+  console.log('id:', store.getters.user_id);
+  console.log('auth:', store.getters.isAuthenticated);
   //Obtain token from Vuex store
   const token = store.state.accessToken;
 
