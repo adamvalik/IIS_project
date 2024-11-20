@@ -4,10 +4,10 @@ import { jwtDecode } from 'jwt-decode';
 export default createStore({
   state: {
     accessToken: localStorage.getItem('access_token') || '',
-    userRole: localStorage.getItem('access_token') ? jwtDecode(localStorage.getItem('access_token')).role : null,
-    sessionExpiration: localStorage.getItem('access_token') ? jwtDecode(localStorage.getItem('access_token')).exp : null,
-    user_id: localStorage.getItem('access_token') ? jwtDecode(localStorage.getItem('access_token')).user_id : null,
-    tokenExpiration: localStorage.getItem('access_token') ? jwtDecode(localStorage.getItem('access_token')).tokenExp : null,
+    userRole: null,
+    user_id: null,
+    sessionExpiration: null,
+    tokenExpiration: null,
   },
   mutations: {
     setToken(state, token) {
@@ -17,7 +17,8 @@ export default createStore({
       state.userRole = decoded.role;
       state.user_id = decoded.user_id
       state.sessionExpiration = decoded.exp;
-      state.tokenExpiration = decoded.tokenExp;
+      state.tokenExpiration = 10;
+      state.sessionExpiration = Math.floor(Date.now() / 1000) + state.tokenExpiration; // * 60;
     },
     clearToken(state) {
       state.accessToken = '';
@@ -28,10 +29,24 @@ export default createStore({
       localStorage.removeItem('access_token');
     },
     resetExpiration(state) {
-      state.sessionExpiration = Math.floor(Date.now() / 1000) + state.tokenExpiration * 60;
+      state.sessionExpiration = Math.floor(Date.now() / 1000) + state.tokenExpiration; // * 60;
     },
   },
   actions: {
+    // async extendTokenExp({ commit }) {
+    //   try {
+    //     const response = await apiClient.post('/refresh-token-interval', {
+    //       sub: this.state.user_id,
+    //       role: this.state.userRole,
+    //       user_id: this.state.user_id,
+    //       tokenExp: this.state.tokenExpiration,
+    //     });
+    //     commit('setToken', response.data.updated_token);
+    //   } catch (error) {
+    //     console.error('Error refreshing token:', error.response.data.detail);
+    //     console.error('Status code:', error.response.status);
+    //   }
+    // },
     login({ commit }, token) {
       commit('setToken', token);
     },
