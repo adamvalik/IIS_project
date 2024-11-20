@@ -2,7 +2,13 @@
   <div class="bg-white shadow-md rounded-lg p-4 flex gap-4 mb-4 relative">
     <div class="flex-1 pr-4">
       <p class="text-lg font-semibold text-gray-800">
-        From {{ request.caregiver.name }} {{ request.caregiver.surname }} for {{ request.animal.name }}
+        From {{ request.caregiver.name }} {{ request.caregiver.surname }} for
+        <router-link
+          :to="`/animal/${request.animal.id}`"
+          class="text-blue-500 hover:text-blue-600"
+        >
+          {{ request.animal.name }}
+        </router-link>
       </p>
 
       <p class="text-sm text-gray-600 max-w-3xl ">
@@ -15,7 +21,7 @@
     </div>
 
     <div v-if="pending" class="flex" :class="showFullDescription ? 'absolute right-4 top-5' : 'items-center'">
-      <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" @click="writeMedicalRecord" :disabled="isAdmin">Write Medical Record</button>
+      <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 font-semibold rounded-lg" @click="writeMedicalRecord" :disabled="isAdmin">Write Medical Record</button>
     </div>
     <div v-else class="flex" :class="showFullDescription ? 'absolute right-4 top-4' : 'items-center'">
       <p class="text-sm text-gray-600 px-2 py-4">Processed by {{ veterinarian.name }} {{ veterinarian.surname }}</p>

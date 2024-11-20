@@ -16,6 +16,7 @@ class User(Base):
     surname = Column(String(255), nullable=False)
     phone = Column(String(20), nullable=True)
     role = Column(role_enum, nullable=False)
+    is_deleted = Column(Boolean, default=False, nullable=False)
 
     # volunteer specific
     verified = Column(Boolean, nullable=True)
@@ -39,6 +40,7 @@ class Animal(Base):
     size = Column(size_enum, nullable=True)
     caregivers_description = Column(Text, nullable=True)
     id_caregiver = Column(Integer, ForeignKey("users.ID_user"), nullable=False)
+    is_deleted = Column(Boolean, default=False, nullable=False)
 
     caregiver = relationship("User", back_populates="animals")
     examination_requests = relationship("ExaminationRequest", back_populates="animal")

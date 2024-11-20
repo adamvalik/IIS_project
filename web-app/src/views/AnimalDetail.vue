@@ -6,7 +6,7 @@
       <div class="flex flex-col gap-8">
         <div class="flex flex-col md:flex-row items-center md:space-x-8 overflow-">
           <img
-            :src="animal.photo"
+            :src="animal.photo || '/assets/placeholder.png'"
             alt="Photo"
             loading="lazy"
             class="w-full md:w-1/3 h-64 object-cover rounded-lg shadow-md self-start"
@@ -55,26 +55,80 @@
               <p v-if="!editMode" class="mb-2 text-lg text-gray-600 break-words">{{ animal.caregivers_description }}</p>
               <textarea v-else v-model="editableAnimal.caregivers_description" placeholder="caregivers description" rows="1" class="text-gray-600 border border-gray-300 p-2 rounded w-full"></textarea>
             </div>
-
           </div>
         </div>
-        <div v-if="isAuthenticated" class="flex gap-4">
-          <router-link v-if="this.hasSchedulerPermissions && !editMode" :to="`/scheduler/${animal.id}`" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Schedule</router-link>
-          <button v-if="this.hasEditPermissions && !editMode" @click="turnEditMode" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Edit</button>
-          <button v-if="editMode" @click="saveChanges" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
-          <button v-if="editMode" @click="cancelEdit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
-          <h1 v-if="showUnverifiedVolunteer" class="text-lg"><b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b></h1>
-          <button v-if="isCaregiver && !editMode" @click="showVetRequestModal = true" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Medical Request</button>
-          <button v-if="!editMode" @click="openHyperlink" class="bg-green-500 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg">Contact Us</button>
-          <router-link v-if="isCaregiver || isAdmin || isVeterinarian && !editMode" :to="`/medicalrecords/${animal.id}`" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg">Medical Records</router-link>
+
+        <!-- buttons -->
+        <div v-if="isAuthenticated && !isDeleted" class="flex gap-4">
+          <router-link
+            v-if="this.hasSchedulerPermissions && !editMode"
+            :to="`/scheduler/${animal.id}`"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
+          >
+            Walking Schedule
+          </router-link>
+          <button
+            v-if="editMode"
+            @click="saveChanges"
+            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg"
+          >
+            Save
+          </button>
+          <button
+            v-if="editMode"
+            @click="cancelEdit"
+            class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg"
+          >
+            Cancel
+          </button>
+          <h1
+            v-if="showUnverifiedVolunteer"
+            class="text-lg"
+          >
+            <b>You are not verified as a volunteer. Please contact the shelter to verify your volunteer status.</b>
+          </h1>
+          <button
+            v-if="isCaregiver && !editMode"
+            @click="showVetRequestModal = true"
+            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg"
+          >
+            Examination Request
+          </button>
+          <router-link
+            v-if="(isCaregiver || isAdmin || isVeterinarian) && !editMode"
+            :to="`/medicalrecords/${animal.id}`"
+            class="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded-lg"
+          >
+            Medical Records
+          </router-link>
+          <button
+            v-if="this.hasEditPermissions && !editMode"
+            @click="turnEditMode"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg"
+          >
+            Edit Animal
+          </button>
+
+          <button
+            v-if="(isCaregiver || isAdmin) && !editMode"
+            @click="deleteAnimal"
+            class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg"
+          >
+            Delete Animal
+          </button>
         </div>
 
-        <div v-else class="flex gap-4 items-center">
+        <div v-if="!isAuthenticated && !isDeleted" class="flex gap-4 items-center">
           <h1 class="text-md text-gray-500">To see the pet scheduler, please use the login button at the top of the page or use the sign-up button here:</h1>
-          <router-link class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0" to="/signup">Sign Up</router-link>
+          <router-link
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-6 md:mt-0"
+            to="/signup"
+          >
+            Sign Up
+          </router-link>
         </div>
 
-        <!-- Vet Request Modal -->
+        <!-- examination request modal -->
         <div v-if="showVetRequestModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"  @click="showVetModal">
           <div class="bg-white p-6 rounded-lg shadow-lg w-1/2" @click.stop>
             <h2 class="text-2xl font-bold mb-4">Request Specification</h2>
@@ -85,7 +139,7 @@
           </div>
         </div>
 
-        <!-- Request Sent Notification -->
+        <!-- notifications -->
         <div v-if="showRequestSent" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
           Request Sent
         </div>
@@ -119,6 +173,7 @@ export default {
       vetRequestText: '',
       showRequestSent: false,
       showEmptyRequest: false,
+      isDeleted: false,
     };
   },
   computed: {
@@ -140,6 +195,7 @@ export default {
   async mounted() {
     const animalId = this.$route.params.id;
     this.fetchAnimal(animalId);
+    this.fetchIsDeleted(animalId);
     this.loadSchedulerPermissions(this.user_id);
     this.loadEditPermissions();
   },
@@ -150,6 +206,18 @@ export default {
         const response = await apiClient.get(`/animals/animal/${id}`);
         this.animal = response.data;
         this.editableAnimal = { ...this.animal };
+      } catch (error) {
+        console.error("Error fetching recent animals:", error);
+      }
+    },
+    async fetchIsDeleted(id) {
+      try {
+        const response = await apiClient.get(`/animals/${id}/is_deleted`);
+        this.isDeleted = response.data;
+        if (this.isDeleted) {
+          alert('Animal has been deleted');
+          this.$router.go(-1);
+        }
       } catch (error) {
         console.error("Error fetching recent animals:", error);
       }
@@ -259,12 +327,23 @@ export default {
         console.error('Error sending request:', error);
       }
     },
-    openHyperlink() {
-      window.open('https://www.youtube.com/watch?v=AZhWW6URrns', '_blank');
-    },
     showVetModal() {
       this.vetRequestText = '';
       this.showVetRequestModal = false;
+    },
+    async deleteAnimal() {
+      if (confirm('Are you sure you want to delete this animal?')) {
+        try {
+          await apiClient.delete(`/animals/delete/${this.animal.id}`, {
+            headers: {
+              Authorization: `Bearer ${this.$store.state.accessToken}`,
+            }
+          });
+          this.$router.go(-1);
+        } catch (error) {
+          console.error('Error deleting animal:', error);
+        }
+      }
     }
   }
 };

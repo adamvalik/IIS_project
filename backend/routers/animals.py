@@ -43,7 +43,7 @@ async def get_animals(
     sort: Optional[str] = Query("name", description="Sort by field (name, age, species)"),
     db: Session = Depends(get_db)
 ):
-    query = db.query(AnimalModel)
+    query = db.query(AnimalModel).filter(AnimalModel.is_deleted == False)
     if filter:
         query = query.filter(AnimalModel.species.ilike(f"%{filter}%"))
 
@@ -65,7 +65,7 @@ async def get_animals(
 
 @router.get("/animals/recent", response_model=List[AnimalSchema])
 async def get_recent_animals(db: Session = Depends(get_db)):
-    recent_animals = db.query(AnimalModel).order_by(AnimalModel.admission_date.desc()).limit(3).all()
+    recent_animals = db.query(AnimalModel).filter(AnimalModel.is_deleted == False).order_by(AnimalModel.admission_date.desc()).limit(3).all()
     for animal in recent_animals:
         if animal.photo:
             animal.photo = f"data:image/jpeg;base64,{base64.b64encode(animal.photo).decode()}"
@@ -73,7 +73,7 @@ async def get_recent_animals(db: Session = Depends(get_db)):
 
 @router.get("/animals/species", response_model=List[str])
 async def get_unique_species(db: Session = Depends(get_db)):
-    species_list = db.query(AnimalModel.species).distinct().all()
+    species_list = db.query(AnimalModel.species).filter(AnimalModel.is_deleted == False).distinct().all()
     unique_species = [species[0] for species in species_list]
 
     if not unique_species:
@@ -121,3 +121,20 @@ async def update_animal(animal_id: int, animal: AnimalCreateSchema, db: Session 
 
     db.commit()
     db.refresh(animal_to_update)
+
+@router.delete("/animals/delete/{animal_id}")
+async def delete_animal(animal_id: int, db: Session = Depends(get_db), user_verified: bool = Depends(verify_user)):
+    animal_to_delete = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
+    if animal_to_delete is None:
+        raise HTTPException(status_code=404, detail="Animal not found")
+
+    animal_to_delete.is_deleted = True
+    db.commit()
+    db.refresh(animal_to_delete)
+
+@router.get("/animals/{animal_id}/is_deleted", response_model=bool)
+async def is_animal_deleted(animal_id: int, db: Session = Depends(get_db)):
+    animal = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
+    if animal is None:
+        raise HTTPException(status_code=404, detail="Animal not found")
+    return animal.is_deleted

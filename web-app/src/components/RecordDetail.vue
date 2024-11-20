@@ -14,7 +14,7 @@
         <p class="text-lg text-gray-600 col-span-2">Description:</p>
         <textarea rows="6" class="w-full border border-gray-300 rounded-md p-2 col-span-2" v-model="localDescription" disabled></textarea>
       </div>
-      <button @click="closeModal" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md mt-4">Close</button>
+      <button @click="closeModal" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-semibold mt-4">Close</button>
     </div>
   </div>
 </template>

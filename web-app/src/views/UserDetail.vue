@@ -82,6 +82,7 @@ export default {
   async mounted() {
     const userID = this.$route.params.id;
     this.fetchUser(userID);
+    this.fetchIsDeleted(userID);
   },
   methods: {
     async fetchUser(id) {
@@ -90,6 +91,18 @@ export default {
           id: id,
         });
         this.user = response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async fetchIsDeleted(id) {
+      try {
+        const response = await apiClient.get(`/users/${id}/is_deleted`);
+        console.log(response.data);
+        if (response.data == true) {
+          alert('User has been deleted');
+          this.$router.go(-1);
+        }
       } catch (error) {
         console.error(error);
       }

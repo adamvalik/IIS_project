@@ -31,7 +31,7 @@
               :name="animal.name"
               :species="animal.species"
               :birth_year="animal.birth_year"
-              :photo="animal.photo"
+              :photo="animal.photo || '/assets/placeholder.png'"
             />
           </router-link>
         </div>

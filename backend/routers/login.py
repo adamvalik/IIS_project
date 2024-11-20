@@ -43,15 +43,15 @@ def verify_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_d
         userFound = None
         if(db.query(UserModel).filter(UserModel.email == email).first() is not None):
             userFound = db.query(UserModel).filter(UserModel.email == email).first()
-            
-        
+
+
         if userFound is None or userFound.id != user_id or userFound.role != role:
             raise HTTPException(status_code=401, detail="User not verified")
 
         return payload
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
+
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
 
@@ -59,7 +59,7 @@ def verify_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_d
 async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
 
     userFound = None
-    if(db.query(UserModel).filter(UserModel.email == login_request.email).first() is not None):
+    if(db.query(UserModel).filter(UserModel.is_deleted == False).filter(UserModel.email == login_request.email).first() is not None):
         userFound = db.query(UserModel).filter(UserModel.email == login_request.email).first()
 
     if userFound is None:

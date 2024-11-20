@@ -45,13 +45,13 @@
       <div class="flex justify-between">
         <button
           @click="$emit('close')"
-          class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md"
+          class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg"
         >
           Cancel
         </button>
         <button
           @click="submitRecord"
-          class="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md"
+          class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg"
         >
           Submit
         </button>

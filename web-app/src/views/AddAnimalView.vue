@@ -131,7 +131,7 @@ export default {
         admission_date: this.getTodayDate(),
         photo: null,
       },
-      selectedFileName: null,
+      selectedFileName: '',
     };
   },
   methods: {
@@ -199,7 +199,7 @@ export default {
         caregivers_description: null,
         admission_date: this.getTodayDate(),
         photo: null,
-        selectedFileName: null,
+        selectedFileName: '',
       };
     },
   },

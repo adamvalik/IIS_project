@@ -59,7 +59,7 @@
         </div>
         <button
           @click="deleteReservation"
-          class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+          class="bg-red-500 text-white py-2 px-4 font-semibold rounded-lg hover:bg-red-600"
         >
           Delete
         </button>
@@ -68,13 +68,13 @@
       <div v-if="!reservation.approved" class="flex justify-end gap-2">
         <button
           @click="approveReservation"
-          class="bg-green-500 text-white py-1 px-3 rounded-md hover:bg-green-600"
+          class="bg-green-500 text-white py-2 px-4 font-semibold rounded-lg hover:bg-green-600"
         >
           Approve
         </button>
         <button
           @click="denyReservation"
-          class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+          class="bg-red-500 text-white py-2 px-4 font-semibold rounded-lg hover:bg-red-600"
         >
           Deny
         </button>
@@ -93,7 +93,7 @@
       <button
         v-if="!isPast"
         @click="deleteReservation"
-        class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+        class="bg-red-500 text-white py-2 px-4 font-semibold rounded-lg hover:bg-red-600"
       >
         Delete
       </button>

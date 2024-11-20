@@ -7,10 +7,10 @@
     </div>
 
     <div class="flex gap-2">
-      <button @click="toggleDetail" class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600">
+      <button @click="toggleDetail" class="bg-yellow-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-yellow-600">
         Show Details
       </button>
-      <button v-if="isAdmin" @click="deleteRecord" class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600">
+      <button v-if="isAdmin" @click="deleteRecord" class="bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600">
         Delete
       </button>
     </div>
@@ -48,16 +48,13 @@ export default {
   created() {
     this.fetchVeterinarianName();
     this.showAnimal = this.showAnimalName;
-    console.log("skrrrrrrr", this.showAnimal);
   },
   methods: {
     toggleDetail() {
-      console.log("det", this.record.id);
       this.$emit('toggleDetail', this.record.id);
     },
     async fetchVeterinarianName() {
       try {
-        console.log(this.record.id_veterinarian);
         const response = await apiClient.get(`/vet/${this.record.id_veterinarian}`);
         this.veterinarian = response.data.name + " " + response.data.surname;
       } catch (error) {
