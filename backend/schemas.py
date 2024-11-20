@@ -2,6 +2,12 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import date, time
 
+class Token(BaseModel):
+    sub: str
+    role: str
+    user_id: int
+    tokenExp: int
+
 class UserBase(BaseModel):
     name: str
     surname: str

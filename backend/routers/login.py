@@ -14,7 +14,7 @@ from db import get_db
 
 SECRET_KEY = "rogalo"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 10
+# ACCESS_TOKEN_EXPIRE_MINUTES = 10
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -22,8 +22,8 @@ router = APIRouter()
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
+    # expire = datetime.now(timezone.utc) + timedelta(seconds=ACCESS_TOKEN_EXPIRE_MINUTES)
+    # to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 def hash_password(password: str) -> str:
@@ -54,6 +54,17 @@ def verify_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_d
 
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
+    
+# @router.post("/refresh-token-interval")
+# async def resfreshTokenInterval(token: Token):
+#     token_data = {
+#         "sub": token.sub,
+#         "role": token.role,
+#         "user_id": token.user_id,
+#         "tokenExp": ACCESS_TOKEN_EXPIRE_MINUTES,
+#     }
+#     updated_token = create_access_token(data=token_data)
+#     return {"access_token": updated_token}
 
 @router.post("/login", response_model=LoginResponse)
 async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
@@ -72,7 +83,7 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
         "sub": userFound.email,
         "role": userFound.role,
         "user_id": userFound.id,
-        "tokenExp": ACCESS_TOKEN_EXPIRE_MINUTES,
+        # "tokenExp": ACCESS_TOKEN_EXPIRE_MINUTES,
     }
 
     access_token = create_access_token(data=token_data)
