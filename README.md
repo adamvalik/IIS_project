@@ -33,7 +33,7 @@ Run example_data.py to fill the database with example data
 docker exec -it backend python3 /app/example_data.py
 ```
 
-Open mysql shell, password satek123
+Open postgresql database shell
 ```bash
 docker exec -it postgres psql -U user -d animal_shelter_db
 ```
