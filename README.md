@@ -35,7 +35,7 @@ docker exec -it backend python3 /app/example_data.py
 
 Open mysql shell, password satek123
 ```bash
-docker exec -it mysql mysql -uuser -p
+docker exec -it postgres psql -U user -d animal_shelter_db
 ```
 
 ## Running the Project
