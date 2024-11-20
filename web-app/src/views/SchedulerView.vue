@@ -465,16 +465,22 @@ export default {
       }
     },
     async checkApprovalStatus() {
-    // Implement your method to check approval status from the database
-    // For example:
-    console.log('Checking approval status...');
-    const animal_id = this.animal_id;
-    const response = await axios.get(`/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
-    this.isApproved = response.data.isApproved;
-    this.userReservation = response.data.username;
-    this.showPopup.user_id = response.data.user_id;
-    console.log('Approval status:', this.isApproved);
-    console.log('User:', this.userReservation);
+      console.log('Checking approval status...');
+      const animal_id = this.animal_id;
+      console.log('Animal ID:', animal_id);
+      console.log('Date:', this.showPopup.date);
+      console.log('Time:', this.showPopup.time);
+
+      try {
+        const response = await apiClient.get(`/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
+        this.isApproved = response.data.isApproved;
+        this.userReservation = response.data.username;
+        this.showPopup.user_id = response.data.user_id;
+        console.log('Approval status:', this.isApproved);
+        console.log('User:', this.userReservation);
+      } catch (error) {
+        console.error('Error checking approval status:', error);
+      }
     },
     showInfo(day, time) {
       this.hoveredSlot = {day, time};
