@@ -280,6 +280,14 @@ export default {
       this.editableAnimal.birth_year = new Date().getFullYear() - this.animal.birth_year;
     },
     async saveChanges(){
+      if (this.editableAnimal.name === '') {
+        alert('Name is required.');
+        return;
+      }
+      if (this.editableAnimal.species === '') {
+        alert('Species is required.');
+        return;
+      }
       try {
         this.editableAnimal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
         await apiClient.put(`/animals/edit/${this.animal.id}`,

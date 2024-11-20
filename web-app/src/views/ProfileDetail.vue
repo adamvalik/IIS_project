@@ -157,6 +157,10 @@ export default {
         this.confirmPassword = '';
         return;
       }
+      if (this.newPassword === '' || this.confirmPassword === '') {
+        alert('Please enter a new password with 1 or more characters.');
+        return;
+      }
       try {
         await apiClient.put(`/users/${this.userID}/password`, {
           oldPassword: this.currentPassword,
