@@ -47,7 +47,6 @@
 
 
 <script>
-import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import ReservationRow from '@/components/ReservationRow.vue';
 import apiClient from '@/api';
@@ -79,7 +78,6 @@ export default {
     },
   },
   async mounted() {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     this.isCaregiver = this.$store.getters.userRole === 'caregiver' || this.$store.getters.userRole === 'admin';
     this.isVolunteer = this.$store.getters.userRole === 'volunteer';
     await this.fetchReservations();

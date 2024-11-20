@@ -53,7 +53,6 @@
 
 
 <script>
-import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import RequestRow from '@/components/RequestRow.vue';
 import WriteRecordModal from '@/components/WriteRecordModal.vue';
@@ -82,7 +81,6 @@ export default {
     },
   },
   async mounted() {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     await this.fetchRequests();
   },
   methods: {

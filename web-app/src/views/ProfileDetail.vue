@@ -113,7 +113,6 @@ export default {
     }
   },
   async mounted() {
-    // axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     await this.fetchProfile();
   },
   methods: {

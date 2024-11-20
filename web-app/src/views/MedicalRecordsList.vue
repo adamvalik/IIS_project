@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import NavigationBar from '@/components/NavigationBar.vue';
 import MedicalRecordRow from "@/components/MedicalRecordRow.vue";
 import RecordDetail from "@/components/RecordDetail.vue";
@@ -62,7 +61,6 @@ export default {
     };
   },
   async created() {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     this.animal_id = this.$route.params.id;
     console.log(this.animal_id);
     this.isCaregiver = this.$store.getters.userRole === 'caregiver' || this.$store.getters.userRole === 'admin';

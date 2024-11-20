@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import UserRow from '@/components/UserRow.vue';
 import UserModal from '@/components/UserModal.vue';
 import NavigationBar from '@/components/NavigationBar.vue';
@@ -65,7 +64,6 @@ export default {
     };
   },
   async mounted() {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
     this.isAdmin = this.$store.getters.userRole === 'admin';
     this.isCaregiver = this.$store.getters.userRole === 'caregiver';
     await this.fetchUsers();
