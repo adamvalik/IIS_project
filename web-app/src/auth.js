@@ -17,7 +17,7 @@ export default createStore({
       state.userRole = decoded.role;
       state.user_id = decoded.user_id
       state.sessionExpiration = decoded.exp;
-      state.tokenExpiration = 10;
+      state.tokenExpiration = 1800;
       state.sessionExpiration = Math.floor(Date.now() / 1000) + state.tokenExpiration; // * 60;
     },
     clearToken(state) {
