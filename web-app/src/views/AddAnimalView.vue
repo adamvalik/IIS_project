@@ -112,7 +112,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import NavigationBar from '@/components/NavigationBar.vue';
 import apiClient from '@/api';
 
@@ -134,12 +133,6 @@ export default {
       },
       selectedFileName: null,
     };
-  },
-  computed: {
-    ...mapGetters(['user_id']),
-    caregiverID() {
-      return this.user_id;
-    }
   },
   methods: {
     getTodayDate() {
@@ -179,13 +172,13 @@ export default {
         const payload = {
           name: this.formData.name,
           species: this.formData.species,
-          admission_date: this.formData.admission_date,
-          id_caregiver: 2, // this.caregiverID,
           breed: this.formData.breed,
           birth_year: this.formData.birth_year,
+          photo: this.formData.photo,
+          admission_date: this.formData.admission_date,
           size: this.formData.size,
           caregivers_description: this.formData.caregivers_description,
-          photo: this.formData.photo,
+          id_caregiver: this.$store.getters.user_id,
         };
         console.log('Adding animal:', payload);
         await apiClient.post('/animals', payload);
