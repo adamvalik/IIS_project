@@ -105,3 +105,9 @@ async def create_user(user: UserSchema, db: Session = Depends(get_db)):
     db.refresh(new_user)
 
     return SignUpResponse(message="User created successfully")
+
+@router.post("/email_validation", response_model=bool)
+async def validate_email(request: EmailValidationRequest, db: Session = Depends(get_db)):
+    user = db.query(UserModel).filter(UserModel.email == request.email).first()
+    #true if email is in use, false if not
+    return user is not None
