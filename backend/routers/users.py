@@ -4,7 +4,7 @@ from typing import List
 from db import get_db
 from models import User as UserModel
 from schemas import User as UserSchema, UserCreate as UserCreateSchema, UserUpdate as UserUpdateSchema, PasswordChangeRequest
-from schemas import UpdatePhoneRequest, UserDetails, Veternarian as VeternarianSchema
+from schemas import UpdatePhoneRequest, UserDetails, Veternarian as VeternarianSchema, EmailValidationRequest
 from routers.login import hash_password
 from routers.login import verify_user, verify_password
 

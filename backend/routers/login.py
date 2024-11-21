@@ -7,7 +7,7 @@ import bcrypt
 from jose import JWTError, jwt
 from enum import Enum
 from datetime import datetime, timedelta, timezone
-from schemas import UserSignUp as UserSchema, LoginRequest, LoginResponse, SignUpResponse
+from schemas import UserSignUp as UserSchema, LoginRequest, LoginResponse, SignUpResponse, EmailValidationRequest
 from sqlalchemy.orm import Session
 from models import User as UserModel
 from db import get_db
@@ -54,7 +54,7 @@ def verify_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_d
 
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
+
 # @router.post("/refresh-token-interval")
 # async def resfreshTokenInterval(token: Token):
 #     token_data = {
@@ -109,3 +109,9 @@ async def create_user(user: UserSchema, db: Session = Depends(get_db)):
     db.refresh(new_user)
 
     return SignUpResponse(message="User created successfully")
+
+@router.post("/email_validation", response_model=bool)
+async def validate_email(request: EmailValidationRequest, db: Session = Depends(get_db)):
+    user = db.query(UserModel).filter(UserModel.email == request.email).first()
+    #true if email is in use, false if not
+    return user is not None

@@ -123,50 +123,55 @@ export default {
   },
   computed: {
     passwordsDoNotMatch() {
-      // Check if the passwords match
       return this.password !== this.passwordConfirm;
     }
   },
   methods: {
-    handleSubmit() {
-      // Check if passwords match before proceeding
+    async handleSubmit() {
+      try {
+        this.email = this.email.trim();
+        const response = await apiClient.post("/email_validation", { email: this.email });
+        const email_in_use = response.data;
+        console.log("Email in use:", email_in_use);
+        if (email_in_use) {
+          alert("Email already in use");
+          this.email = "";
+          return;
+        }
+      } catch (error) {
+        console.error("Error validating email:", error);
+      }
+
       if (this.passwordsDoNotMatch) {
         alert("Passwords do not match.");
         return;
       }
 
-      // Create a user object with the provided data
+      this.name = this.name.trim();
+      this.surname = this.surname.trim();
+
       const newUser = {
         name: this.name,
         surname: this.surname,
         email: this.email,
         password: this.password,
-        telephone: this.telephone || null, // Optional telephone
+        telephone: this.telephone || null,
       };
 
-      console.log("New user data:", newUser);
-
-      // Submit the form (e.g., make an API call to the backend)
-      // Example: axios.post('/signup', newUser)
-
-      apiClient.post('/signup', newUser)
-        .then(response => {
-          console.log("Sign up successful:", response.data);
-          alert("Account created succesfully, now please log in.");
-          this.$router.push('/login');
-        })
-        .catch(error => {
-          alert("Sign up failed, reason: " + error.response.data.detail);
-        });
-
-      this.$router.push('/');
+      try {
+        await apiClient.post('/signup', newUser);
+        alert("Account created successfully, now please log in.");
+        this.$router.push('/login');
+      } catch (error) {
+        alert("Sign up failed, reason: " + error.response.data.detail);
+        this.$router.push('/');
+      }
     },
   },
 };
 </script>
 
 <style scoped>
-/* Utility styles for form inputs and labels */
 input:focus {
   outline: none;
 }

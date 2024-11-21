@@ -6,27 +6,27 @@
       <form @submit.prevent="saveUser">
         <div class="mb-4">
           <label class="block text-gray-700">Name</label>
-          <input v-model="formData.name" type="text" class="w-full border rounded p-2">
+          <input v-model="formData.name" type="text" class="w-full border rounded p-2" required>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700">Surname</label>
-          <input v-model="formData.surname" type="text" class="w-full border rounded p-2">
+          <input v-model="formData.surname" type="text" class="w-full border rounded p-2" required>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700">Email</label>
-          <input v-model="formData.email" type="email" class="w-full border rounded p-2">
+          <input v-model="formData.email" type="email" class="w-full border rounded p-2" required>
         </div>
         <div v-if="isAdmin" class="mb-4">
           <label class="block text-gray-700">Role</label>
-          <select v-model="formData.role" class="w-full border rounded p-2">
+          <select v-model="formData.role" class="w-full border rounded p-2" required>
+            <option value="volunteer">Volunteer</option>
             <option value="caregiver">Caregiver</option>
             <option value="veterinarian">Veterinarian</option>
-            <option value="volunteer">Volunteer</option>
           </select>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700">{{ user ? "New Password" : "Password" }}</label>
-          <input v-model="formData.password" type="password" class="w-full border rounded p-2">
+          <input v-model="formData.password" type="password" class="w-full border rounded p-2" :required="!user">
         </div>
 
         <div class="flex justify-between">
@@ -86,7 +86,21 @@ export default {
   },
   methods: {
     async saveUser() {
+      this.formData.name = this.formData.name.trim();
+      this.formData.surname = this.formData.surname.trim();
+      this.formData.email = this.formData.email.trim();
+
       try {
+        if (!this.user) {
+          const response = await apiClient.post("/email_validation", { email: this.formData.email });
+          const email_in_use = response.data;
+          if (email_in_use) {
+            alert("Email already in use");
+            this.formData.email = "";
+            return;
+          }
+        }
+
         if (this.user) {
           // update existing user
           await apiClient.put(`/users/${this.user.id}`, this.formData);

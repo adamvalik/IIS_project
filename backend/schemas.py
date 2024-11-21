@@ -187,3 +187,6 @@ class MedicalRecord(BaseModel):
 
 class MedicalRecordGet(MedicalRecord):
     id: int
+
+class EmailValidationRequest(BaseModel):
+    email: str
