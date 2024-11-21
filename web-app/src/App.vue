@@ -12,19 +12,20 @@ export default {
     ...mapGetters(['sessionExp', 'isAuthenticated']),
   },
   mounted() {
+    this.fetchTokenData();
     this.checkExpiredToken();
+
     this.tokenInterval = setInterval(() => {
       this.checkExpiredToken();
-    }, 1000);
+    }, 120000);
   },
   methods: {
-    ...mapActions(['logout', 'extendExpiration']),//, 'extendTokenExp']),
+    ...mapActions(['logout', 'extendExpiration', 'fetchTokenData']),
 
     resetTimer() {
       if (this.isAuthenticated) {
         console.log(this.sessionExp);
         this.extendExpiration();
-        //this.extendTokenExp();
       }
     },
     checkExpiredToken() {
