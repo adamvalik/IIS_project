@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0064)https://www.fit.vut.cz/study/course/IIS/private/projekt/doc.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projekt IIS</title>
+  <style type="text/css">
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      line-height: 1.6;
+    }
+    p, dl, ul, table {
+      max-width: 80%;
+      margin: 0 auto;
+      word-wrap: break-word;
+    }
+    table {
+      width: 40%;
+      border-collapse: collapse;
+      overflow-x: auto;
+    }
+    td, th {
+      border: 1px solid black;
+      padding: 0.3em 0.5em;
+      text-align: left;
+      word-wrap: break-word;
+      max-width: 200px;
+    }
+    img {
+      max-width: 50%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1089.0" data-gr-ext-installed="">
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu
+     podle použitého editoru -->
+
+<h1>Zvířecí útulek</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+  <h3>Autoři</h3>
+  <dd>Adam Valík <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+    <a href="mailto:xvalik05@stud.fit.vutbr.cz">xvalik05@stud.fit.vutbr.cz</a> -
+    Majitel informačních systémů
+  </dd>
+  <dd>Samuel Hejníček <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+    <a href="mailto:xhejni00@stud.fit.vutbr.cz">xhejni00@stud.fit.vutbr.cz</a> -
+    Sietockar
+  </dd>
+  <dd>Marek Effenberger <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+    <a href="mailto:xeffen00@stud.fit.vutbr.cz">xeffen00@stud.fit.vutbr.cz</a> -
+    Vlastník frontendu
+  </dd>
+  <h3>URL aplikace</h3>
+
+  <dd >URL aplikace je dostupná na adrese:</dd>
+  <dd><a href="http://https://iis-frontend.onrender.com/">https://iis-frontend.onrender.com/</a></dd>
+</dl>
+
+
+<h2>Uživatelé systému pro testování</h2>
+
+<p>Pro testování můžete použít následující uživatele:</p>
+<table>
+  <thead>
+  <tr>
+    <th>Login</th>
+    <th>Heslo</th>
+    <th>Role</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>admin@admin.com</td>
+    <td>admin</td>
+    <td>Administrátor</td>
+  </tr>
+  <tr>
+    <td>care@example.com</td>
+    <td>care</td>
+    <td>Pečovatel</td>
+  </tr>
+  <tr>
+    <td>volunteer@example.com</td>
+    <td>volunteer</td>
+    <td>Dobrovolník</td>
+  </tr>
+  <tr>
+    <td>vet@example.com</td>
+    <td>vet</td>
+    <td>Veterinář</td>
+  </tr>
+  </tbody>
+</table>
+
+<h3>Video</h3>
+
+<p>Přiložte odkaz na komentované video demostrující použití informačního systému. Zaměřte se na případy užití definované zadáním (např. registrace uživatele, správa uživatelů a činnosti jednotlivých rolí). Video nahrajte například na VUT Google Drive, kde ho bude možné přímo spustit z odkazu.</p>
+
+<h2>Implementace</h2>
+
+<p>Informační systém 'Zvířecí útulek' je implementován pomocí kombinace frameworků umožňujících modulární architekturu.
+  Interaktivní uživatelské elementy našeho systému jsou postaveny pomocí html obohaceného o styly z frameworku Tailwind.css.
+  Tyto elementy obsluhuje kontrolerová vrstva postavena ve frameworku Vue.js. Vue.js pak pomocí služby FastAPI Python vysílá požadavky, které jsou v jazyce Python zpracovány. Kombinace Vue.js a Python tak tvoří aplikační vrstvu našeho systému.
+  Databáze systému je postavena na PostgreSQL, přičemž objektově-relační model je abstrahován pomocí knihovny SQLAlchemy. Využití této knihovny případně umožňuje snadnou migraci na systémy postaveny nad jiným systémem, např. MySQL.
+</p>
+<br>
+<p>
+  Systém je postaven pomocí několika stránek, jež jsou doplňovány elementy a modulárními komponenty, které jsou uživateli zpřístupněny na základě jeho/jejich práv.
+</p>
+<br>
+<p>
+  Uživatel je nejprve přivítán hlavní obrazovkou. Na základě předchozí běžící relace je přímo přihlášen a může pokračovat v operacích na základě vlastních práv, případně je systémem rozpoznán jako neregistrovaný uživatel.
+</p>
+<br>
+<p>
+  Nehledě na práva si pak tento uživatel může zobrazit veškerá zvířata, která jsou aktuálně v útulku, pomocí prokliku na "View All Animals". View All Animals pošle požadavek na zobrazení všech zvířat aktuálně se nacházejících v útulku. Uživatel pak dostane základní výčet informací o zvířeti a může při kliknutí na okénko zvířete si může zobrazit jeho detailní popis.
+</p>
+<br>
+<p>
+  Popis zvířete je přístupný všem uživatelům systému stejný. Co se ale mění na základě práv je množina operací, reprezentovaných interaktivními tlačítky, které nad zvířetem může provést. Uživatel bez vytvořeného účtu dostane upozornění na možnost venčení při tvorbě nového účtu/ přihlášení se. Přihlášený dobrovolník dokáže možnost si zobrazit rozvrh zvířete a případně si vytvořit rezervaci venčení. Pečovatel pak může zvířeti zobrazit rozvrh, podat žádost na veterináře na zvířecí vyšetření, editovat informace o zvířeti a zobrazit si zdravotní záznamy zvířete. Veterinář pak má možnost dostat se ke zdravotním kartám zvířete. Administrátor pak dostává kombinaci práv pečovatele a veterináře.
+</p>
+<br>
+<p>
+  Další možností, která se nabízí již z hlavní nabídky je přihlášení uživatele. Uživateli se zobrazí formulář, který, když opatřen údaji korelujícími se záznamem uživatele v databázi, provede přihlášení uživatele do systému. Uživatel se z této nabídky též může dostat k registračnímu formuláři, pokud si tvoří nový účet. Oba formuláře jsou opatřeny kontrolami správného formátu vstupu. Heslo je podrobeno hashování ||||| NECO COOL O HASHOVANI |||||.
+</p>
+<br>
+<p>
+  Rozvrh zvířete je realizovaný pomocí týdenního zobrazení hodin pomocí interaktivních okének, jež na základě různého zbarvení (popsaného v legendě pod samotným rozvrhem) uživatele informují o časové obsazenosti zvířete. Verifikovaný uživatel má možnost si podat žádost o rezervaci na volné okénka, případně zobrazit si vlastní rezervace a potvrdit jejich zrušení. Pečovatel může vytvořit nové volné časové možnosti pro venčení, zobrazit si rezervace, přes proklik detail uživatele, co rezervaci podal a její případné potvrzení nebo zrušení. Informace o nadcházejících i proběhlých rezervacích pro veškerá zvířata si uživatel může zobrazit na stránce 'My Reservations' a pečovatel na stránce 'Edit Reservations'. V této nabídce je pečovateli umožněno si do systému poznamenat zda bylo zvíře vydané dobrovolníkovi a zda bylo následně navráceno.
+</p>
+<br>
+<p>
+  Podobně jako nabídka s detaily zvířete, tak také uživatelé disponují oknem, které shrnuje jejich údaje. Uživatelé také disponují nabídkou pro změnu vlastních údajů, případné doplnění telefonního čísla. Uživatele může přidávat do systému pečovatel a administrátor. V systému zároveň jasně vidí kteří dobrovolníci jsou nevalidováni a tedy mohou se snadno rozhodnout o jejich potvrzení, či odmítnutí.
+</p>
+<br>
+<p>
+  Pro zvířáta mohou pečovatelé vytvořit požadavky na ošetření, kontrolu veterinářem. Veterináři se pak zobrazí v příslušném okně tento požadavek, jež nabývá neschváleného statusu. Jakýkoli veterinář pak může na tento požadavek zareagovat a přidat zvířeti do systému zdravotní záznam, s popisem a případném popisu vakcinace.
+</p>
+<br>
+<p>
+  V případě odstranění zvířete nebo uživatele ze systému se provede tzv. soft-delete. U položek si pak ukládáme status smazání, ačkoli k fyzickému odstranění záznamu z databáze nedojde. Díky tomu si zaměstnanci útulku i dobrovolníci mohou stále zobrazovat historii veškerých interakcí.
+</p>
+<br>
+<p>
+  Co se týče uchovávání 'session' dat při interakci se systémem||||| SAM SIETOCKY|||||.
+</p>
+
+<h3>Databáze</h3>
+
+<p>Ukázka schématu databáze:</p>
+<img src="IIS_ERD.png" alt="Schéma databáze">
+
+
+<h2>Instalace</h2>
+
+Stručně popište:
+<ul>
+  <li>postup instalace na server,</li>
+  <li>softwarové požadavky (verze PHP apod.),</li>
+  <li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>
+</ul>
+
+<h2>Známé problémy</h2>
+<p>XDD VTIPALCI SI MYSLI ZE MAME NEJAKE CHYBY.</p>
+
