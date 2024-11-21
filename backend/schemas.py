@@ -6,7 +6,9 @@ class Token(BaseModel):
     sub: str
     role: str
     user_id: int
-    tokenExp: int
+
+class RefreshResponse(BaseModel):
+    access_token: str
 
 class UserBase(BaseModel):
     name: str
