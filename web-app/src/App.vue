@@ -17,7 +17,7 @@ export default {
 
     this.tokenInterval = setInterval(() => {
       this.checkExpiredToken();
-    }, 1000);
+    }, 120000);
   },
   methods: {
     ...mapActions(['logout', 'extendExpiration', 'fetchTokenData']),
