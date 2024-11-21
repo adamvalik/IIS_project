@@ -287,6 +287,12 @@ export default {
       this.editableAnimal.birth_year = new Date().getFullYear() - this.animal.birth_year;
     },
     async saveChanges(){
+
+      this.editableAnimal.caregivers_description = this.editableAnimal.caregivers_description.trim();
+      this.editableAnimal.breed = this.editableAnimal.breed.trim();
+      this.editableAnimal.name = this.editableAnimal.name.trim();
+      this.editableAnimal.species = this.editableAnimal.species.trim();
+
       if (this.editableAnimal.name === '') {
         alert('Name is required.');
         return;
@@ -295,7 +301,6 @@ export default {
         alert('Species is required.');
         return;
       }
-      this.editableAnimal.caregivers_description = this.editableAnimal.caregivers_description.trim();
       if (!this.editableAnimal.birth_year) {
         this.editableAnimal.birth_year = null;
       } else{

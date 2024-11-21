@@ -25,12 +25,12 @@
           <div>
             <label for="phone" class="block text-sm font-medium py-2">Phone number:</label>
             <div class="flex gap-2">
-              <input type="text" v-model="user.phone" name="phone" id="phone" placeholder="Enter your phone number (optional)" class="w-3/4 p-2 border border-gray-300 rounded-md text-sm" />
+              <input type="text" v-model="user.phone" name="phone" id="phone" placeholder="Enter your phone number" class="w-3/4 p-2 border border-gray-300 rounded-md text-sm" />
               <input type="submit" value="Save" class="w-1/4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded" />
             </div>
           </div>
 
-          <button @click="deleteAccount" type="button" class="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded">
+          <button v-if="!isAdmin" @click="deleteAccount" type="button" class="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded">
             Delete Account
           </button>
         </form>
@@ -110,6 +110,9 @@ export default {
 
     userID() {
       return this.user_id;
+    },
+    isAdmin() {
+      return this.user.role === 'admin';
     }
   },
   async mounted() {
@@ -129,6 +132,7 @@ export default {
     async updatePhoneNum() {
       try {
         const phoneRegex = /^[+]?[0-9]{10,15}$/;
+        this.user.phone = this.user.phone.trim();
         if (!this.user.phone || this.user.phone === '') {
           alert('Phone number is required.');
           this.user.phone = null;

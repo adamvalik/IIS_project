@@ -2,8 +2,24 @@
   <div class="flex justify-between items-center bg-white shadow p-4 rounded-lg">
     <div>
       <p class="text-lg font-semibold text-gray-700">{{ record.date }}</p>
-      <p v-if="!showAnimal" class="text-sm text-gray-600">Animal: {{ animal_name }}</p>
-      <p class="text-sm text-gray-600">Veterinarian: {{ veterinarian }}</p>
+      <p v-if="!showAnimal" class="text-sm text-gray-600">
+        Animal:
+        <router-link
+          :to="`/animal/${record.id_animal}`"
+          class="text-blue-500 hover:text-blue-600"
+        >
+          {{ animal_name }}
+        </router-link>
+      </p>
+      <p class="text-sm text-gray-600">
+        Veterinarian:
+        <router-link
+          :to="`/user/${record.id_veterinarian}`"
+          class="text-blue-500 hover:text-blue-600"
+        >
+          {{ veterinarian }}
+        </router-link>
+      </p>
     </div>
 
     <div class="flex gap-2">
