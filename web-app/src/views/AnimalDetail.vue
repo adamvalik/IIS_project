@@ -12,7 +12,7 @@
             class="w-full md:w-1/3 h-64 object-cover rounded-lg shadow-md self-start"
           />
 
-          <div class="mt-6 md:mt-0">
+          <div class="mt-6 md:mt-0 w-full">
             <div>
               <h2 v-if="!editMode" class="mb-4 text-3xl font-bold text-gray-800">{{ animal.name }}</h2>
               <input v-else v-model="editableAnimal.name" placeholder="Name" class="text-gray-800 border border-gray-300 p-2 rounded w-full" />
@@ -29,7 +29,7 @@
             </div>
 
             <div>
-              <p v-if="!editMode" class="mb-2 text-lg text-gray-600">Age: {{ calculateAge(animal.birth_year) }} years</p>
+              <p v-if="!editMode" class="mb-2 text-lg text-gray-600">Age: {{ calculateAge(animal.birth_year) }} </p>
               <input v-else v-model="editableAnimal.birth_year" placeholder="Age" type="number" class=" text-gray-600 border border-gray-300 p-2 rounded w-full" />
             </div>
 
@@ -39,7 +39,7 @@
                 v-else
                 v-model="editableAnimal.size"
                 class="border border-gray-300 p-2 rounded w-full">
-                <option value="" disabled>Select size</option>
+                <option value="" disabled selected>Size</option>
                 <option value="small">small</option>
                 <option value="medium">medium</option>
                 <option value="large">large</option>
@@ -53,7 +53,7 @@
 
             <div>
               <p v-if="!editMode" class="mb-2 text-lg text-gray-600 break-words">{{ animal.caregivers_description }}</p>
-              <textarea v-else v-model="editableAnimal.caregivers_description" placeholder="caregivers description" rows="1" class="text-gray-600 border border-gray-300 p-2 rounded w-full"></textarea>
+              <textarea v-else v-model="editableAnimal.caregivers_description" placeholder="caregivers description" rows="3" class="text-gray-600 border border-gray-300 p-2 rounded w-full"></textarea>
             </div>
           </div>
         </div>
@@ -268,8 +268,11 @@ export default {
       console.log(this.editableAnimal.birth_year);
     },
     calculateAge(birthYear) {
+      if (!birthYear) {
+        return '';
+      }
       const currentYear = new Date().getFullYear();
-      return currentYear - birthYear;
+      return `${currentYear - birthYear} years`;
     },
     formatDate(dateString) {
       const date = new Date(dateString);
@@ -277,6 +280,10 @@ export default {
     },
     turnEditMode(){
       this.editMode = !this.editMode;
+      if (!this.animal.birth_year) {
+        this.editableAnimal.birth_year = '';
+        return;
+      }
       this.editableAnimal.birth_year = new Date().getFullYear() - this.animal.birth_year;
     },
     async saveChanges(){
@@ -288,8 +295,13 @@ export default {
         alert('Species is required.');
         return;
       }
-      try {
+      this.editableAnimal.caregivers_description = this.editableAnimal.caregivers_description.trim();
+      if (!this.editableAnimal.birth_year) {
+        this.editableAnimal.birth_year = null;
+      } else{
         this.editableAnimal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
+      }
+      try {
         await apiClient.put(`/animals/edit/${this.animal.id}`,
           this.editableAnimal,
           {
