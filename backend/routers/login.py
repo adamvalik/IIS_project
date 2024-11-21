@@ -7,7 +7,7 @@ import bcrypt
 from jose import JWTError, jwt
 from enum import Enum
 from datetime import datetime, timedelta, timezone
-from schemas import UserSignUp as UserSchema, LoginRequest, LoginResponse, SignUpResponse, Token, RefreshResponse
+from schemas import UserSignUp as UserSchema, LoginRequest, LoginResponse, SignUpResponse, Token, RefreshResponse, EmailValidationRequest
 from sqlalchemy.orm import Session
 from models import User as UserModel
 from db import get_db
