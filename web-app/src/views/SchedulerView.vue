@@ -102,7 +102,7 @@
         <p>Date: {{ showPopup.date }}</p>
         <div class="flex justify-evenly mt-2" :class="getRole === 'caregiver' ? 'gap-16' : ''">
           <button @click="cancelReservation" class="mt-2 px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md font-semibold">Cancel Reservation</button>
-          <button v-if="getRole === 'caregiver'" @click="approveReservation" class="mt-2 px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-md font-semibold">Approve Reservation</button>
+          <button v-if="getRole === 'caregiver' && !isApproved" @click="approveReservation" class="mt-2 px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-md font-semibold">Approve Reservation</button>
         </div>
         <p v-if="getRole === 'volunteer'" class="text-sm text-gray-500 mt-2">If you are canceling less than 24 hours before the appointment, please call us at +123456789</p>
       </div>
