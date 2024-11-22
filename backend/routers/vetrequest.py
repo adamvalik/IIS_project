@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.post("/request")
 async def create_vet_request(vet_request: VetRequestSchema, db: Session = Depends(get_db), user_verified = Depends(verify_user)):
-    verify_user_role(user_verified, ["caregiver, admin"])
+    verify_user_role(user_verified, ["caregiver", "admin"])
 
     animal_id = vet_request.animal_id
     caregivers_description = vet_request.request_text
