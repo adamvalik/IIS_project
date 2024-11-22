@@ -4,19 +4,14 @@ from typing import List, Optional
 from models import Animal as AnimalModel
 from schemas import Animal as AnimalSchema, AnimalCreate as AnimalCreateSchema
 from db import get_db
-from routers.login import verify_user
+from routers.login import verify_user, verify_user_role
 import base64
 
 router = APIRouter()
 
 @router.get("/addanimal")
 async def addAnimal(user_verified = Depends(verify_user)):
-    if user_verified is None:
-        raise HTTPException(status_code=401, detail="User not verified")
-
-    if user_verified.get("role") not in ["admin", "caregiver"]:
-        raise HTTPException(status_code=401, detail="User not authorized")
-
+    verify_user_role(user_verified, ["admin", "caregiver"])
     return {"Validation successful"}
 
 @router.get("/animals/animal/{animal_id}", response_model=AnimalSchema)
@@ -83,6 +78,7 @@ async def get_unique_species(db: Session = Depends(get_db)):
 
 @router.post("/animals")
 async def create_animal(animal: AnimalCreateSchema, db: Session = Depends(get_db), user_verified = Depends(verify_user)):
+    verify_user_role(user_verified, ["admin", "caregiver"])
     try:
         photo_data = base64.b64decode(animal.photo) if animal.photo else None
     except (ValueError, TypeError):
@@ -105,6 +101,7 @@ async def create_animal(animal: AnimalCreateSchema, db: Session = Depends(get_db
 
 @router.put("/animals/edit/{animal_id}")
 async def update_animal(animal_id: int, animal: AnimalCreateSchema, db: Session = Depends(get_db), user_verified: bool = Depends(verify_user)):
+    verify_user_role(user_verified, ["admin", "caregiver"])
 
     animal_to_update = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
     if animal_to_update is None:
@@ -124,6 +121,7 @@ async def update_animal(animal_id: int, animal: AnimalCreateSchema, db: Session 
 
 @router.delete("/animals/delete/{animal_id}")
 async def delete_animal(animal_id: int, db: Session = Depends(get_db), user_verified: bool = Depends(verify_user)):
+    verify_user_role(user_verified, ["admin", "caregiver"])
     animal_to_delete = db.query(AnimalModel).filter(AnimalModel.id == animal_id).first()
     if animal_to_delete is None:
         raise HTTPException(status_code=404, detail="Animal not found")

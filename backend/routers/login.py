@@ -52,6 +52,23 @@ def verify_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_d
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
     
+
+def verify_user_role(payload: dict, roles: List[str]):
+    if payload.get("role") not in roles:
+        raise HTTPException(status_code=401, detail=f'User with role {payload.get("role")} not authorized')
+    
+def verify_volunteer_status(user_id: int, db: Session):
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not user.verified:
+        raise HTTPException(status_code=401, detail="Volunteer not verified")
+    
+def validate_same_user_id(user_id: int, actual_user_id: int):
+    if user_id != actual_user_id:
+        raise HTTPException(status_code=401, detail="User asks for different user's data")
+        
+
 @router.post("/refresh-token-interval", response_model=RefreshResponse)
 async def resfreshTokenInterval(token: Token):
 

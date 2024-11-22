@@ -241,12 +241,7 @@ export default {
           console.log("User is a volunteer");
           console.log("User ID: ", userId);
           try {
-            const response = await apiClient.get(`/users/volunteers/${userId}/verify`, {
-                headers: {
-                  Authorization: `Bearer ${this.$store.state.accessToken}`,
-                }
-              }
-            );
+            const response = await apiClient.get(`/users/volunteers/${userId}/verify`);
             if (response.data === true) {
               console.log("User is verified");
               this.VolunteerVetification = true;

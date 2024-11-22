@@ -10,7 +10,7 @@ from models import Animal as AnimalModel
 from models import AnimalBorrow as AnimalBorrowModel
 from models import Reservation as ReservationModel
 from models import User as UserModel
-from routers.login import verify_user
+from routers.login import verify_user, verify_volunteer_status, verify_user_role
 import pytz
 
 # We be working in CR
@@ -24,15 +24,8 @@ router = APIRouter(
 
 @router.get("/scheduler/{id}")
 async def listUsers(user_verified = Depends(verify_user), db: Session = Depends(get_db)):
-
-    userToVerify = db.query(UserModel).filter(UserModel.id == user_verified.get("user_id")).first()
-    if not userToVerify:
-        raise HTTPException(status_code=404, detail="User not found")
-
     if user_verified.get("role") == "volunteer":
-        if(not userToVerify.verified):
-            raise HTTPException(status_code=401, detail=user_verified.get("role") + " not authorized")
-    # If the user is verified, return the list of users
+        verify_volunteer_status(user_verified.get("user_id"), db)
     return {"Validation successful"}
 
 @router.post("/schedule", response_model=dict)
@@ -119,6 +112,7 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
 
 @router.post("/confirmselection", response_model=Dict[str, str])
 async def confirm_selection(request: ConfirmSelectionRequest, db: Session = Depends(get_db)):
+    
     print("Confirming selection for:", request.animal_id)
 
     for slot in request.slots:
@@ -192,7 +186,8 @@ async def cancel_slot(user_id: int, animal_id: int, date: str, time: str, db: Se
 
 
 @router.post("/createslot", response_model=dict)
-async def create_slot(request: CSlot, db: Session = Depends(get_db)):
+async def create_slot(request: CSlot, db: Session = Depends(get_db), user_verified = Depends(verify_user)):
+    verify_user_role(user_verified, ["admin", "caregiver"])
 
     for slot in request.new_slots:
         print(f"Day: {slot.day}, Time: {slot.time}, Date: {slot.date}, Animal ID: {request.animal_id}")
@@ -280,7 +275,8 @@ async def check_approval(animal_id: int, date: str, time: str, db: Session = Dep
         return {'isApproved': False, 'username': 'No one', 'user_id': -1}
 
 @router.post('/approve', response_model=dict)
-async def approve_slot(reservation: Reservation, db: Session = Depends(get_db)):
+async def approve_slot(reservation: Reservation, db: Session = Depends(get_db), user_verified = Depends(verify_user)):
+    verify_user_role(user_verified, ["admin", "caregiver"])
 
     borrow = db.query(AnimalBorrowModel).filter(
         AnimalBorrowModel.id_animal == reservation.animal_id,
