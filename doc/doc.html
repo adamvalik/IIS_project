@@ -45,15 +45,15 @@
 
 <dl>
   <h3>Autoøi</h3>
-  <dd>Adam Valík <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
+  <dd>Adam Valík
     <a href="mailto:xvalik05@stud.fit.vutbr.cz">xvalik05@stud.fit.vutbr.cz</a> -
     Majitel informaèních systémù
   </dd>
-  <dd>Samuel Hejníèek <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
+  <dd>Samuel Hejníèek
     <a href="mailto:xhejni00@stud.fit.vutbr.cz">xhejni00@stud.fit.vutbr.cz</a> -
     Sietockar
   </dd>
-  <dd>Marek Effenberger <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
+  <dd>Marek Effenberger
     <a href="mailto:xeffen00@stud.fit.vutbr.cz">xeffen00@stud.fit.vutbr.cz</a> -
     Vlastník frontendu
   </dd>
@@ -111,13 +111,13 @@
 <h2>Implementace</h2>
 
 <p>Informaèní systém 'Zvíøecí útulek' je implementován pomocí kombinace frameworkù umo¾òujících modulární architekturu.
-  Interaktivní u¾ivatelské elementy na¹eho systému jsou postaveny pomocí html obohaceného o styly z frameworku Tailwind.css.
-  Tyto elementy obsluhuje kontrolerová vrstva postavena ve frameworku Vue.js. Vue.js pak pomocí slu¾by FastAPI Python vysílá po¾adavky, které jsou v jazyce Python zpracovány. Kombinace Vue.js a Python tak tvoøí aplikaèní vrstvu na¹eho systému.
-  Databáze systému je postavena na PostgreSQL, pøièem¾ objektovì-relaèní model je abstrahován pomocí knihovny SQLAlchemy. Vyu¾ití této knihovny pøípadnì umo¾òuje snadnou migraci na systémy postaveny nad jiným systémem, napø. MySQL.
+  Interaktivní u¾ivatelské elementy na¹eho systému jsou napsány v HTML obohaceného o stylování za pou¾ití frameworku Tailwind CSS.
+  Tyto elementy obsluhuje kontrolerová vrstva postavena ve frameworku Vue.js. Vue.js pak pomocí REST API vysílá po¾adavky, které jsou zpracovány webovým rámcem FastAPI v jazyce Python. Kombinace Vue.js a Python tak tvoøí aplikaèní vrstvu na¹eho systému.
+  Databáze systému je postavena na PostgreSQL, pøièem¾ objektovì-relaèní model je abstrahován pomocí knihovny SQLAlchemy. Vyu¾ití této knihovny pøípadnì umo¾òuje snadnou migraci na jiný databázový systém, napø. MySQL.
 </p>
 <br>
 <p>
-  Systém je postaven pomocí nìkolika stránek, je¾ jsou doplòovány elementy a modulárními komponenty, které jsou u¾ivateli zpøístupnìny na základì jeho/jejich práv.
+  Systém je tvoøen nìkolika stránkami doplnìnými o prvky a modulární komponenty, které jsou u¾ivatelùm zpøístupnìny podle jejich oprávnìní.
 </p>
 <br>
 <p>
@@ -129,23 +129,27 @@
 </p>
 <br>
 <p>
-  Popis zvíøete je pøístupný v¹em u¾ivatelùm systému stejný. Co se ale mìní na základì práv je mno¾ina operací, reprezentovaných interaktivními tlaèítky, které nad zvíøetem mù¾e provést. U¾ivatel bez vytvoøeného úètu dostane upozornìní na mo¾nost venèení pøi tvorbì nového úètu/ pøihlá¹ení se. Pøihlá¹ený dobrovolník doká¾e mo¾nost si zobrazit rozvrh zvíøete a pøípadnì si vytvoøit rezervaci venèení. Peèovatel pak mù¾e zvíøeti zobrazit rozvrh, podat ¾ádost na veterináøe na zvíøecí vy¹etøení, editovat informace o zvíøeti a zobrazit si zdravotní záznamy zvíøete. Veterináø pak má mo¾nost dostat se ke zdravotním kartám zvíøete. Administrátor pak dostává kombinaci práv peèovatele a veterináøe.
+  Popis zvíøete je stejný v¹em u¾ivatelùm systému. Co se ale mìní na základì práv, je mno¾ina operací reprezentovaných interaktivními tlaèítky, které nad zvíøetem mù¾ou provést. U¾ivatel bez vytvoøeného úètu dostane upozornìní na mo¾nost venèení pøi tvorbì nového úètu / pøihlá¹ení se. Pøihlá¹ený dobrovolník má mo¾nost si zobrazit rozvrh zvíøete a pøípadnì si vytvoøit rezervaci venèení. Peèovatel si pak mù¾e zobrazit rozvrh zvíøete a pøidat mu temríny venèení, podat ¾ádost na veterináøe na vy¹etøení zvíøete, editovat informace o zvíøeti nebo si zobrazit jeho zdravotní záznamy. Veterináø pak má mo¾nost dostat se ke zdravotním kartám zvíøete nebo si zobrazit v¹echny zdravotní záznamy. Administrátor dostává kombinaci práv peèovatele a veterináøe.
 </p>
 <br>
 <p>
-  Dal¹í mo¾ností, která se nabízí ji¾ z hlavní nabídky je pøihlá¹ení u¾ivatele. U¾ivateli se zobrazí formuláø, který, kdy¾ opatøen údaji korelujícími se záznamem u¾ivatele v databázi, provede pøihlá¹ení u¾ivatele do systému. U¾ivatel se z této nabídky té¾ mù¾e dostat k registraènímu formuláøi, pokud si tvoøí nový úèet. Oba formuláøe jsou opatøeny kontrolami správného formátu vstupu. Heslo je podrobeno hashování ||||| NECO COOL O HASHOVANI |||||.
+  Dal¹í mo¾ností, která se nabízí ji¾ z hlavní nabídky je pøihlá¹ení u¾ivatele. U¾ivateli se zobrazí formuláø, který, kdy¾ je opatøen údaji korelujícími se záznamem u¾ivatele v databázi, provede pøihlá¹ení u¾ivatele do systému. U¾ivatel se z této nabídky té¾ mù¾e dostat k registraènímu formuláøi, pokud si tvoøí nový úèet. Oba formuláøe jsou opatøeny kontrolami správného formátu vstupu. Heslo je pøi ukládání do databáze podrobeno hashování ||||| NECO COOL O HASHOVANI |||||.
 </p>
 <br>
 <p>
-  Rozvrh zvíøete je realizovaný pomocí týdenního zobrazení hodin pomocí interaktivních okének, je¾ na základì rùzného zbarvení (popsaného v legendì pod samotným rozvrhem) u¾ivatele informují o èasové obsazenosti zvíøete. Verifikovaný u¾ivatel má mo¾nost si podat ¾ádost o rezervaci na volné okénka, pøípadnì zobrazit si vlastní rezervace a potvrdit jejich zru¹ení. Peèovatel mù¾e vytvoøit nové volné èasové mo¾nosti pro venèení, zobrazit si rezervace, pøes proklik detail u¾ivatele, co rezervaci podal a její pøípadné potvrzení nebo zru¹ení. Informace o nadcházejících i probìhlých rezervacích pro ve¹kerá zvíøata si u¾ivatel mù¾e zobrazit na stránce 'My Reservations' a peèovatel na stránce 'Edit Reservations'. V této nabídce je peèovateli umo¾nìno si do systému poznamenat zda bylo zvíøe vydané dobrovolníkovi a zda bylo následnì navráceno.
+  Peèovatel eviduje novì pøijaté zvíøata do útulku v sekci 'Add Animal'. Zde musí vyplnit jméno a druh zvíøete, dále mù¾e pøidat informace jako jsou rasa, velikost, rok narození, pøidat popis a zároveò i fotku zvíøete.
 </p>
 <br>
 <p>
-  Podobnì jako nabídka s detaily zvíøete, tak také u¾ivatelé disponují oknem, které shrnuje jejich údaje. U¾ivatelé také disponují nabídkou pro zmìnu vlastních údajù, pøípadné doplnìní telefonního èísla. U¾ivatele mù¾e pøidávat do systému peèovatel a administrátor. V systému zároveò jasnì vidí kteøí dobrovolníci jsou nevalidováni a tedy mohou se snadno rozhodnout o jejich potvrzení, èi odmítnutí.
+  Rozvrh zvíøete je realizovaný pomocí týdenního zobrazení hodin s interaktivními okénky, je¾ na základì rùzného zbarvení (popsaného v legendì pod samotným rozvrhem) u¾ivatele informují o èasové obsazenosti zvíøete. Ovìøený u¾ivatel má mo¾nost si podat ¾ádost o rezervaci na okénka s volnými termíny, zobrazit si vlastní rezervace a pøípadnì provést jejich zru¹ení. Peèovatel mù¾e vytvoøit nové volné termíny pro venèení, zobrazit si rezervace a pøes proklik nahlédnout na detail u¾ivatele, který rezervaci podal. Pøedev¹ím v¹ak provádí potvrzení nebo zru¹ení dané rezervace. Informace o nadcházejících i probìhlých rezervacích pro ve¹kerá zvíøata si u¾ivatel mù¾e zobrazit na stránce 'My Reservations' a peèovatel na stránce 'Reservations'. V této nabídce je peèovateli umo¾nìno si do systému poznamenat zda bylo zvíøe vydané dobrovolníkovi a zda bylo následnì navráceno.
 </p>
 <br>
 <p>
-  Pro zvíøáta mohou peèovatelé vytvoøit po¾adavky na o¹etøení, kontrolu veterináøem. Veterináøi se pak zobrazí v pøíslu¹ném oknì tento po¾adavek, je¾ nabývá neschváleného statusu. Jakýkoli veterináø pak mù¾e na tento po¾adavek zareagovat a pøidat zvíøeti do systému zdravotní záznam, s popisem a pøípadném popisu vakcinace.
+  Podobnì jako nabídka s detaily zvíøete, tak také u¾ivatelé disponují oknem, které shrnuje jejich údaje. Dále má ka¾dý u¾ivatel pøístup do okna 'My Profile', kde si mù¾e doplnit telefonní èíslo, nebo zmìnit heslo. Peèovatele a veterináøe mù¾e do systému pøidávat pouze administrátor. Peèovatelé pak mohou pøidávat dobrovolníky, které zároveò ovìøují a udìlují jim tak práva vytváøet rezervace venèení.
+</p>
+<br>
+<p>
+  Pro zvíøata mohou peèovatelé vytvoøit po¾adavky na kontrolu èi o¹etøení veterináøem. Veterináøùm se pak zobrazí v prokliku pøes akci 'Examination requests' tento po¾adavek. Jakýkoli veterináø pak mù¾e na tento po¾adavek zareagovat pøidáním zdravotního záznamu zvíøeti do systému s popisem prohlídky, uvedením výsledku vá¾ení a pøípadným popisem vakcinace.
 </p>
 <br>
 <p>
@@ -155,6 +159,77 @@
 <p>
   Co se týèe uchovávání 'session' dat pøi interakci se systémem||||| SAM SIETOCKY|||||.
 </p>
+
+<h3>Struktura projektu</h3>
+<p>Výèet use casù a odpovídající Vue soubory:</p>
+<ul>
+  <li>
+    <strong>Registrace u¾ivatele:</strong>
+    <ul>
+      <li>SignUpView.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Pøihlá¹ení u¾ivatele:</strong>
+    <ul>
+      <li>LoginView.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Správa u¾ivatelù/dobrovolníkù:</strong>
+    <ul>
+      <li>ListUsersView.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Zobrazení profilu u¾ivatele:</strong>
+    <ul>
+      <li>ProfileDetail.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Zobrazení detailù zvíøete:</strong>
+    <ul>
+      <li>AnimalDetail.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Pøídání zvíøete:</strong>
+    <ul>
+      <li>AddAnimalView.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Zobrazení seznamu zvíøat:</strong>
+    <ul>
+      <li>AnimalsView.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Rezervace:</strong>
+    <ul>
+      <li>ReservationView.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Po¾adavky na vy¹etøení:</strong>
+    <ul>
+      <li>RequestsView.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Zdravotní záznamy:</strong>
+    <ul>
+      <li>MedicalRecordsList.vue</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Rozvrh venèení zvíøete:</strong>
+    <ul>
+      <li>SchedulerView.vue</li>
+    </ul>
+  </li>
+</ul>
 
 <h3>Databáze</h3>
 
