@@ -1,5 +1,5 @@
 <template>
-  <div @mousemove="resetTimer" @keypress="resetTimer">
+  <div @mousemove="detectActivity" @keypress="detectActivity">
     <router-view />
   </div>
 </template>
@@ -17,9 +17,13 @@ export default {
     ...mapGetters(['sessionExp', 'isAuthenticated', 'isTokenExpired']),
   },
   mounted() {
+    // Load token data to Vuex store
     this.fetchTokenData();
+
+    // Check token expiration for the first time
     this.checkExpiredToken();
 
+    // Check for token expiration every minute
     this.tokenInterval = setInterval(() => {
       this.checkExpiredToken();
     }, 60000);
@@ -27,18 +31,22 @@ export default {
   methods: {
     ...mapActions(['logout', 'extendExpiration', 'fetchTokenData', 'extendTokenExp']),
 
-    resetTimer() {
+    detectActivity() {
       this.ActivityDetected = true;
     },
     checkExpiredToken() {
 
+      //If user is logged in
       if(this.isAuthenticated){
+        //If activity was detected, extend token expiration
         if(this.ActivityDetected) {
           console.log("Extending token expiration...");
           console.log(this.sessionExp * 1000);
           this.extendTokenExp();
           this.ActivityDetected = false;
-      } 
+        } 
+      
+        //Check if token has expired
         if((Date.now() >= this.sessionExp * 1000)) {
           alert("Your session has expired. Please log in again.");
           this.logout();
@@ -46,22 +54,6 @@ export default {
         }
 
       }
-
-        // if(this.isTokenExpired) {
-        //   alert("Your session has expired. Please log in again.");
-        //   this.logout();
-        //   this.$router.push('/');
-        // }
-
-        // console.log("Checking token expiration...");
-        // console.log(Date.now() + " >= " + this.sessionExp * 1000);
-
-        // if((Date.now() >= this.sessionExp * 1000)) {
-        //   alert("Your session has expired. Please log in again.");
-        //   this.logout();
-        //   this.$router.push('/');
-        // }
-      //}
     }
 
   },

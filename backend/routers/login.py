@@ -16,24 +16,35 @@ SECRET_KEY = "rogalo"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+# Define a dependency for bearer token authentication
+Oauth2Scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 router = APIRouter()
 
+# Function to create an access token
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
+
+    #Add a 10 minute expiration time to the token
+    expireTokenTime = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expireTokenTime})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+# Function to hash a password using bcrypt and salt to add security
 def hash_password(password: str) -> str:
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    return hashed_password.decode('utf-8')
+    bytePassword = password.encode('utf-8')
+    hashedPassword = bcrypt.hashpw(bytePassword, bcrypt.gensalt())
+    byteHashedPassword = hashedPassword.decode('utf-8')
+    return byteHashedPassword
 
+# Function to verify a password using bcrypt
 def verify_password(password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
+    bytePassword = password.encode('utf-8')
+    byteHashedPassword = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(bytePassword, byteHashedPassword)
 
-def verify_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+# Function that verifies the user's token and looking up the user in the database
+def verify_user(token: str = Depends(Oauth2Scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
@@ -52,11 +63,12 @@ def verify_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_d
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-
+# Function that verifies the user's role
 def verify_user_role(payload: dict, roles: List[str]):
     if payload.get("role") not in roles:
         raise HTTPException(status_code=401, detail=f'User with role {payload.get("role")} not authorized')
     
+# Function that verifies  if the user is a verified volunteer
 def verify_volunteer_status(user_id: int, db: Session):
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if user is None:
@@ -64,14 +76,14 @@ def verify_volunteer_status(user_id: int, db: Session):
     if not user.verified:
         raise HTTPException(status_code=401, detail="Volunteer not verified")
     
+# Function that validates if the user is asking for their own data
 def validate_same_user_id(user_id: int, actual_user_id: int):
     if user_id != actual_user_id:
         raise HTTPException(status_code=401, detail="User asks for different user's data")
         
-
+# Function that creates a new token with updated expiration time
 @router.post("/refresh-token-interval", response_model=RefreshResponse)
 async def resfreshTokenInterval(token: Token):
-
     token_data = {
         "sub": token.sub,
         "role": token.role,

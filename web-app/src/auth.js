@@ -11,6 +11,7 @@ export default createStore({
     sub: null,
   },
   mutations: {
+    //Set all states in the store based on the token when user logs in
     setToken(state, token) {
       state.accessToken = token;
       localStorage.setItem('access_token', token);
@@ -20,6 +21,7 @@ export default createStore({
       state.sessionExpiration = decoded.exp;
       state.sub = decoded.sub;
     },
+    // Clear the token from vuex store when user logs out
     clearToken(state) {
       state.accessToken = '';
       state.userRole = null;
@@ -29,6 +31,7 @@ export default createStore({
     },
   },
   actions: {
+    // Extend the token expiration time when activity is detected
     async extendTokenExp({ commit, state }) {
       try {
         const response = await apiClient.post('/refresh-token-interval', {
@@ -36,21 +39,24 @@ export default createStore({
           role: state.userRole,
           user_id: state.user_id,
         });
-
+        //Set the new token with extended time in the store
         commit('setToken', response.data.access_token);
       } catch (error) {
         console.error('Error refreshing token:', error);
       }
     },
+
+    // Login action to set the token in the store
     login({ commit }, token) {
       commit('setToken', token);
     },
+
+    // Logout action to clear the token from the store
     logout({ commit }) {
       commit('clearToken');
     },
-    extendExpiration({ commit }) {
-      commit('setNewSessionExp');
-    },
+
+    // Fetch the token data from local storage when user refreshes the page
     fetchTokenData({ commit }) {
       const token = localStorage.getItem('access_token');
       if (token) {
@@ -58,6 +64,8 @@ export default createStore({
       }
     }
   },
+
+  // Getters to access the states in the store
   getters: {
     isAuthenticated: state => !!state.accessToken,
     userRole: state => state.userRole,
