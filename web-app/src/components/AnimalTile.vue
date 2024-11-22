@@ -32,6 +32,10 @@ export default {
     showAge() {
       if (!this.birth_year) {
         return "Age: Unknown";
+      } else if (this.calculateAge(this.birth_year) === 0) {
+        return 'Age: Less than a year';
+      } else if (this.calculateAge(this.birth_year) === 1) {
+        return 'Age: ' + this.calculateAge(this.birth_year) + ' year';
       } else {
         return 'Age: ' + this.calculateAge(this.birth_year) + ' years';
       }

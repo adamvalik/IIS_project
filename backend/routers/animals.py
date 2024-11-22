@@ -65,7 +65,7 @@ async def get_animals(
 
 @router.get("/animals/recent", response_model=List[AnimalSchema])
 async def get_recent_animals(db: Session = Depends(get_db)):
-    recent_animals = db.query(AnimalModel).filter(AnimalModel.is_deleted == False).order_by(AnimalModel.admission_date.desc()).limit(3).all()
+    recent_animals = db.query(AnimalModel).filter(AnimalModel.is_deleted == False).order_by(AnimalModel.admission_date.desc(), AnimalModel.id.desc()).limit(3).all()
     for animal in recent_animals:
         if animal.photo:
             animal.photo = f"data:image/jpeg;base64,{base64.b64encode(animal.photo).decode()}"

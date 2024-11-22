@@ -25,7 +25,16 @@
           <div>
             <label for="phone" class="block text-sm font-medium py-2">Phone number:</label>
             <div class="flex gap-2">
-              <input type="text" v-model="user.phone" name="phone" id="phone" placeholder="Enter your phone number" class="w-3/4 p-2 border border-gray-300 rounded-md text-sm" />
+              <input
+                v-model="user.phone"
+                type="tel"
+                id="phone"
+                name="phone"
+                pattern="^[+]?[0-9]{0,3}\s?[0-9]{3}\s?[0-9]{3}\s?[0-9]{3}$"
+                placeholder="Enter your phone number"
+                class="w-3/4 p-2 border border-gray-300 rounded-md text-sm"
+                required
+              />
               <input type="submit" value="Save" class="w-1/4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded" />
             </div>
           </div>
@@ -131,18 +140,6 @@ export default {
     },
     async updatePhoneNum() {
       try {
-        const phoneRegex = /^[+]?[0-9]{10,15}$/;
-        this.user.phone = this.user.phone.trim();
-        if (!this.user.phone || this.user.phone === '') {
-          alert('Phone number is required.');
-          this.user.phone = null;
-          return;
-        } else if (!phoneRegex.test(this.user.phone)) {
-          alert('Invalid phone number format.');
-          this.user.phone = null;
-          return;
-        }
-
         await apiClient.put(`/users/${this.userID}/phone`, { phone: this.user.phone });
         this.fetchProfile();
         this.showPhoneUpdated = true;

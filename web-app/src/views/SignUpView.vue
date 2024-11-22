@@ -81,6 +81,7 @@
             v-model="telephone"
             type="tel"
             id="telephone"
+            pattern="^[+]?[0-9]{0,3}\s?[0-9]{3}\s?[0-9]{3}\s?[0-9]{3}$"
             placeholder="Enter your telephone number"
             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -155,7 +156,7 @@ export default {
         surname: this.surname,
         email: this.email,
         password: this.password,
-        telephone: this.telephone || null,
+        phone: this.telephone || null,
       };
 
       try {
