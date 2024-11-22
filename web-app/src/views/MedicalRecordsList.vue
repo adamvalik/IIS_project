@@ -17,6 +17,7 @@
           :isAdmin="isAdmin"
           @toggleDetail="toggleDetail"
           @deleteRecord="deleteRecord"
+          :class="{ 'mb-10': record.id === lastRecordId }"
         />
       </div>
     </div>
@@ -67,6 +68,11 @@ export default {
     this.isVolunteer = this.$store.getters.userRole === 'volunteer';
     await this.fetchMedicalRecords();
     this.animal_name = await this.fetchAnimalName(this.animal_id);
+  },
+  computed: {
+    lastRecordId() {
+      return this.records.length ? this.records[this.records.length - 1].id : null;
+    }
   },
   methods: {
     async fetchMedicalRecords() {

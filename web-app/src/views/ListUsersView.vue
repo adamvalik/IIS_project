@@ -8,10 +8,10 @@
       <h2 v-else-if="isCaregiver" class="text-3xl font-bold text-gray-800 py-8">Manage Volunteers</h2>
       <h2 v-else class="text-3xl font-bold text-gray-800 py-8" style="display:none;">Manage Users or Volunteers</h2>
 
-      <button v-if="isAdmin" @click="openCreateUserModal" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+      <button v-if="isAdmin" @click="openCreateUserModal" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
         Add New User
       </button>
-      <button v-else  @click="openCreateUserModal" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+      <button v-else  @click="openCreateUserModal" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
         Add New Volunteer
       </button>
     </div>
@@ -27,6 +27,7 @@
           @editUser="openEditUserModal"
           @deleteUser="deleteUser"
           @verifyVolunteer="verifyVolunteer"
+          :class="{ 'mb-10': user.id === lastUserId }"
         />
       </div>
     </div>
@@ -62,6 +63,11 @@ export default {
       isAdmin: false,
       isCaregiver: false,
     };
+  },
+  computed: {
+    lastUserId() {
+      return this.users.length ? this.users[this.users.length - 1].id : null;
+    }
   },
   async mounted() {
     this.isAdmin = this.$store.getters.userRole === 'admin';
@@ -126,7 +132,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Additional styles can be added here */
-</style>

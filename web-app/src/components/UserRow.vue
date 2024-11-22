@@ -18,10 +18,10 @@
       <button v-if="!isAdmin && !user.verified && user.role === 'volunteer'" @click="verifyVolunteer" class="bg-green-500 text-white py-1 px-3 rounded-md hover:bg-green-600">
         Verify
       </button>
-      <button @click="$emit('editUser', user)" class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600">
+      <button @click="$emit('editUser', user)" class="bg-yellow-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-yellow-600">
         Edit
       </button>
-      <button @click="confirmDelete" class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600">
+      <button @click="confirmDelete" class="bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600">
         Delete
       </button>
     </div>
