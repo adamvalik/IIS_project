@@ -282,6 +282,7 @@ export default {
 
         const slotStatus = this.getSlot(day, time);
         if (slotStatus === 'green' || slotStatus === 'orange') {
+          this.resetPopup();
           this.showPopup = { visible: true, day, time, date: formattedDate };
         } else {
           if (this.showPopup.visible) {
@@ -305,6 +306,11 @@ export default {
           this.new_slots = this.new_slots.filter(s => !(s.day === day && s.time === time));
         }
       }
+    },
+    resetPopup() {
+      this.isApproved = false;
+      this.userReservation = '';
+      this.showPopup = { visible: false, day: '', time: '', date: '', user_id: '' };
     },
     createNewSlot() {
       const startOfWeek = new Date(this.currentDate);
