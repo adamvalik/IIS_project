@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '../auth';
-import axios from 'axios';
+import apiClient from '@/api';
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import SignUpView from '@/views/SignUpView.vue';
@@ -37,22 +37,19 @@ const router = createRouter({
   routes
 })
 
-//Specify routes that require authentication
+// Specify routes that require authentication
 const protectedRoutes = ['/profile', '/listusers', '/addanimal', '/reservations', '/requests'];
 const userInfoRoutes = /^\/user\/\d+$/;
 const schedulerRoutes = /^\/scheduler\/\d+$/;
 const medicalRecordsRoutes = /^\/medicalrecords\/\d+$/;
 const loginRoutes = ['/login', '/signup'];
-const BASE_URL = process.env.VUE_APP_BACKEND_URL || 'http://localhost:8000';
 
 router.beforeEach(async (to, from, next) => {
-  //console.log('token:', store.getters.tokenExp);
-  console.log('role:', store.getters.userRole);
-  console.log('id:', store.getters.user_id);
-  console.log('auth:', store.getters.isAuthenticated);
-  //Obtain token from Vuex store
+
+  // Obtain token from Vuex store
   const token = store.state.accessToken;
 
+  // If the requested route is protected, verify the token
   if (protectedRoutes.includes(to.path) ||
       userInfoRoutes.test(to.path) ||
       schedulerRoutes.test(to.path) ||
@@ -64,21 +61,9 @@ router.beforeEach(async (to, from, next) => {
       return next('/login');
     }
 
-    // if((Date.now() >= store.state.sessionExpiration * 1000)) {
-    //   alert("Your session has expired. Please log in again.");
-    //   this.logout();
-    //   this.$router.push('/');
-    // }
-
-    // If the token is present, verify that user checks out and has appropriate role
+    // Try to proceed to the requested route by sending a request to the backend with authenticaton headers
     try {
-      console.log('Fetching protected route:',to.path);
-      await axios.get(`${BASE_URL}${to.path}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      await apiClient.get(to.path);
       //Proceed to the requested route if the token is valid
       next();
     } catch (error) {
@@ -89,15 +74,18 @@ router.beforeEach(async (to, from, next) => {
         console.error('Error fetching protected route:', error.message);
       }
 
-      //If the token is invalid, redirect to the home page
+      // If the token is invalid, redirect to the home page
       alert(error.response.data.detail);
       next('/');
     }
+
+    // If the user is already logged in, redirect to the home page
   } else if(loginRoutes.includes(to.path) && token) {
 
-    //If user is already logged in, redirect to the home page
+    
     next('/');
   } else {
+    // Redirect to the requested route if it is not protected
     next();
   }
 });
