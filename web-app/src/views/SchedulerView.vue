@@ -6,14 +6,14 @@
 
     <div class="py-10 px-20">
       <div class="text-center font-bold mb-4">
-        Selected Animal: {{ selectedAnimal ? selectedAnimal.name : 'Bella' }}
+        Selected Animal: {{ selectedAnimal ? selectedAnimal.name : '' }}
       </div>
       <div class="flex justify-between items-center mb-4">
-        <button @click="previousWeek" class="px-3 py-2 bg-gray-300 rounded">&#9664;</button>
+        <button @click="previousWeek" class="px-3 py-2 bg-gray-300 hover:bg-gray-400 rounded">&#9664;</button>
         <div class="text-center font-bold">
-          Week {{ currentWeek.week }}. {{ currentWeek.startDay }}.{{ currentWeek.startMonth }}. - {{ currentWeek.endDay }}.{{ currentWeek.endMonth }}. year {{ currentWeek.year }}
+          Week {{ currentWeek.week }}: {{ currentWeek.startDay }}.{{ currentWeek.startMonth }}. - {{ currentWeek.endDay }}.{{ currentWeek.endMonth }}. {{ currentWeek.year }}
         </div>
-        <button @click="nextWeek" class="px-3 py-2 bg-gray-300 rounded">&#9654;</button>
+        <button @click="nextWeek" class="px-3 py-2 bg-gray-300 hover:bg-gray-400 rounded">&#9654;</button>
       </div>
 
       <div class="grid grid-cols-14 gap-2">
@@ -81,30 +81,30 @@
         </div>
       </div>
 
-      <button v-if="getRole !== 'caregiver'" class="mt-5 p-2 bg-blue-500 text-white rounded" @click="confirmSelection">
+      <button v-if="getRole !== 'caregiver'" class="mt-5 py-2 px-3 rounded-lg font-semibold bg-green-500 hover:bg-green-600 text-white" @click="confirmSelection">
         Confirm Reservation
       </button>
 
-      <button v-if="getRole === 'caregiver'" class="mt-5 p-2 bg-green-500 text-white rounded" @click="createNewSlot">
+      <button v-if="getRole === 'caregiver'" class="mt-5 py-2 px-3 rounded-lg font-semibold bg-green-500 hover:bg-green-600 text-white" @click="createNewSlot">
         Create New Slots
       </button>
 
       <!-- Pop-up Window -->
       <div v-if="showPopup.visible" class="popup absolute bg-white border p-4 rounded shadow-lg" style="top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 50;" @click.stop>
         <p class="font-bold">{{ approvalText }}</p>
-        <p>
+        <p v-if="getRole === 'caregiver'">
           Name:
-          <router-link :to="`/user/${showPopup.user_id}`" class="text-blue-500 underline">
+          <router-link :to="`/user/${showPopup.user_id}`" class="text-blue-500 hover:text-blue-600">
             {{ userReserve }}
           </router-link>
         </p>
         <p>Time: {{ showPopup.time }}</p>
         <p>Date: {{ showPopup.date }}</p>
-        <div class="flex justify-evenly">
-          <button @click="cancelReservation" class="mt-2 px-3 py-1 bg-red-500 text-white rounded">Cancel Reservation</button>
-          <button v-if="getRole === 'caregiver'" @click="approveReservation" class="mt-2 px-3 py-1 bg-yellow-500 text-white rounded">Approve Reservation</button>
+        <div class="flex justify-evenly mt-2" :class="getRole === 'caregiver' ? 'gap-16' : ''">
+          <button @click="cancelReservation" class="mt-2 px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md font-semibold">Cancel Reservation</button>
+          <button v-if="getRole === 'caregiver'" @click="approveReservation" class="mt-2 px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-md font-semibold">Approve Reservation</button>
         </div>
-        <p class="text-sm text-gray-600 mt-2">If you are canceling less than 24 hours before the appointment, please call us at +69696969</p>
+        <p v-if="getRole === 'volunteer'" class="text-sm text-gray-500 mt-2">If you are canceling less than 24 hours before the appointment, please call us at +123456789</p>
       </div>
 
     </div>
@@ -148,14 +148,14 @@ export default {
     return {
       currentDate: new Date(),
       currentWeek: {},
-      selectedAnimal: {name: 'Bella'}, // Hardcoded for now
+      selectedAnimal: {name: ''},
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       times: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'],
       schedule: [],
       selected: [],
       new_slots: [],
-      hoveredSlot: {day: null, time: null}, // Initialize hoveredSlot with default values
-      showPopup: { visible: false, day: '', time: '', date: '', user_id: '' }, // Control the visibility of the popup and store day, time, date
+      hoveredSlot: {day: null, time: null},
+      showPopup: { visible: false, day: '', time: '', date: '', user_id: '' },
       isApproved: false,
       userReservation: '',
       animal_id: null
@@ -251,13 +251,13 @@ export default {
       return 'gray';
     },
     getClass(slot) {
-      if (slot === 'green') return 'bg-green-400';
-      if (slot === 'red') return 'bg-red-400';
-      if (slot === 'blue') return 'bg-blue-400';
-      if (slot === 'orange') return 'bg-orange-400';
-      if (slot === 'pink') return 'bg-pink-400';
-      if (slot === 'selected') return 'bg-yellow-400';
-      return 'bg-gray-200';
+      if (slot === 'green') return 'bg-green-400 hover:bg-green-500';
+      if (slot === 'red') return 'bg-red-400 hover:bg-red-500';
+      if (slot === 'blue') return 'bg-blue-400 hover:bg-blue-500';
+      if (slot === 'orange') return 'bg-orange-400 hover:bg-orange-500';
+      if (slot === 'pink') return 'bg-pink-400 hover:bg-pink-500';
+      if (slot === 'selected') return 'bg-yellow-400 hover:bg-yellow-500';
+      return 'bg-gray-200 hover:bg-gray-300';
     },
     toggleSelection(day, time) {
       const dayIndex = this.days.indexOf(day);
@@ -502,15 +502,11 @@ export default {
 }
 
 .grid-cols-14 {
-  grid-template-columns: repeat(14, 1fr); /* One for days, 13 for time slots */
+  grid-template-columns: repeat(14, 1fr);
 }
 
 .border {
   border: 1px solid #ddd;
-}
-
-.cursor-pointer {
-  cursor: pointer;
 }
 
 .info-table {
@@ -518,6 +514,6 @@ export default {
   left: 100%;
   z-index: 10;
   width: 150px;
-  transform: translateX(10px); /* Adjust the position to be next to the cell */
+  transform: translateX(10px);
 }
 </style>
