@@ -6,13 +6,13 @@
   <style type="text/css">
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
       padding: 20px;
       box-sizing: border-box;
       line-height: 1.6;
+      max-width: 80%;
+      margin: 0 auto;
     }
     p, dl, ul, table {
-      max-width: 80%;
       margin: 0 auto;
       word-wrap: break-word;
     }
@@ -29,10 +29,14 @@
       max-width: 200px;
     }
     img {
-      max-width: 50%;
+      max-width: 60%;
       height: auto;
       display: block;
       margin: 0 auto;
+    }
+    code {
+      color:red;
+      font-size: large;
     }
   </style>
 </head>
@@ -233,18 +237,36 @@
 
 <h3>Databáze</h3>
 
-<p>Ukázka schématu databáze:</p>
-<img src="IIS_ERD.png" alt="Schéma databáze">
+<p>Návrh databáze (ERD):</p>
+<img src="IIS_ERD.png" alt="Návrh databáze (ERD)">
 
+<p>Schéma relaèní databáze (tabulky v databázi):</p>
+<img src="IIS_RDB.png" alt="Schéma relaèní databáze" style="max-width: 90%;">
 
 <h2>Instalace</h2>
 
-Struènì popi¹te:
-<ul>
-  <li>postup instalace na server,</li>
-  <li>softwarové po¾adavky (verze PHP apod.),</li>
-  <li>jak rozbalit, konfigurovat, inicializovat databázi, ...</li>
-</ul>
+<p>
+  Informaèní systém jsme nasadili na plaformu Render.com, co¾ je poskytovatel cloudového hostování, který pro omezené pou¾ití bezplatnì poskytuje nasazení aplikace v cloudu.
+  Podporuje rùzné technologie, co¾ nám umo¾nilo zde nasadit v¹echny èásti na¹eho informaèního systému.
+  Frontend i backend jsou zde nasazeny jako samostatné slu¾by, tøetí slu¾bou pak je databáze PostgreSQL, která bude dostupná do 19. prosince 2024.
+</p>
+<br>
+
+<img src="render.png" alt="Render" >
+<br>
+<p>
+  Pro úèely vývoje a lokálního pou¾ití byl nasazen nástroj Docker Compose, který umo¾nil efektivní správu více kontejnerù v rámci jednoho konzistentního prostøedí.
+  Tento nástroj nám usnadnil integraci slu¾eb, vèetnì jednoduchého nasazení PostgreSQL databáze prostøednictvím Docker image.
+</p>
+<br>
+<p>
+  Ke spu¹tìní aplikace je tøeba mít nainstalovaný Docker Desktop, který zahrnuje pøíkaz <code>docker compose</code> (pøípadnì <code>docker-compose</code>).
+  V koøenovém adresáøi projektu staèí spustit pøíkaz <br>
+  <code>docker compose up --build</code><br>Ten stáhne potøebné závislosti, vytvoøí a spustí kontejnery s aplikací.
+  Zároveò se vytvoøí databázové schéma. Pro naplnìní databáze ukázkovými daty je tøeba spustit skript <br><code>docker exec -it backend python3 /app/example_data.py</code><br>
+  Dojde k vytvoøení demonstraèních u¾ivatelských úètù, ale pøedev¹ím se vytvoøí úèet admina (pøihla¹ovací údaje uvedeny vý¹e).<br>
+  Na adrese <code>localhost:8080</code> pak bude dostupné u¾ivatelské rozhraní.
+</p>
 
 <h2>Známé problémy</h2>
 <p>XDD VTIPALCI SI MYSLI ZE MAME NEJAKE CHYBY.</p>

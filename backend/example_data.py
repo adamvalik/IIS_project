@@ -17,10 +17,11 @@ def load_image_as_binary(image_name):
 
 def create_example_users():
     users = [
-        User(email="admin@admin.com", password=login.hash_password("admin"), name="Admin", surname="Admin", phone="0000000000", role="admin"),
-        User(email="caregiver@example.com", password=login.hash_password("password"), name="Bob", surname="Caregiver", phone="1234567890", role="caregiver"),
-        User(email="vet@example.com", password=login.hash_password("password"), name="Dr. Alice", surname="Veterinarian", phone="0987654321", role="veterinarian"),
-        User(email="volunteer@example.com", password=login.hash_password("password"), name="Charlie", surname="Volunteer", phone="1122334455", role="volunteer", verified=True)
+        User(email="admin@admin.com", password=login.hash_password("admin123"), name="Admin", surname="Admin", role="admin"),
+        User(email="caregiver@example.com", password=login.hash_password("caregiver123"), name="Bob", surname="Caregiver", role="caregiver"),
+        User(email="vet@example.com", password=login.hash_password("vet123"), name="Dr. Alice", surname="Veterinarian", role="veterinarian"),
+        User(email="volunteer@example.com", password=login.hash_password("volunteer123"), name="Charlie", surname="Volunteer", role="volunteer", verified=True),
+        User(email="unverified@example.com", password=login.hash_password("unverified123"), name="Daisy", surname="Unverified", role="volunteer")
     ]
     db = SessionLocal()
     try:
@@ -39,14 +40,19 @@ def create_example_animals(user_ids):
     caregiver_id = user_ids.get("caregiver")
     animals = [
         Animal(
-            name="Bella", species="Dog", breed="Labrador Retriever", birth_year=2018,
-            photo=load_image_as_binary("puppy.jpg"), admission_date=date(2021, 5, 10),
-            size="large", caregivers_description="Friendly and outgoing.", id_caregiver=caregiver_id
+            name="Bella", species="Dog", breed="Labrador Retriever", birth_year=2022,
+            photo=load_image_as_binary("puppy.jpg"), admission_date=date(2024, 5, 10),
+            size="small", caregivers_description="Friendly and outgoing.", id_caregiver=caregiver_id
         ),
         Animal(
-            name="Mittens", species="Cat", breed="Siamese", birth_year=2016,
-            photo=load_image_as_binary("kotatko.jpg"), admission_date=date(2022, 3, 8),
-            size="medium", caregivers_description="Quiet and affectionate.", id_caregiver=caregiver_id
+            name="Mittens", species="Cat", breed="Siamese", birth_year=2024,
+            photo=load_image_as_binary("kotatko.jpg"), admission_date=date(2024, 3, 8),
+            size="small", caregivers_description="Quiet and affectionate.", id_caregiver=caregiver_id
+        ),
+        Animal(
+            name="Rabbie", species="Rabbit", breed="Cute", birth_year=2024,
+            photo=load_image_as_binary("rabbit.jpg"), admission_date=date(2024, 3, 8),
+            size="small", caregivers_description="Just cutie cute.", id_caregiver=caregiver_id
         ),
     ]
 
@@ -92,13 +98,9 @@ def create_example_medical_records(user_ids, animal_ids):
     veterinarian_id = user_ids.get("veterinarian")
     medical_records = [
         MedicalRecord(
-            date=date(2021, 7, 21), weight=15.5, vaccination=True, vaccination_type="Rabies",
-            vet_description="Healthy and active.", id_animal=animal_ids.get("Bella"), id_veterinarian=veterinarian_id
+            date=date(2024, 11, 21), weight=5.5, vaccination=True, vaccination_type="Rabies",
+            vet_description="Everything ok, vaccinated.", id_animal=animal_ids.get("Bella"), id_veterinarian=veterinarian_id
         ),
-        MedicalRecord(
-            date=date(2022, 1, 10), weight=8.2, vaccination=True, vaccination_type="Feline distemper",
-            vet_description="Good health, recently vaccinated.", id_animal=animal_ids.get("Mittens"), id_veterinarian=veterinarian_id
-        )
     ]
 
     db = SessionLocal()
@@ -115,23 +117,23 @@ def create_example_medical_records(user_ids, animal_ids):
 def create_example_animal_borrows(animal_ids):
     borrows = [
         AnimalBorrow(
-            date=date(2024, 11, 3), time=time(10, 0), borrowed=True, returned=False,
+            date=date(2024, 11, 25), time=time(10, 0), borrowed=False, returned=False,
             id_animal=animal_ids.get("Bella")
         ),
         AnimalBorrow(
-            date=date(2024, 11, 2), time=time(10, 0), borrowed=False, returned=False,
+            date=date(2024, 11, 25), time=time(11, 0), borrowed=False, returned=False,
             id_animal=animal_ids.get("Bella")
         ),
         AnimalBorrow(
-            date=date(2024, 11, 2), time=time(11, 0), borrowed=False, returned=False,
+            date=date(2024, 11, 26), time=time(12, 0), borrowed=False, returned=False,
             id_animal=animal_ids.get("Bella")
         ),
         AnimalBorrow(
-            date=date(2024, 11, 2), time=time(12, 0), borrowed=False, returned=False,
+            date=date(2024, 11, 26), time=time(13, 0), borrowed=False, returned=False,
             id_animal=animal_ids.get("Bella")
         ),
         AnimalBorrow(
-            date=date(2022, 8, 16), time=time(14, 30), borrowed=False, returned=False,
+            date=date(2024, 11, 26), time=time(14, 00), borrowed=False, returned=False,
             id_animal=animal_ids.get("Mittens")
         )
     ]
@@ -142,7 +144,6 @@ def create_example_animal_borrows(animal_ids):
         db.commit()
         print("Example animal borrows added to the database.")
 
-        # Return mapping of borrow IDs to animal names
         return {borrow.id: borrow.id_animal for borrow in db.query(AnimalBorrow).all()}
     except Exception as e:
         db.rollback()
@@ -154,10 +155,10 @@ def create_example_reservations(user_ids, borrow_ids):
     volunteer_id = user_ids.get("volunteer")
     reservations = [
         Reservation(
-            approved=True, id_borrow=borrow_ids.get(1), id_volunteer=volunteer_id  # For "Bella"
+            approved=True, id_borrow=borrow_ids.get(1), id_volunteer=volunteer_id  # for "Bella"
         ),
         Reservation(
-            approved=False, id_borrow=borrow_ids.get(2), id_volunteer=volunteer_id  # For "Mittens"
+            approved=False, id_borrow=borrow_ids.get(2), id_volunteer=volunteer_id  # for "Mittens"
         )
     ]
 
@@ -176,7 +177,7 @@ def create_example_reservations(user_ids, borrow_ids):
 if __name__ == "__main__":
     user_ids = create_example_users()
     animal_ids = create_example_animals(user_ids)
-    # create_example_examination_requests(user_ids, animal_ids)
-    # create_example_medical_records(user_ids, animal_ids)
-    # borrow_ids = create_example_animal_borrows(animal_ids)
-    # create_example_reservations(user_ids, borrow_ids)
+    create_example_examination_requests(user_ids, animal_ids)
+    create_example_medical_records(user_ids, animal_ids)
+    borrow_ids = create_example_animal_borrows(animal_ids)
+    create_example_reservations(user_ids, borrow_ids)
