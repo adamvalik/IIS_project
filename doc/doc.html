@@ -137,7 +137,7 @@
 </p>
 <br>
 <p>
-  Dal¹í mo¾ností, která se nabízí ji¾ z hlavní nabídky je pøihlá¹ení u¾ivatele. U¾ivateli se zobrazí formuláø, který, kdy¾ je opatøen údaji korelujícími se záznamem u¾ivatele v databázi, provede pøihlá¹ení u¾ivatele do systému. U¾ivatel se z této nabídky té¾ mù¾e dostat k registraènímu formuláøi, pokud si tvoøí nový úèet. Oba formuláøe jsou opatøeny kontrolami správného formátu vstupu. Heslo je pøi ukládání do databáze podrobeno hashování ||||| NECO COOL O HASHOVANI |||||.
+  Dal¹í mo¾ností, která se nabízí ji¾ z hlavní nabídky je pøihlá¹ení u¾ivatele. U¾ivateli se zobrazí formuláø, který, kdy¾ je opatøen údaji korelujícími se záznamem u¾ivatele v databázi, provede pøihlá¹ení u¾ivatele do systému. U¾ivatel se z této nabídky té¾ mù¾e dostat k registraènímu formuláøi, pokud si tvoøí nový úèet. Oba formuláøe jsou opatøeny kontrolami správného formátu vstupu. Heslo je pøi ukládání do databáze podrobeno hashování, co¾ znamená, ¾e do databáze se ukládá pouze hash hesla (vypoèítaný pomocí knihovny bcrypt), nikoli heslo samotné. Samotný hash má 60 znakù a pøi jeho tvorbì je navíc vyu¾ito "soli", co¾ je dal¹í mechanismus zvy¹ující bezpeènost hashe (napø. dva u¾ivatelé se stejným heslem nebudou mít stejný hash).
 </p>
 <br>
 <p>
@@ -161,7 +161,9 @@
 </p>
 <br>
 <p>
-  Co se týèe uchovávání 'session' dat pøi interakci se systémem||||| SAM SIETOCKY|||||.
+  Informaèní systém nepou¾ívá stavová sezení, tedy pøi interakci mezi klientem a serverem si server ¾ádný token neukládá a ani se neposílá v rámci Cookies. Místo sezení je pou¾it  mechanismus JWT tokenù, který je bezstavový a token je reprezentován jako JSON objekt. Tento token je u¾ivateli vytvoøen pøi jeho pøihlá¹ení do systému a obsahuje infomace jako je jeho identifikaèní èíslo, role a platnost tokenu. Token je ulo¾en v jeho prohlí¾eèi (localStorage).
+  Následnì pøi ka¾dém dotazu na server klient posílá tento token v hlavièce HTTP protokolu (Authorization: Bearer TOKEN), slovo bearer znaèí, ¾e server pou¾ije klientùv token k ovìøení. Server zkontroluje, zdali je token vytvoøený serverem (porovná podepsanou èást tokenu se svým klíèem) a pøípadnì jeho platnost (token expiruje po 10 minutách neèinnosti). Pøi po¾adavku mù¾e také dojít k ovìøení role u¾ivatele, pokud je to zapotøebí pro provedení dané akce.
+  Po odhlá¹ení klienta ze systému je token z prohlí¾eèe smazán a u¾ivatel je pøesmìrován na úvodní stránku.
 </p>
 
 <h3>Struktura projektu</h3>
