@@ -6,6 +6,7 @@
 
     <h3 v-if="animal_id" class="text-xl font-semibold text-gray-700 mb-4">Medical Records for {{animal_name}}</h3>
     <h3 v-else class="text-xl font-semibold text-gray-700 mb-4">All Medical Records</h3>
+<!--    The rows with the details of the medical records-->
     <div v-if="records.length">
       <div class="grid grid-cols-1 gap-3">
         <MedicalRecordRow
@@ -25,6 +26,7 @@
       <p v-if="animal_id" class="text-gray-700">No medical records for {{animal_name}} found.</p>
       <p v-else class="text-gray-700">No medical records found.</p>
     </div>
+<!--    The selected record is shown below utilizing its data passed from the row-->
     <RecordDetail
       v-if="selectedRecord"
       :show="showModal"
@@ -62,8 +64,8 @@ export default {
     };
   },
   async created() {
+    // The data is fetched based on the route
     this.animal_id = this.$route.params.id;
-    console.log(this.animal_id);
     this.isCaregiver = this.$store.getters.userRole === 'caregiver' || this.$store.getters.userRole === 'admin';
     this.isVolunteer = this.$store.getters.userRole === 'volunteer';
     await this.fetchMedicalRecords();
@@ -77,7 +79,7 @@ export default {
   methods: {
     async fetchMedicalRecords() {
       if (!this.animal_id) {
-        //fetch all
+        // Fetch all medical records if no animal_id is provided
         try {
           const response = await apiClient.get(`/all_medical_records`);
           this.records = response.data;
@@ -89,8 +91,8 @@ export default {
         }
       }
       else {
+        // You looked to the records from the site of the animal
         try {
-          console.log(this.animal_id);
           const response = await apiClient.get(`/medical_records/${this.animal_id}`);
           this.records = response.data;
           for (let record of this.records) {
@@ -100,12 +102,10 @@ export default {
           console.error(error);
         }
       }
-      for (let record of this.records) {
-        console.log(record);
-      }
+
     },
     async toggleDetail(recordId) {
-      console.log(recordId);
+      // The details of the selected record are fetched
       let record = null;
       let veterinarianName = null;
       let animalName = null;
@@ -113,15 +113,12 @@ export default {
       try {
         const response = await apiClient.get(`/medical_record_get/${recordId}`);
         record = response.data;
-        console.log("xxx", record);
-        console.log("s",record.id_veterinarian);
 
       } catch (error) {
         console.error("Error fetching record details:", error);
       }
       if (record) {
         try{
-          console.log(record.id_veterinarian);
           const response = await apiClient.get(`/vet/${record.id_veterinarian}`);
           veterinarianName = response.data.name + " " + response.data.surname;
         } catch (error) {
@@ -130,7 +127,6 @@ export default {
         try{
           const response = await apiClient.get(`/animals/animal_name/${record.id_animal}`);
           animalName = response.data;
-          console.log("a", animalName);
         } catch (error) {
           console.error("Error fetching animal:", error);
         }
@@ -167,7 +163,6 @@ export default {
       if (!animalId) {
         return null;
       }
-      console.log("a", animalId);
       try {
         const response = await apiClient.get(`/animals/animal_name/${animalId}`);
         return response.data;

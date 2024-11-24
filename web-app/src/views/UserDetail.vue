@@ -80,25 +80,32 @@ export default {
     },
   },
   async mounted() {
+    // Fetch user details, userID is taken from the route
     const userID = this.$route.params.id;
     this.fetchUser(userID);
     this.fetchIsDeleted(userID);
   },
   methods: {
+    // Method for fetching user details
     async fetchUser(id) {
       try {
-        const response = await apiClient.post('/user_detail', {
-          id: id,
-        });
-        this.user = response.data;
+        const response = await apiClient.post('/user_detail', { id: id });
+        if (response.data) {
+          this.user = response.data;
+        } else {
+          alert('User not found');
+          this.$router.go(-1);
+        }
       } catch (error) {
         console.error(error);
+        alert('An error occurred while fetching user details');
+        this.$router.go(-1);
       }
     },
+    // Method for finding out if user is deleted
     async fetchIsDeleted(id) {
       try {
         const response = await apiClient.get(`/users/${id}/is_deleted`);
-        console.log(response.data);
         if (response.data == true) {
           alert('User has been deleted');
           this.$router.go(-1);
@@ -106,7 +113,7 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    },
-  },
+    }
+  }
 };
 </script>
