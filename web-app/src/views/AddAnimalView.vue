@@ -180,7 +180,6 @@ export default {
           caregivers_description: this.formData.caregivers_description,
           id_caregiver: this.$store.getters.user_id,
         };
-        console.log('Adding animal:', payload);
         await apiClient.post('/animals', payload);
         alert('Animal added successfully');
         this.resetForm();

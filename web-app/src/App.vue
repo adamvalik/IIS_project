@@ -40,12 +40,10 @@ export default {
       if(this.isAuthenticated){
         //If activity was detected, extend token expiration
         if(this.ActivityDetected) {
-          console.log("Extending token expiration...");
-          console.log(this.sessionExp * 1000);
           this.extendTokenExp();
           this.ActivityDetected = false;
-        } 
-      
+        }
+
         //Check if token has expired
         if((Date.now() >= this.sessionExp * 1000)) {
           alert("Your session has expired. Please log in again.");

@@ -256,7 +256,6 @@ export default {
     },
     computeBirthYear(newValue) {
       this.editableAnimal.birth_year = new Date().getFullYear() - newValue;
-      console.log(this.editableAnimal.birth_year);
     },
     calculateAge(birthYear) {
       if (!birthYear) {
@@ -329,7 +328,6 @@ export default {
           caregiver_id: this.user_id,
           request_text: this.vetRequestText
         });
-        console.log('Request sent:', response.data);
         this.showVetRequestModal = false;
         this.showRequestSent = true;
         this.vetRequestText = '';

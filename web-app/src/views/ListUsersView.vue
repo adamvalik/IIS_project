@@ -98,7 +98,6 @@ export default {
     },
     openEditUserModal(user) {
       this.selectedUser = { ...user };
-      console.log(this.selectedUser);
       this.showUserModal = true;
     },
     async deleteUser(userId) {
