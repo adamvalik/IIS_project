@@ -3,7 +3,7 @@ from typing import Optional, List
 from datetime import date, time
 
 class Token(BaseModel):
-    sub: str
+    mail: str
     role: str
     user_id: int
 

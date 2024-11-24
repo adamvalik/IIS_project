@@ -12,23 +12,22 @@ from sqlalchemy.orm import Session
 from models import User as UserModel
 from db import get_db
 
-SECRET_KEY = "rogalo"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 10
-
 # Define a dependency for bearer token authentication
 Oauth2Scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 router = APIRouter()
 
 # Function to create an access token
-def create_access_token(data: dict):
-    to_encode = data.copy()
-
+def create_user_token(user_id: int, userMail: str, userRole: str):
+    tokendata = {
+        "mail": userMail,
+        "role": userRole,
+        "user_id": user_id
+    }
     #Add a 10 minute expiration time to the token
-    expireTokenTime = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expireTokenTime})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    expireTokenTime = datetime.now(timezone.utc) + timedelta(minutes=10)
+    tokendata.update({"exp": expireTokenTime})
+    return jwt.encode(tokendata, "rogalo", algorithm="HS256")
 
 # Function to hash a password using bcrypt and salt to add security
 def hash_password(password: str) -> str:
@@ -46,8 +45,8 @@ def verify_password(password: str, hashed_password: str) -> bool:
 # Function that verifies the user's token and looking up the user in the database
 def verify_user(token: str = Depends(Oauth2Scheme), db: Session = Depends(get_db)):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
+        payload = jwt.decode(token, "rogalo", algorithms=["HS256"])
+        email = payload.get("mail")
         role = payload.get("role")
         user_id = payload.get("user_id")
 
@@ -84,12 +83,7 @@ def validate_same_user_id(user_id: int, actual_user_id: int):
 # Function that creates a new token with updated expiration time
 @router.post("/refresh-token-interval", response_model=RefreshResponse)
 async def resfreshTokenInterval(token: Token):
-    token_data = {
-        "sub": token.sub,
-        "role": token.role,
-        "user_id": token.user_id,
-    }
-    access_token = create_access_token(data=token_data)
+    access_token = create_user_token(token.user_id, token.mail, token.role)
     return {"access_token": access_token}
 
 @router.post("/login", response_model=LoginResponse)
@@ -105,13 +99,7 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     if not verify_password(login_request.password, userFound.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token_data = {
-        "sub": userFound.email,
-        "role": userFound.role,
-        "user_id": userFound.id,
-    }
-
-    access_token = create_access_token(data=token_data)
+    access_token = create_user_token(userFound.id, userFound.email, userFound.role)
 
     return {"message": "Login successful", "access_token": access_token}
 
