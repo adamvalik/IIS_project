@@ -6,7 +6,9 @@
 
     <form @submit.prevent="addAnimal" class="bg-white shadow-md rounded-lg p-6 space-y-4 max-w-lg mx-auto">
       <div>
-        <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
+        <label for="name" class="block text-sm font-medium text-gray-700">
+          Name: <span class="text-red-500">*</span>
+        </label>
         <input
           type="text"
           v-model="formData.name"
@@ -17,7 +19,9 @@
       </div>
 
       <div>
-        <label for="species" class="block text-sm font-medium text-gray-700">Species:</label>
+        <label for="species" class="block text-sm font-medium text-gray-700">
+          Species: <span class="text-red-500">*</span>
+        </label>
         <input
           type="text"
           v-model="formData.species"
@@ -168,6 +172,12 @@ export default {
       reader.readAsDataURL(file);
     },
     async addAnimal() {
+      // admission date cannot be in the future
+      if (new Date(this.formData.admission_date) > new Date()) {
+        alert('Admission date cannot be in the future');
+        this.formData.admission_date = this.getTodayDate();
+        return;
+      }
       try {
         const payload = {
           name: this.formData.name,

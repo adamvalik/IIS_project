@@ -8,7 +8,7 @@
       <!-- <h2 class="text-2xl font-semibold text-gray-800 text-center">Sign Up</h2> -->
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
-          <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
+          <label for="name" class="block text-gray-700 font-bold mb-2">Name <span class="text-red-500">*</span></label>
           <input
             v-model="name"
             type="text"
@@ -20,7 +20,7 @@
         </div>
 
         <div class="mb-4">
-          <label for="surname" class="block text-gray-700 font-bold mb-2">Surname</label>
+          <label for="surname" class="block text-gray-700 font-bold mb-2">Surname <span class="text-red-500">*</span></label>
           <input
             v-model="surname"
             type="text"
@@ -32,7 +32,7 @@
         </div>
 
         <div class="mb-4">
-          <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
+          <label for="email" class="block text-gray-700 font-bold mb-2">Email <span class="text-red-500">*</span></label>
           <input
             v-model="email"
             type="email"
@@ -44,7 +44,7 @@
         </div>
 
         <div class="mb-4">
-          <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
+          <label for="password" class="block text-gray-700 font-bold mb-2">Password <span class="text-red-500">*</span></label>
           <input
             v-model="password"
             type="password"
@@ -56,7 +56,7 @@
         </div>
 
         <div class="mb-4">
-          <label for="passwordConfirm" class="block text-gray-700 font-bold mb-2">Confirm Password</label>
+          <label for="passwordConfirm" class="block text-gray-700 font-bold mb-2">Confirm Password <span class="text-red-500">*</span></label>
           <input
             v-model="passwordConfirm"
             type="password"
@@ -70,7 +70,7 @@
 
         <!-- telephone (optional) -->
         <div class="mb-6">
-          <label for="telephone" class="block text-gray-700 font-bold mb-2">Telephone (Optional)</label>
+          <label for="telephone" class="block text-gray-700 font-bold mb-2">Telephone</label>
           <input
             v-model="telephone"
             type="tel"

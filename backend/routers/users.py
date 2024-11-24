@@ -142,7 +142,7 @@ async def get_vet(vet_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/users/{user_id}")
 async def delete_user(user_id: int, db: Session = Depends(get_db), user_verified = Depends(verify_user)):
-    if(user_verified.get("role") != "admin"):
+    if(user_verified.get("role") != "admin" and user_verified.get("role") != "caregiver"):
         validate_same_user_id(user_id, user_verified.get("user_id"))
 
     user_to_delete = db.query(UserModel).filter(UserModel.id == user_id).first()

@@ -15,12 +15,12 @@
           <div class="mt-6 md:mt-0 w-full">
             <div>
               <h2 v-if="!editMode" class="mb-4 text-3xl font-bold text-gray-800">{{ animal.name }}</h2>
-              <input v-else v-model="editableAnimal.name" placeholder="Name" class="text-gray-800 border border-gray-300 p-2 rounded w-full" />
+              <input v-else v-model="editableAnimal.name" placeholder="Name" class="text-gray-800 border border-red-300 p-2 rounded w-full" />
             </div>
 
             <div>
               <p v-if="!editMode" class="mb-2 text-lg text-gray-600">Species: {{ animal.species }}</p>
-              <input v-else v-model="editableAnimal.species" placeholder="species" class="text-gray-600 border border-gray-300 p-2 rounded w-full" />
+              <input v-else v-model="editableAnimal.species" placeholder="species" class="text-gray-600 border border-red-300 p-2 rounded w-full" />
             </div>
 
             <div>
@@ -252,14 +252,17 @@ export default {
         }
       }
     },
-    computeBirthYear(newValue) {
-      this.editableAnimal.birth_year = new Date().getFullYear() - newValue;
-    },
     calculateAge(birthYear) {
       if (!birthYear) {
-        return '';
+        return 'Unknown';
       }
       const currentYear = new Date().getFullYear();
+      if (currentYear - birthYear === 0) {
+        return 'Less than a year';
+      }
+      if (currentYear - birthYear === 1) {
+        return `${currentYear - birthYear} year`;
+      }
       return `${currentYear - birthYear} years`;
     },
     formatDate(dateString) {
@@ -296,9 +299,15 @@ export default {
         alert('Species is required.');
         return;
       }
-      if (!this.editableAnimal.birth_year) {
+      if (this.editableAnimal.birth_year === 0) {
+        this.editableAnimal.birth_year = new Date().getFullYear();
+      } else if (this.editableAnimal.birth_year === '') {
         this.editableAnimal.birth_year = null;
-      } else{
+      } else if (this.editableAnimal.birth_year < 0) {
+        alert('Age cannot be negative.');
+        this.editableAnimal.birth_year = null;
+        return;
+      } else {
         this.editableAnimal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
       }
       try {

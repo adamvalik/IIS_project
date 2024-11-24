@@ -5,19 +5,19 @@
       <h2 v-else class="text-xl font-bold mb-4">{{ user ? "Edit Volunteer" : "Add New Volunteer" }}</h2>
       <form @submit.prevent="saveUser">
         <div class="mb-4">
-          <label class="block text-gray-700">Name</label>
+          <label class="block text-gray-700">Name  <span class="text-red-500">*</span></label>
           <input v-model="formData.name" type="text" class="w-full border rounded p-2" required>
         </div>
         <div class="mb-4">
-          <label class="block text-gray-700">Surname</label>
+          <label class="block text-gray-700">Surname  <span class="text-red-500">*</span></label>
           <input v-model="formData.surname" type="text" class="w-full border rounded p-2" required>
         </div>
         <div class="mb-4">
-          <label class="block text-gray-700">Email</label>
+          <label class="block text-gray-700">Email  <span class="text-red-500">*</span></label>
           <input v-model="formData.email" type="email" class="w-full border rounded p-2" required>
         </div>
         <div v-if="isAdmin" class="mb-4">
-          <label class="block text-gray-700">Role</label>
+          <label class="block text-gray-700">Role  <span class="text-red-500">*</span></label>
           <select v-model="formData.role" class="w-full border rounded p-2" required>
             <option value="volunteer">Volunteer</option>
             <option value="caregiver">Caregiver</option>
@@ -25,7 +25,7 @@
           </select>
         </div>
         <div class="mb-4">
-          <label class="block text-gray-700">{{ user ? "New Password" : "Password" }}</label>
+          <label class="block text-gray-700">{{ user ? "New Password" : "Password" }} <span v-if="!user" class="text-red-500">*</span></label>
           <input v-model="formData.password" type="password" class="w-full border rounded p-2" :required="!user">
         </div>
 
