@@ -148,6 +148,11 @@ async def delete_user(user_id: int, db: Session = Depends(get_db), user_verified
     user_to_delete = db.query(UserModel).filter(UserModel.id == user_id).first()
     if user_to_delete is None:
         raise HTTPException(status_code=404, detail="User not found.")
+    
+    if(user_verified.get("role") == "caregiver"):
+        if(user_to_delete.role != "volunteer" and (user_to_delete.id != user_verified.get("user_id"))):
+            raise HTTPException(status_code=403, detail="You cannot delete other people than volunteers.")
+
     user_to_delete.is_deleted = True
     db.commit()
 
