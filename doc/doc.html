@@ -269,6 +269,13 @@
   Zároveò se vytvoøí databázové schéma. Pro naplnìní databáze ukázkovými daty je tøeba spustit skript <br><code>docker exec -it backend python3 /app/example_data.py</code><br>
   Dojde k vytvoøení demonstraèních u¾ivatelských úètù, ale pøedev¹ím se vytvoøí úèet admina (pøihla¹ovací údaje uvedeny vý¹e).<br>
   Na adrese <code>localhost:8080</code> pak bude dostupné u¾ivatelské rozhraní.
+
+  <p>V pøípadì výskytu chyby typu "ERROR in [eslint] EACCES: permission denied" a podobných je postup následující:</p>
+  <li>
+    <ul>1. Nechat spu¹tìný docker kontejner</ul>
+    <ul>2. Otevøít si druhý terminál, kde je tøeba zadat pøíkaz <code>docker exec -it web-app bash</code> pro navigaci do web-app kontejneru.</ul>
+    <ul>3. V daném kontejneru je tøeba zmìnit práva pøíkazem <code>chmod -R 777 ./node_modules</code></ul>
+  </li>
 </p>
 
 <h2>Známé problémy</h2>
