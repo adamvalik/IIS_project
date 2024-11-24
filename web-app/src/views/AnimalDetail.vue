@@ -232,24 +232,22 @@ export default {
     async loadSchedulerPermissions(userId) {
 
       if(this.isAuthenticated){
-        this.hasSchedulerPermissions = true;
-
-        if(this.userRole === 'veterinarian'){
+        if (this.userRole === 'admin' || this.userRole === 'caregiver') {
+          this.hasSchedulerPermissions = true;
+        } else if (this.userRole === 'veterinarian') {
           this.hasSchedulerPermissions = false;
-        }
-        if (this.userRole === 'volunteer') {
+        } else if (this.userRole === 'volunteer') {
           try {
             const response = await apiClient.get(`/users/volunteers/${userId}/verify`);
-            if (response.data === true) {
-              this.VolunteerVetification = true;
-            } else {
+            if (response.data === false) {
               this.showUnverifiedVolunteer = true;
               this.hasSchedulerPermissions = false;
+            } else {
+              this.hasSchedulerPermissions = true;
             }
           } catch (error) {
             console.error("Error fetching user permissions:", error);
             this.hasSchedulerPermissions = false;
-            this.VolunteerVetification = false;
           }
         }
       }
