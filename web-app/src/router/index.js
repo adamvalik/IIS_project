@@ -71,15 +71,13 @@ router.beforeEach(async (to, from, next) => {
         console.error('Error proceeding to protected route:', error.response.data.detail, error.response.status);
         alert(error.response.data.detail);
       }
-
       // If the token is invalid, redirect to the home page
       next('/');
     }
 
-    // If the user is already logged in, redirect to the home page
-  } else if(loginRoutes.includes(to.path) && token) {
-
     
+  } else if(loginRoutes.includes(to.path) && token) {
+    // If the user is already logged in, redirect to the home page
     next('/');
   } else {
     // Redirect to the requested route if it is not protected

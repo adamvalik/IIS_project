@@ -305,13 +305,7 @@ export default {
         this.editableAnimal.birth_year = new Date().getFullYear() - this.editableAnimal.birth_year;
       }
       try {
-        await apiClient.put(`/animals/edit/${this.animal.id}`,
-          this.editableAnimal,
-          {
-            headers: {
-              Authorization: `Bearer ${this.$store.state.accessToken}`,
-            }
-          });
+        await apiClient.put(`/animals/edit/${this.animal.id}`,this.editableAnimal);
         this.animal = { ...this.editableAnimal };
         this.editMode = false;
       } catch (error) {
@@ -334,10 +328,6 @@ export default {
           animal_id: this.animal.id,
           caregiver_id: this.user_id,
           request_text: this.vetRequestText
-        }, {
-          headers: {
-            Authorization: `Bearer ${this.$store.state.accessToken}`,
-          },
         });
         console.log('Request sent:', response.data);
         this.showVetRequestModal = false;
@@ -357,11 +347,7 @@ export default {
     async deleteAnimal() {
       if (confirm('Are you sure you want to delete this animal?')) {
         try {
-          await apiClient.delete(`/animals/delete/${this.animal.id}`, {
-            headers: {
-              Authorization: `Bearer ${this.$store.state.accessToken}`,
-            }
-          });
+          await apiClient.delete(`/animals/delete/${this.animal.id}`);
           this.$router.go(-1);
         } catch (error) {
           console.error('Error deleting animal:', error);
