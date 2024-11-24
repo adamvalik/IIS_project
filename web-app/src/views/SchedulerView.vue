@@ -15,7 +15,7 @@
         </div>
         <button @click="nextWeek" class="px-3 py-2 bg-gray-300 hover:bg-gray-400 rounded">&#9654;</button>
       </div>
-
+<!--      A grid of slots-->
       <div class="grid grid-cols-14 gap-2">
         <div></div>
         <div v-for="time in times" :key="time" class="text-center font-bold">{{ time }}</div>
@@ -80,7 +80,7 @@
           </div>
         </div>
       </div>
-
+<!--      Logic for the buttons which either appear or disappear based on the user's role:-->
       <button v-if="getRole !== 'caregiver'" class="mt-5 py-2 px-3 rounded-lg font-semibold bg-green-500 hover:bg-green-600 text-white" @click="confirmSelection">
         Confirm Reservation
       </button>
@@ -146,14 +146,17 @@ export default {
   name: 'SchedulerView',
   data() {
     return {
+      // Data for the scheduler
       currentDate: new Date(),
       currentWeek: {},
       selectedAnimal: {name: ''},
+      // Static data for days and times
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       times: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'],
       schedule: [],
       selected: [],
       new_slots: [],
+      // Slot popup
       hoveredSlot: {day: null, time: null},
       showPopup: { visible: false, day: '', time: '', date: '', user_id: '' },
       isApproved: false,
@@ -163,13 +166,10 @@ export default {
   },
   created() {
     axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.accessToken}`;
-    console.log('User ID:', this.getID);
-    console.log('User Role:', this.getRole);
     this.currentWeek = this.getWeekDetails(this.currentDate);
     this.animal_id = this.$route.params.id;
-    console.log('Animal ID:', this.animal_id);
     this.fetchName(this.animal_id);
-    this.fetchSchedule(); // Fetch the schedule when component is created
+    this.fetchSchedule(); // Fetch the schedule and name of the now-viewed animal when component is created
   },
   methods: {
     getWeekDetails(date) {
@@ -177,7 +177,7 @@ export default {
       let dayOfWeek = currentDate.getDay();
       if (dayOfWeek === 0) dayOfWeek = 7; // Convert Sunday from 0 to 7 to handle week start correctly
       const startOfWeek = new Date(currentDate);
-      startOfWeek.setDate(currentDate.getDate() - dayOfWeek + 1); // Set to Monday of the current week
+      startOfWeek.setDate(currentDate.getDate() - dayOfWeek + 1); // Set to Monday of the current week (by default it is Sunday)
 
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 6);
@@ -190,6 +190,7 @@ export default {
       const year = currentDate.getFullYear();
 
       return {
+        // Calculate the week number 604800000 = 7 * 24 * 60 * 60 * 1000
         week: Math.ceil((currentDate - new Date(currentDate.getFullYear(), 0, 1)) / 604800000),
         startMonth: startMonth,
         endMonth: endMonth,
@@ -212,13 +213,9 @@ export default {
       const currentDate = new Date(this.currentDate);
       const dayOfWeek = currentDate.getDay();
       const startOfWeek = new Date(currentDate.setDate(currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)));
-      console.log('Start of the week:', startOfWeek);
       const startDate = startOfWeek.toISOString().split('T')[0];
       const animal_id = this.animal_id;
-      console.log(animal_id);
       const user_id = this.getID;
-
-      console.log('Fetching schedule for user:', user_id, 'and animal:', animal_id, 'on date:', startDate);
 
       apiClient.post('/schedule', {
         user_id: user_id,
@@ -259,6 +256,7 @@ export default {
       if (slot === 'selected') return 'bg-yellow-400 hover:bg-yellow-500';
       return 'bg-gray-200 hover:bg-gray-300';
     },
+    // Logic (if - else constructions) for the buttons which either appear or disappear based on the user's role
     toggleSelection(day, time) {
       const dayIndex = this.days.indexOf(day);
       const timeIndex = this.times.indexOf(time);
@@ -325,7 +323,6 @@ export default {
         new_slots: newSlots
       })
         .then(response => {
-          console.log('Slot created:', response.data);
           newSlots.forEach(slot => {
             const dayIndex = this.days.indexOf(slot.day);
             const timeIndex = this.times.indexOf(slot.time);
@@ -357,7 +354,6 @@ export default {
         slots: selectedSlots
       })
           .then(response => {
-            console.log('Reservation confirmed:', response.data);
             // Make the slots orange to indicate pending confirmation
             selectedSlots.forEach(slot => {
               const dayIndex = this.days.indexOf(slot.day);
@@ -431,7 +427,6 @@ export default {
         const animalId = this.animal_id;
         apiClient.delete(`/delete/${animalId}/${formattedDate}/${time}`)
           .then(response => {
-            console.log('Slot Deleted:', response.data);
             this.new_slots = this.new_slots.filter(s => !(s.day === day && s.time === time));
             this.schedule[dayIndex][timeIndex] = 'gray';
           })
@@ -465,32 +460,17 @@ export default {
       }
     },
     async checkApprovalStatus() {
-      console.log('Checking approval status...');
       const animal_id = this.animal_id;
-      console.log('Animal ID:', animal_id);
-      console.log('Date:', this.showPopup.date);
-      console.log('Time:', this.showPopup.time);
-
+      // Check if the selected slot is approved
       try {
         const response = await apiClient.get(`/checkApproval/${animal_id}/${this.showPopup.date}/${this.showPopup.time}`);
         this.isApproved = response.data.isApproved;
         this.userReservation = response.data.username;
         this.showPopup.user_id = response.data.user_id;
-        console.log('Approval status:', this.isApproved);
-        console.log('User:', this.userReservation);
       } catch (error) {
         console.error('Error checking approval status:', error);
       }
     },
-    showInfo(day, time) {
-      this.hoveredSlot = {day, time};
-    },
-    hideInfo() {
-      this.hoveredSlot = {day: null, time: null};
-    },
-    confirmInfo() {
-      console.log('confirm');
-    }
   }
 };
 </script>

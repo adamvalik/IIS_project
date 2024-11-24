@@ -45,14 +45,10 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
     end_date = start_date + timedelta(days=6)
 
-    print(start_date, end_date)
     cast(start_date, Date)
     cast(end_date, Date)
-    print(start_date, end_date)
-    print(animal_id, animal.name)
 
     all_borrows = db.query(AnimalBorrowModel).all()
-    print(f"All borrows: {[(borrow.date, borrow.time, borrow.id_animal) for borrow in all_borrows]}")
 
     # Get borrow data for the week
     borrows = db.query(AnimalBorrowModel).filter(
@@ -61,14 +57,9 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
         AnimalBorrowModel.date <= end_date
     ).all()
 
-    print(borrows)
-
-    if not borrows:
-        print("No borrows found")
 
     # Create a dictionary to hold the schedule
     schedule: Dict[int, Dict[int, str]] = {day: {time: "gray" for time in range(9, 22)} for day in range(7)}
-    print(schedule)
 
     for borrow in borrows:
         my_reservation = False
@@ -77,7 +68,6 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
 
         day_index = (borrow.date - start_date).days
         time_index = borrow.time.hour
-        print(day_index, time_index)
 
         reservation = db.query(ReservationModel).filter(ReservationModel.id_borrow == borrow.id).first()
         role = db.query(UserModel).filter(UserModel.id == user_id).first().role
@@ -112,11 +102,9 @@ async def get_schedule(uad_slot: UADSlot, db: Session = Depends(get_db)):
 
 @router.post("/confirmselection", response_model=Dict[str, str])
 async def confirm_selection(request: ConfirmSelectionRequest, db: Session = Depends(get_db)):
-    
-    print("Confirming selection for:", request.animal_id)
+
 
     for slot in request.slots:
-        print(f"Day: {slot.day}, Time: {slot.time}, Date: {slot.date}")
 
         # Check if the `AnimalBorrow` already exists for this slot
         borrow = db.query(AnimalBorrowModel).filter(
@@ -159,7 +147,6 @@ async def cancel_slot(user_id: int, animal_id: int, date: str, time: str, db: Se
         raise HTTPException(status_code=404, detail="Slot not found")
 
     user_role = db.query(UserModel).filter(UserModel.id == user_id).first().role
-    print(user_role)
 
     if user_role == "caregiver":
         if borrow.reservation:
@@ -190,7 +177,6 @@ async def create_slot(request: CSlot, db: Session = Depends(get_db), user_verifi
     verify_user_role(user_verified, ["admin", "caregiver"])
 
     for slot in request.new_slots:
-        print(f"Day: {slot.day}, Time: {slot.time}, Date: {slot.date}, Animal ID: {request.animal_id}")
         # Check if the `AnimalBorrow` already exists for this slot
         borrow = db.query(AnimalBorrowModel).filter(
             AnimalBorrowModel.id_animal == request.animal_id,
