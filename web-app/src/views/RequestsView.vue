@@ -17,7 +17,7 @@
       </div>
     </div>
     <div v-else>
-      <p class="text-gray-600 mb-4">No pending requests...</p>
+      <p class="text-gray-600 mb-4">No pending requests ✅</p>
     </div>
 
     <h3 class="text-xl font-semibold text-gray-700 mb-4">Processed Requests</h3>
