@@ -7,7 +7,7 @@
         <h1 class="text-2xl font-semibold text-gray-800">User Details</h1>
 
         <div class="flex flex-col gap-6 md:flex-row items-center md:items-start md:gap-10">
-          <!-- Placeholder Avatar -->
+          <!-- placeholder avatar -->
           <div class="flex-shrink-0">
             <div class="h-32 w-32 rounded-full overflow-hidden bg-gray-100 shadow-md">
               <div
@@ -80,13 +80,11 @@ export default {
     },
   },
   async mounted() {
-    // Fetch user details, userID is taken from the route
     const userID = this.$route.params.id;
     this.fetchUser(userID);
     this.fetchIsDeleted(userID);
   },
   methods: {
-    // Method for fetching user details
     async fetchUser(id) {
       try {
         const response = await apiClient.post('/user_detail', { id: id });
@@ -102,7 +100,6 @@ export default {
         this.$router.go(-1);
       }
     },
-    // Method for finding out if user is deleted
     async fetchIsDeleted(id) {
       try {
         const response = await apiClient.get(`/users/${id}/is_deleted`);

@@ -53,7 +53,6 @@
 </template>
 
 <script>
-// import axios from 'axios';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -106,7 +105,6 @@ export default {
       this.showActions = !this.showActions;
     },
     handleLogout() {
-      // Dispatch the logout action from Vuex
       this.$store.dispatch('logout');
       this.$router.push('/');
     },

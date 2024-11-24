@@ -3,7 +3,7 @@
     <NavigationBar />
 
     <div class="mt-10">
-      <!-- shelter Info -->
+      <!-- shelter info -->
       <section class="mb-10">
         <h2 class="text-3xl font-bold text-gray-800">About Our Shelter</h2>
         <p class="mt-4 text-gray-600">

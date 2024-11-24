@@ -1,13 +1,10 @@
 <template>
   <div class="container mx-auto px-4 py-10 max-w-lg h-screen flex flex-col justify-center">
-    <!-- Shelter Name -->
     <router-link to="/" class="text-4xl font-bold text-gray-800 text-center mb-10">DJ Khaled's Animal Shelter</router-link>
 
-    <!-- Login Form -->
     <div class="bg-white shadow-lg rounded-lg p-8">
       <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Login</h2>
       <form @submit.prevent="handleSubmit">
-        <!-- Email Input -->
         <div class="mb-6">
           <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
           <input
@@ -20,7 +17,6 @@
           />
         </div>
 
-        <!-- Password Input with Toggle -->
         <div class="mb-6 relative">
           <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
           <input
@@ -31,7 +27,6 @@
             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <!-- Toggle Password Visibility -->
           <button
             type="button"
             @click="togglePasswordVisibility"
@@ -46,7 +41,6 @@
           </button>
         </div>
 
-        <!-- Submit Button -->
         <button
           type="submit"
           class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
@@ -55,7 +49,6 @@
         </button>
       </form>
 
-      <!-- Sign Up Redirect -->
       <div class="mt-6 text-center">
         <p class="text-gray-700">
           Don’t have an account?
@@ -73,12 +66,11 @@ export default {
     return {
       email: '',
       password: '',
-      passwordFieldType: 'password', // By default, password is hidden
+      passwordFieldType: 'password',
     };
   },
   methods: {
     togglePasswordVisibility() {
-      // Toggles between 'password' and 'text' input types
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
     },
     handleSubmit() {
@@ -88,7 +80,6 @@ export default {
         password: this.password
       })
       .then(response => {
-        // Store the token and its data in Vuex store
         this.$store.dispatch('login', response.data.access_token);
         this.$router.push('/');
       })
@@ -102,7 +93,6 @@ export default {
 </script>
 
 <style scoped>
-/* Simple utility styles for form */
 input:focus {
   outline: none;
 }

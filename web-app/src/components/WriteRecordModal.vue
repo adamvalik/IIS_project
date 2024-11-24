@@ -5,7 +5,6 @@
 
       <p class="text-sm text-gray-600 mb-4">Date: {{ currentDate }}</p>
 
-      <!-- Vaccination Type -->
       <div class="mb-4">
         <label for="vaccinationType" class="block text-sm font-medium text-gray-800 mb-1">Vaccination Type (if applied):</label>
         <input
@@ -17,7 +16,6 @@
         />
       </div>
 
-      <!-- Weight -->
       <div class="mb-4 flex items-center gap-4">
         <label for="weight" class="block text-sm font-medium text-gray-800">Weight:</label>
         <input
@@ -29,7 +27,6 @@
         <p class="text-sm">kg</p>
       </div>
 
-      <!-- Vet's Description -->
       <div class="mb-4">
         <label for="description" class="block text-sm font-medium text-gray-800 mb-1">Description:</label>
         <textarea
@@ -41,7 +38,6 @@
         ></textarea>
       </div>
 
-      <!-- Action Buttons -->
       <div class="flex justify-between">
         <button
           @click="$emit('close')"

@@ -147,7 +147,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Style adjustments for better readability */
-</style>

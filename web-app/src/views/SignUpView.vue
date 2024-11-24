@@ -4,11 +4,9 @@
       <router-link to="/" class="text-4xl font-bold text-gray-800">DJ Khaled's Animal Shelter</router-link>
     </div>
 
-    <!-- Sign-Up Form -->
     <div class="bg-white shadow-lg rounded-lg p-8">
       <!-- <h2 class="text-2xl font-semibold text-gray-800 text-center">Sign Up</h2> -->
       <form @submit.prevent="handleSubmit">
-        <!-- Name Input -->
         <div class="mb-4">
           <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
           <input
@@ -21,7 +19,6 @@
           />
         </div>
 
-        <!-- Surname Input -->
         <div class="mb-4">
           <label for="surname" class="block text-gray-700 font-bold mb-2">Surname</label>
           <input
@@ -34,7 +31,6 @@
           />
         </div>
 
-        <!-- Email Input -->
         <div class="mb-4">
           <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
           <input
@@ -47,7 +43,6 @@
           />
         </div>
 
-        <!-- Password Input -->
         <div class="mb-4">
           <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
           <input
@@ -60,7 +55,6 @@
           />
         </div>
 
-        <!-- Password Confirmation Input -->
         <div class="mb-4">
           <label for="passwordConfirm" class="block text-gray-700 font-bold mb-2">Confirm Password</label>
           <input
@@ -74,7 +68,7 @@
           <p v-if="passwordsDoNotMatch" class="text-red-500 mt-2">Passwords do not match.</p>
         </div>
 
-        <!-- Telephone Input (Optional) -->
+        <!-- telephone (optional) -->
         <div class="mb-6">
           <label for="telephone" class="block text-gray-700 font-bold mb-2">Telephone (Optional)</label>
           <input
@@ -87,7 +81,6 @@
           />
         </div>
 
-        <!-- Submit Button -->
         <button
           type="submit"
           class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
@@ -96,7 +89,6 @@
         </button>
       </form>
 
-      <!-- Log In Redirect -->
       <div class="mt-6 text-center">
         <p class="text-gray-700">
           Already have an account?

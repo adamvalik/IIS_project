@@ -92,7 +92,6 @@
 </template>
 
 <script>
-// import axios from 'axios';
 import { mapGetters } from 'vuex';
 import NavigationBar from '@/components/NavigationBar.vue';
 import apiClient from '@/api';

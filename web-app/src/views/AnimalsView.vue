@@ -1,9 +1,8 @@
 <template>
   <div class="container mx-auto px-4 py-6">
-    <!-- Include the NavigationBar component -->
     <NavigationBar />
 
-    <!-- Filters and Sorting -->
+    <!-- filter and sort -->
     <section class="flex gap-4 items-center py-4">
       <div>
         <label for="filter" class="text-gray-700 font-bold mr-2">Filter by:</label>
