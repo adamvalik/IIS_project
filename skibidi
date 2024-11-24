@@ -1,5 +1,0 @@
-uzivatel : muze klikat na modre policka, kdyz klikne tak se to zezluti,  az klikne confirm reservation, tak zoranzovi a ceka se na potvrzeni - az potvrzeno, tak zezelena (pro daneho uzivatele), blokace vsech ostatnich cervena. muze take zrusit svou rezervaci poslanou, zrusit se da den dopredu
-caretaker : ten muze zablokovat sloty, u oranzovych, kdyz na ne klikne, tak se zobrazi kdo to zablokoval a muze mu to potvrdit, nebo zrusit - zruseni modra, potvrzeni zelena, blokace cervena
-
-KDYZ CAREGIVER DELA NOVY SLOT, ALE CHCE HO HNED ZRUSIT, ALE V MEZICASE SI TO NEKDO REZERVUJE, TAK PROSTE MA SMULU TEN NEKDO A ZRUSI SE TO, KAZDOPADNE SE MUSI NECHAT
-INFORMOVAT TEN UZIVATEL!!!!!!!!!!! PROTOZE NEMA CAREGIVER JESTE REFRESHNUTOU STRANKU A NEVIDI TO ORANZOVE/ ZLUTE
