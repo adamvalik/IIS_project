@@ -88,7 +88,6 @@ export default {
         password: this.password
       })
       .then(response => {
-        console.log("Login successful:", response.data.message);
         // Store the token and its data in Vuex store
         this.$store.dispatch('login', response.data.access_token);
         this.$router.push('/');

@@ -56,7 +56,6 @@ async def create_user(user: UserCreateSchema, db: Session = Depends(get_db), use
 
 @router.get("/users/{user_id}", response_model=UserSchema)
 async def get_user(user_id: int, db: Session = Depends(get_db)):
-    print(user_id)
 
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if user is None:
@@ -145,7 +144,7 @@ async def get_vet(vet_id: int, db: Session = Depends(get_db)):
 async def delete_user(user_id: int, db: Session = Depends(get_db), user_verified = Depends(verify_user)):
     if(user_verified.get("role") != "admin"):
         validate_same_user_id(user_id, user_verified.get("user_id"))
-        
+
     user_to_delete = db.query(UserModel).filter(UserModel.id == user_id).first()
     if user_to_delete is None:
         raise HTTPException(status_code=404, detail="User not found.")

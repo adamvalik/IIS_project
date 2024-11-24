@@ -402,7 +402,6 @@ export default {
             .then(response => {
               this.schedule[dayIndex][timeIndex] = 'blue';
               this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
-              console.log('Reservation canceled:', response.data);
             })
             .catch(error => {
               console.error('Error canceling reservation:', error);
@@ -445,18 +444,14 @@ export default {
         this.showPopup.visible = false;
 
         const animalId = this.animal_id;
-        apiClient.post('/approve/',
-            {
-              animal_id: animalId,
-              date: date,
-              time: time
-            })
-            .then(response => {
-              console.log('Reservation approved:', response.data);
-            })
-            .catch(error => {
-              console.error('Error approving reservation:', error);
-            });
+        apiClient.post('/approve/', {
+          animal_id: animalId,
+          date: date,
+          time: time
+        })
+        .catch(error => {
+          console.error('Error approving reservation:', error);
+        });
       }
     },
     async checkApprovalStatus() {

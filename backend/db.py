@@ -18,10 +18,8 @@ for attempt in range(10):
         # test connection to ensure the database is ready
         connection = engine.connect()
         connection.close()
-        print("Database connection established.")
         break
     except OperationalError:
-        print(f"Database connection failed. Attempt {attempt + 1} of 5. Retrying in 5 seconds...")
         time.sleep(5)
 else:
     raise Exception("Database not reachable. Check connection settings.")

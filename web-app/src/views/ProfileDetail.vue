@@ -130,8 +130,6 @@ export default {
   methods: {
     async fetchProfile() {
       try {
-        console.log('Fetching profile...');
-        console.log('User ID:', this.userID);
         const response = await apiClient.get(`/users/${this.userID}`);
         this.user = response.data;
       } catch (error) {

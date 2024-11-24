@@ -133,7 +133,6 @@ export default {
         this.email = this.email.trim();
         const response = await apiClient.post("/email_validation", { email: this.email });
         const email_in_use = response.data;
-        console.log("Email in use:", email_in_use);
         if (email_in_use) {
           alert("Email already in use");
           this.email = "";
