@@ -322,7 +322,7 @@ export default {
         animal_id: animal_id,
         new_slots: newSlots
       })
-        .then(response => {
+        .then(() => {
           newSlots.forEach(slot => {
             const dayIndex = this.days.indexOf(slot.day);
             const timeIndex = this.times.indexOf(slot.time);
@@ -353,7 +353,7 @@ export default {
         animal_id: this.animal_id,
         slots: selectedSlots
       })
-          .then(response => {
+          .then(() => {
             // Make the slots orange to indicate pending confirmation
             selectedSlots.forEach(slot => {
               const dayIndex = this.days.indexOf(slot.day);
@@ -399,7 +399,7 @@ export default {
         const animalId = this.animal_id;
         const userId = this.getID;
         apiClient.delete(`/cancel/${userId}/${animalId}/${date}/${time}`)
-            .then(response => {
+            .then(() => {
               this.schedule[dayIndex][timeIndex] = 'blue';
               this.selected = this.selected.filter(s => !(s.day === day && s.time === time));
             })
@@ -425,7 +425,7 @@ export default {
 
         const animalId = this.animal_id;
         apiClient.delete(`/delete/${animalId}/${formattedDate}/${time}`)
-          .then(response => {
+          .then(() => {
             this.new_slots = this.new_slots.filter(s => !(s.day === day && s.time === time));
             this.schedule[dayIndex][timeIndex] = 'gray';
           })

@@ -323,7 +323,7 @@ export default {
         return;
       }
       try {
-        const response = await apiClient.post('/request', {
+        await apiClient.post('/request', {
           animal_id: this.animal.id,
           caregiver_id: this.user_id,
           request_text: this.vetRequestText
