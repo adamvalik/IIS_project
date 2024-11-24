@@ -271,11 +271,11 @@
   Na adrese <code>localhost:8080</code> pak bude dostupné u¾ivatelské rozhraní.
 
   <p>V pøípadì výskytu chyby typu "ERROR in [eslint] EACCES: permission denied" a podobných je postup následující:</p>
-  <li>
-    <ul>1. Nechat spu¹tìný docker kontejner</ul>
-    <ul>2. Otevøít si druhý terminál, kde je tøeba zadat pøíkaz <code>docker exec -it web-app bash</code> pro navigaci do web-app kontejneru.</ul>
-    <ul>3. V daném kontejneru je tøeba zmìnit práva pøíkazem <code>chmod -R 777 ./node_modules</code></ul>
-  </li>
+  <ol>
+    <li>Nechat spu¹tìný docker kontejner</li>
+    <li>Otevøít si druhý terminál, kde je tøeba zadat pøíkaz <code>docker exec -it web-app bash</code> pro navigaci do web-app kontejneru.</li>
+    <li>V daném kontejneru je tøeba zmìnit práva pøíkazem <code>chmod -R 777 ./node_modules</code></li>
+  </ol>
 </p>
 
 <h2>Známé problémy</h2>
