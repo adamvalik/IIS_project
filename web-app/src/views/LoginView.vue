@@ -89,15 +89,13 @@ export default {
       })
       .then(response => {
         console.log("Login successful:", response.data.message);
-        // Save the token in localStorage
-        //localStorage.setItem('access_token', response.data.access_token);
+        // Store the token and its data in Vuex store
         this.$store.dispatch('login', response.data.access_token);
         this.$router.push('/');
       })
       .catch(error => {
         alert("Login failed, reason: " + error.response.data.detail);
         this.password = '';
-        // Handle the error (e.g., display an error message to the user)
       });
     }
   }

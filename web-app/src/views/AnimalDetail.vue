@@ -238,15 +238,11 @@ export default {
           this.hasSchedulerPermissions = false;
         }
         if (this.userRole === 'volunteer') {
-          console.log("User is a volunteer");
-          console.log("User ID: ", userId);
           try {
             const response = await apiClient.get(`/users/volunteers/${userId}/verify`);
             if (response.data === true) {
-              console.log("User is verified");
               this.VolunteerVetification = true;
             } else {
-              console.log("User is not verified");
               this.showUnverifiedVolunteer = true;
               this.hasSchedulerPermissions = false;
             }

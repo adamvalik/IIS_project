@@ -68,14 +68,11 @@ router.beforeEach(async (to, from, next) => {
       next();
     } catch (error) {
       if (error.response) {
-        console.error('Error fetching protected route:', error.response.data.detail);
-        console.error('Status code:', error.response.status);
-      } else {
-        console.error('Error fetching protected route:', error.message);
+        console.error('Error proceeding to protected route:', error.response.data.detail, error.response.status);
+        alert(error.response.data.detail);
       }
 
       // If the token is invalid, redirect to the home page
-      alert(error.response.data.detail);
       next('/');
     }
 
