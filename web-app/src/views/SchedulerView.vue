@@ -107,6 +107,10 @@
         <p v-if="getRole === 'volunteer'" class="text-sm text-gray-500 mt-2">If you are canceling less than 24 hours before the appointment, please call us at +123456789</p>
       </div>
 
+      <div v-if="past_date" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+        You cannot create new slots for past dates, past interactions are in menu - "My Reservations".
+      </div>
+
     </div>
   </div>
 </template>
@@ -161,7 +165,8 @@ export default {
       showPopup: { visible: false, day: '', time: '', date: '', user_id: '' },
       isApproved: false,
       userReservation: '',
-      animal_id: null
+      animal_id: null,
+      past_date: false,
     };
   },
   created() {
@@ -260,6 +265,7 @@ export default {
     toggleSelection(day, time) {
       const dayIndex = this.days.indexOf(day);
       const timeIndex = this.times.indexOf(time);
+      this.past_date = false;
 
       if (dayIndex >= 0 && timeIndex >= 0) {
         const startOfWeek = new Date(this.currentDate);
@@ -275,6 +281,10 @@ export default {
         const currentDate = new Date();
         const selectedDateTime = new Date(`${formattedDate}T${time}:00`);
         if (selectedDateTime < currentDate) {
+          this.past_date = true;
+          setTimeout(() => {
+            this.past_date = false;
+          }, 5000);
           return;
         }
 
