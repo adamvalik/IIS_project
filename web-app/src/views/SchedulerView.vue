@@ -107,8 +107,9 @@
         <p v-if="getRole === 'volunteer'" class="text-sm text-gray-500 mt-2">If you are canceling less than 24 hours before the appointment, please call us at +123456789</p>
       </div>
 
-      <div v-if="past_date" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
-        You cannot create new slots for past dates, past interactions are in menu - "My Reservations".
+      <div v-if="past_date" class="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg">
+        <span v-if="getRole === 'volunteer'">You cannot create new slots for past dates, past interactions are in menu - "My Reservations".</span>
+        <span v-else>You cannot interact with slots in the past, for those, please refer to the "Reservations" menu.</span>
       </div>
 
     </div>
