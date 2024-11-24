@@ -45,17 +45,17 @@ def verify_password(password: str, hashed_password: str) -> bool:
 # Function that verifies the user's token and looking up the user in the database
 def verify_user(token: str = Depends(Oauth2Scheme), db: Session = Depends(get_db)):
     try:
-        payload = jwt.decode(token, "rogalo", algorithms=["HS256"])
-        email = payload.get("mail")
-        role = payload.get("role")
-        user_id = payload.get("user_id")
+        decodedToken = jwt.decode(token, "rogalo", algorithms=["HS256"])
+        email = decodedToken.get("mail")
+        role = decodedToken.get("role")
+        user_id = decodedToken.get("user_id")
 
         userFound = db.query(UserModel).filter(UserModel.email == email).first()
         
         if userFound is None or userFound.id != user_id or userFound.role != role:
             raise HTTPException(status_code=401, detail="User not verified")
 
-        return payload
+        return decodedToken
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
@@ -63,9 +63,9 @@ def verify_user(token: str = Depends(Oauth2Scheme), db: Session = Depends(get_db
         raise HTTPException(status_code=401, detail="Invalid token")
     
 # Function that verifies the user's role
-def verify_user_role(payload: dict, roles: List[str]):
-    if payload.get("role") not in roles:
-        raise HTTPException(status_code=401, detail=f'User with role {payload.get("role")} not authorized')
+def verify_user_role(decodedToken: dict, roles: List[str]):
+    if decodedToken.get("role") not in roles:
+        raise HTTPException(status_code=401, detail=f'User with role {decodedToken.get("role")} not authorized')
     
 # Function that verifies  if the user is a verified volunteer
 def verify_volunteer_status(user_id: int, db: Session):
