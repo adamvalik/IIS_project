@@ -1,5 +1,7 @@
-# IIS_project
-zviratka - **now Dockerized!**
+# IIS_project - DJKhaled's Animal Shelter (30b/30)
+Adam Valík (xvalik05) - vedoucí <br>
+Marek EffenBerger (xeffen00) <br>
+Samuel Hejníček (xhejni00) <br>
 
 This project uses Docker Compose, which is included with Docker Desktop (download from [docker.com](https://www.docker.com/products/docker-desktop/))
 
