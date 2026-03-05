@@ -1,32 +1,16 @@
 services:
-  postgres:
-    image: postgres:13
-    container_name: postgres
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: satek123
-      POSTGRES_DB: animal_shelter_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app_network
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload  # command override for development (--reload)
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
     container_name: backend
-    volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
+    # Port 8000 is NOT exposed to the host — nginx proxies /api internally
+    expose:
+      - "8000"
     environment:
-      - DATABASE_URL=postgresql+psycopg2://user:satek123@postgres:5432/animal_shelter_db
-    depends_on:
-      - postgres
+      - DATABASE_URL=postgresql+psycopg2://user:satek123@10.0.1.4:5432/animal_shelter_db
+    restart: always
     networks:
       - app_network
 
@@ -35,12 +19,38 @@ services:
       context: ./web-app
       dockerfile: Dockerfile
     container_name: web-app
+    # Internal only — outer nginx proxies to this container
+    expose:
+      - "80"
+    restart: always
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
     ports:
-      - "8080:8080"  # development: serve directly on port 8080 with hot-reloading
-    # - "8080:80"    # production:  serve via NGINX on port 8080 mapped to port 80 inside the container
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./web-app:/app
-      - /app/node_modules
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - web-app
+      - backend
+    restart: always
+    networks:
+      - app_network
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    # Auto-renew every 12 hours
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     networks:
       - app_network
 
