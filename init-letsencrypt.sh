@@ -6,7 +6,7 @@
 set -e
 
 DOMAIN="djkhaled-animal-shelter.switzerlandnorth.cloudapp.azure.com"
-EMAIL="your@email.com"   # <-- CHANGE THIS to a real address for expiry notices
+EMAIL="adar.valik@gmail.com"
 RSA_KEY_SIZE=4096
 CERT_PATH="./certbot/conf/live/${DOMAIN}"
 
